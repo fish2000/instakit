@@ -1,0 +1,6 @@
+include .gitignore
+include README.md
+include setup.py
+include requirements.txt
+recursive-include django_instakit *.*
+
