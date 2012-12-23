@@ -16,6 +16,7 @@
 *.hgignore
 .hg/*
 .hgignore
+.tm_properties
 
 *.dropbox
 .dropbox

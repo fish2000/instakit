@@ -15,23 +15,20 @@ Created by FI$H 2000 on 2012-08-23.
 Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 """
 
-from os.path import join
+import numpy
 from struct import unpack
 from scipy import interpolate
 from PIL import Image
-import numpy
 
-from django.contrib.staticfiles.finders import \
-    AppDirectoriesFinder
-
+from django_instakit.utils import static
 
 class Channel(list):
     def __init__(self, name, *args):
         self.name = name
         list.__init__(self, *args)
     
-    def asarray(self, dtype=numpy.uint8):
-        return numpy.array(self)
+    def asarray(self, dtype=None):
+        return numpy.array(self, dtype=dtype)
     
     def lagrange(self):
         xy = self.asarray()
@@ -60,6 +57,7 @@ class CurveSet(object):
     def __init__(self, name):
         self.curves = []
         self.name = name
+        self.count = 0
         object.__init__(self)
         self.read_acv(name)
     
@@ -81,10 +79,8 @@ class CurveSet(object):
     
     def read_acv(self, name):
         print "Reading curves from %s.acv" % name
-        acv_path = AppDirectoriesFinder().storages.get(
-            'django_instakit').path(join(
-                'django_instakit', 'acv',
-                "%s.acv" % name))
+        acv_path = static.path(
+            'acv', "%s.acv" % name)
         with open(acv_path, "rb") as acv_file:
             _, self.count = unpack("!hh", acv_file.read(4))
             for i in xrange(self.count):
@@ -111,26 +107,19 @@ class CurveSet(object):
 
 
 if __name__ == '__main__':
-    curve_files = AppDirectoriesFinder().storages.get(
-        'django_instakit').listdir(join(
-            'django_instakit', 'acv'))[-1]
-    curve_names = [curve_file.rstrip('.acv') for curve_file in curve_files]
+    curve_names = [curve_file.rstrip('.acv') for curve_file in static.listfiles('acv')]
     curve_sets = [CurveSet(name) for name in curve_names if not name.lower() == '.ds_store']
 
-    image_files = AppDirectoriesFinder().storages.get(
-        'django_instakit').listdir(join(
-            'django_instakit', 'img'))[-1]
     image_paths = map(
-        lambda image_file: AppDirectoriesFinder().storages.get(
-            'django_instakit').path(join(
-                'django_instakit', 'img', image_file)), image_files)
+        lambda image_file: static.path('img', image_file),
+            static.listfiles('img'))
     image_inputs = map(
         lambda image_path: Image.open(image_path).convert('RGB'),
             image_paths)
     
     for image_input in image_inputs:
         image_input.show()
-        for curve_set in curve_sets:
+        for curve_set in curve_sets[:3]:
             curve_set.process(image_input).show()
     
     print curve_sets
