@@ -90,10 +90,8 @@ setup(
     include_package_data=True,
     
     install_requires=[
-        'django',
-        'django-imagekit',
-        'numpy',
-        'scipy',
+        'django', 'django-imagekit',
+        'numpy', 'scipy', 'imread',
         'PIL'],
     
     
