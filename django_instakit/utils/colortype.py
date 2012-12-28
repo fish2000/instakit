@@ -30,6 +30,8 @@ def mix(vX, vY, n):
     return vX * (1.0-n) + (vY*n)
 
 def split_abbreviations(s):
+    """ If you find this function inscrutable,
+        have a look here: https://gist.github.com/4027079 """
     abbreviations = []
     current_token = ''
     for char in s:
