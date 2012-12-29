@@ -91,17 +91,11 @@ class SquareCrop(object):
 
 
 if __name__ == '__main__':
-    from os.path import join
-    from django.contrib.staticfiles.finders import \
-        AppDirectoriesFinder
+    from django_instakit.utils import static
     
-    image_files = AppDirectoriesFinder().storages.get(
-        'django_instakit').listdir(join(
-            'django_instakit', 'img'))[-1]
     image_paths = map(
-        lambda image_file: AppDirectoriesFinder().storages.get(
-            'django_instakit').path(join(
-                'django_instakit', 'img', image_file)), image_files)
+        lambda image_file: static.path('img', image_file),
+            static.listfiles('img'))
     image_inputs = map(
         lambda image_path: Image.open(image_path).convert('RGB'),
             image_paths)
