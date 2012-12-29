@@ -54,6 +54,12 @@ class CurveSet(object):
     
     channels = ('composite', 'red', 'green', 'blue')
     
+    @classmethod
+    def names(cls):
+        return [curve_file.rstrip('.acv') \
+            for curve_file in static.listfiles('acv') \
+            if curve_file.lower().endswith('.acv')]
+    
     def __init__(self, name):
         self.curves = []
         self.name = name
@@ -107,11 +113,7 @@ class CurveSet(object):
 
 
 if __name__ == '__main__':
-    curve_names = [curve_file.rstrip('.acv') \
-        for curve_file in static.listfiles('acv')]
-    curve_sets = [CurveSet(name) \
-        for name in curve_names \
-        if not name.lower() == '.ds_store']
+    curve_sets = [CurveSet(nm) for nm in CurveSet.names()]
 
     image_paths = map(
         lambda image_file: static.path('img', image_file),
