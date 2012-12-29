@@ -107,8 +107,11 @@ class CurveSet(object):
 
 
 if __name__ == '__main__':
-    curve_names = [curve_file.rstrip('.acv') for curve_file in static.listfiles('acv')]
-    curve_sets = [CurveSet(name) for name in curve_names if not name.lower() == '.ds_store']
+    curve_names = [curve_file.rstrip('.acv') \
+        for curve_file in static.listfiles('acv')]
+    curve_sets = [CurveSet(name) \
+        for name in curve_names \
+        if not name.lower() == '.ds_store']
 
     image_paths = map(
         lambda image_file: static.path('img', image_file),

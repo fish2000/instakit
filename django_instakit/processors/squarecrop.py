@@ -12,8 +12,9 @@ from PIL import Image
 
 def histogram_entropy(im):
     """
-    Calculate the entropy of an images' histogram. Used for "smart cropping" in easy-thumbnails;
-    see: https://raw.github.com/SmileyChris/easy-thumbnails/master/easy_thumbnails/utils.py
+    Calculate the entropy of an images' histogram.
+    Used for "smart cropping" in easy-thumbnails:
+        https://raw.github.com/SmileyChris/easy-thumbnails/master/easy_thumbnails/utils.py
 
     """
     if not isinstance(im, Image.Image):
@@ -28,8 +29,9 @@ def histogram_entropy(im):
 
 class SquareCrop(object):
     """
-    Crop an image to an Instagrammy square, by whittling away the parts of the
-    image with the least entropy.
+    Crop an image to an Instagrammy square,
+    by whittling away the parts of the image
+    with the least entropy.
 
     Based on smart crop implementation from easy-thumbnails:
         https://github.com/SmileyChris/easy-thumbnails/blob/master/easy_thumbnails/processors.py#L193
@@ -38,8 +40,9 @@ class SquareCrop(object):
 
     def compare_entropy(self, start_slice, end_slice, slice, difference):
         """
-        Calculate the entropy of two slices (from the start and end of an axis),
-        returning a tuple containing the amount that should be added to the start
+        Calculate the entropy of two slices (from the start
+        and end of an axis), returning a tuple containing
+        the amount that should be added to the start
         and removed from the end of the axis.
 
         """

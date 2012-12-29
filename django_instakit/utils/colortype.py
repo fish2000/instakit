@@ -11,9 +11,6 @@ import numpy, imread
 #from numpy import vectorize
 from os.path import join
 from collections import namedtuple, defaultdict
-#from django.utils.functional import memoize
-from django.contrib.staticfiles.finders import \
-    AppDirectoriesFinder
 
 from PIL import Image
 from math import floor
@@ -63,7 +60,8 @@ def ColorType(name, *args, **kwargs):
                 return "%s(dtype=%s, %s)" % (
                     self.__class__.__name__,
                     self.__class__.dtype,
-                    ', '.join(['%s=%s' % (i[0], i[1]) for i in self._asdict().items()]))
+                    ', '.join(['%s=%s' % (i[0], i[1]) \
+                        for i in self._asdict().items()]))
             
             def __str__(self):
                 return str(repr(self))
