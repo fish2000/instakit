@@ -122,9 +122,9 @@ if __name__ == '__main__':
         lambda image_path: Image.open(image_path).convert('RGB'),
             image_paths)
     
-    for image_input in image_inputs:
+    for image_input in image_inputs[:1]:
         image_input.show()
-        for curve_set in curve_sets[:3]:
+        for curve_set in curve_sets:
             curve_set.process(image_input).show()
     
     print curve_sets
