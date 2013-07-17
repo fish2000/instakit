@@ -10,13 +10,12 @@ Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 import numpy, imread
 from os.path import join
 from collections import namedtuple, defaultdict
-from django.contrib.staticfiles.finders import \
-    AppDirectoriesFinder
 
 from PIL import Image
 from math import floor
 
 from instakit.utils.colortype import ColorType
+from instakit.utils import static
 
 class RGBTable(defaultdict):
     RGB = ColorType('RGB', dtype=numpy.uint8)
@@ -91,10 +90,7 @@ class LUT(RGBTable):
     def _read_png_matrix(cls, name):
         print "Reading LUT image: %s" % name
         return imread.imread(
-            AppDirectoriesFinder().storages.get(
-                'instakit').path(join(
-                    'instakit', 'lut',
-                    "%s.png" % name)))
+            static.path(join('lut', '%s.png' % name)))
 
 
 def main():
@@ -134,15 +130,9 @@ def blurthday():
     #soft_elegance_1 = LUT('soft_elegance_1')
     #soft_elegance_2 = LUT('soft_elegance_2')
     
-    im1 = imread(
-        AppDirectoriesFinder().storages.get(
-            'instakit').path(join(
-                'instakit', 'img', '06-DSCN4771.JPG')))
-    im2 = imread(
-        AppDirectoriesFinder().storages.get(
-            'instakit').path(join(
-                'instakit', 'img',
-                '430023_3625646599363_1219964362_3676052_834528487_n.jpg')))
+    im1 = imread(static.path(join('img', '06-DSCN4771.JPG')))
+    im2 = imread(static.path(join(
+        'img', '430023_3625646599363_1219964362_3676052_834528487_n.jpg')))
     
     pprint(identity)
     pprint(amatorka)
@@ -164,9 +154,7 @@ def old_main():
     
     #imfuckingshowalready = lambda mx: Image.fromarray(mx).show()
 
-    old_identity = AppDirectoriesFinder().storages.get(
-           'instakit').path(join(
-               'instakit', 'lut', 'identity.png'))
+    old_identity = static.path(join('lut', 'identity.png'))
 
     im_old_identity = imread.imread(old_identity)
     im_identity = numpy.zeros_like(im_old_identity)
