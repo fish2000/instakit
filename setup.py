@@ -88,6 +88,7 @@ setup(
     packages=find_packages(),
     package_data={'': ['*.*']},
     include_package_data=True,
+    zip_safe=False,
     
     install_requires=[
         'numpy', 'scipy', 'imread',
