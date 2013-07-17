@@ -1,7 +1,13 @@
-DJANGO-INSTAKIT
-===============
+INSTAKIT
+========
 
-Image processors and filters, for use with [ImageKit](https://github.com/jdriscoll/django-imagekit) &mdash; as of this first draft there are [Instagrammy](http://www.instagram.com/) image-curve adjusters and a few other geegaws.
+Image processors and filters, for processing PIL images.
+
+InstaKit processors use the same API as [PILKit](https://github.com/matthewwithanm/pilkit)'s,
+so they can be used with anything that supports those, including [ImageKit](https://github.com/matthewwithanm/django-imagekit).
+Or you can just use them by themselves to process images using Python.
+
+As of this first draft there are [Instagrammy](http://www.instagram.com/) image-curve adjusters and a few other geegaws.
 
 ![one](http://i.imgur.com/pQ6Vw.jpg)
 
