@@ -94,7 +94,7 @@ class SquareCrop(object):
 
 
 if __name__ == '__main__':
-    from django_instakit.utils import static
+    from instakit.utils import static
     
     image_paths = map(
         lambda image_file: static.path('img', image_file),

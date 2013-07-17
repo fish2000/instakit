@@ -23,7 +23,7 @@
 
 Icon*
 
-django_instakit.egg-info/
+instakit.egg-info/
 bin/
 etc/
 build/

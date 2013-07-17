@@ -16,7 +16,7 @@ from django.contrib.staticfiles.finders import \
 from PIL import Image
 from math import floor
 
-from django_instakit.utils.colortype import ColorType
+from instakit.utils.colortype import ColorType
 
 class RGBTable(defaultdict):
     RGB = ColorType('RGB', dtype=numpy.uint8)
@@ -92,8 +92,8 @@ class LUT(RGBTable):
         print "Reading LUT image: %s" % name
         return imread.imread(
             AppDirectoriesFinder().storages.get(
-                'django_instakit').path(join(
-                    'django_instakit', 'lut',
+                'instakit').path(join(
+                    'instakit', 'lut',
                     "%s.png" % name)))
 
 
@@ -136,12 +136,12 @@ def blurthday():
     
     im1 = imread(
         AppDirectoriesFinder().storages.get(
-            'django_instakit').path(join(
-                'django_instakit', 'img', '06-DSCN4771.JPG')))
+            'instakit').path(join(
+                'instakit', 'img', '06-DSCN4771.JPG')))
     im2 = imread(
         AppDirectoriesFinder().storages.get(
-            'django_instakit').path(join(
-                'django_instakit', 'img',
+            'instakit').path(join(
+                'instakit', 'img',
                 '430023_3625646599363_1219964362_3676052_834528487_n.jpg')))
     
     pprint(identity)
@@ -165,8 +165,8 @@ def old_main():
     #imfuckingshowalready = lambda mx: Image.fromarray(mx).show()
 
     old_identity = AppDirectoriesFinder().storages.get(
-           'django_instakit').path(join(
-               'django_instakit', 'lut', 'identity.png'))
+           'instakit').path(join(
+               'instakit', 'lut', 'identity.png'))
 
     im_old_identity = imread.imread(old_identity)
     im_identity = numpy.zeros_like(im_old_identity)

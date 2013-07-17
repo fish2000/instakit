@@ -27,7 +27,7 @@ from __future__ import print_function
 import sys
 import os
 
-name = 'django-instakit'
+name = 'instakit'
 version = '0.1.4'
 packages = []
 description = 'Image processors and filters.'
