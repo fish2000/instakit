@@ -24,7 +24,7 @@
 Icon*
 
 instakit.egg-info/
-bin/
+django_instakit.egg-info/
 etc/
 build/
 dist/
