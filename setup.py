@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#    TWEMOIR -- Models and other hooks for using tweets as Django model data.
+#    INSTAKIT -- Instagrammy PIL-based processors and tools
 #
 #    Copyright © 2012 Alexander Bohn
 #
@@ -28,7 +28,7 @@ import sys
 import os
 
 name = 'instakit'
-version = '0.1.4'
+version = '0.1.5'
 packages = []
 description = 'Image processors and filters.'
 keywords = 'python django imagekit image processing filters'
@@ -50,7 +50,8 @@ except ImportError:
     
     def find_packages(path, base=""):
         """ Find all packages in path
-            See also http://wiki.python.org/moin/Distutils/Cookbook/AutoPackageDiscovery"""
+            See also http://wiki.python.org/moin/Distutils/Cookbook/AutoPackageDiscovery
+        """
         packages = {}
         for item in os.listdir(path):
             dir = os.path.join(path, item)
@@ -91,7 +92,9 @@ setup(
     zip_safe=False,
     
     install_requires=[
-        'numpy', 'scipy', 'imread',
+        'numpy',
+        'scipy',
+        'imread',
         'PIL'],
     
     
@@ -102,5 +105,7 @@ setup(
         'Operating System :: OS Independent',
         'Operating System :: POSIX',
         'Operating System :: Unix',
-        'Programming Language :: Python :: 2.6'],
+        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2.7',
+    ],
 )
