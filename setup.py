@@ -28,7 +28,7 @@ import sys
 import os
 
 name = 'instakit'
-version = '0.1.6'
+version = '0.1.7'
 description = 'Image processors and filters.'
 keywords = 'python django imagekit image processing filters'
 
