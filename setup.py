@@ -96,7 +96,6 @@ setup(
         'imread',
         'Pillow'],
     
-    
     classifiers=classifiers+[
         'License :: OSI Approved :: MIT License',
         'Operating System :: MacOS',
