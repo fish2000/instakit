@@ -3,7 +3,7 @@ INSTAKIT
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/fish2000/django-instakit/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
-Instakit† is a suite of image processors and filters, for processing PIL images.
+Instakit<sup><b>†</b></sup> is a suite of image processors and filters, for processing PIL images.
 
 InstaKit processors use the same API as [PILKit](https://github.com/matthewwithanm/pilkit)'s,
 so they can be used with anything that supports those, including [ImageKit](https://github.com/matthewwithanm/django-imagekit).
