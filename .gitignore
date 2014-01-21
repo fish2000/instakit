@@ -1,6 +1,7 @@
 *.pyc
 *.orig
 .DS_Store
+.tm_properties
 *~
 \#*\#
 Icon*
