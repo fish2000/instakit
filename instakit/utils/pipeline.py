@@ -6,7 +6,8 @@ from PIL import ImageMode
 class Pipe(list):
     """ A linear pipeline of processors to be applied en masse.
         Derived from an ImageKit class:
-        imagekit.processors.base.ProcessorPipeline """
+        imagekit.processors.base.ProcessorPipeline
+    """
     def process(self, img):
         for p in self:
             img = p.process(img)
@@ -32,7 +33,8 @@ class ChannelFork(defaultdict):
         >>> from instakit.processors.halftone import Atkinson
         >>> cfork = ChannelFork(None)
         >>> cfork['G'] = Atkinson()
-        >>> cfork.process(my_image) """
+        >>> cfork.process(my_image)
+    """
     
     default_mode = 'RGB'
     
@@ -81,7 +83,9 @@ class ChannelFork(defaultdict):
         return self.compose(*processed_channels)
 
 class CMYKInk(object):
-    """ Renders an input L-mode image by simulating a CMYK primary ink color. """
+    """ Renders an input L-mode image,
+        by simulating a CMYK primary ink color.
+    """
     
     WHITE =     (255,   255,    255)
     CYAN =      (0,     250,    250)
@@ -105,7 +109,8 @@ class CMYKInk(object):
 
 class ChannelOverprinter(ChannelFork):
     """ A ChannelFork subclass that rebuilds its output image using
-        multiply-mode to simulate CMYK overprinting effects. """
+        multiply-mode to simulate CMYK overprinting effects.
+    """
     default_mode = 'CMYK'
     
     def _set_mode(self, mode_string):

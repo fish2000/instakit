@@ -4,7 +4,8 @@ from PIL import Image
 def gcr(im, percentage):
     ''' basic "Gray Component Replacement" function. Returns a CMYK image with 
         percentage gray component removed from the CMY channels and put in the
-        K channel, ie. for percentage=100, (41, 100, 255, 0) >> (0, 59, 214, 41) '''
+        K channel, ie. for percentage=100, (41, 100, 255, 0) >> (0, 59, 214, 41)
+    '''
     # from http://stackoverflow.com/questions/10572274/halftone-images-in-python
     
     cmyk_im = im.convert('CMYK')

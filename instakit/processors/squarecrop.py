@@ -39,12 +39,10 @@ class SquareCrop(object):
     """
 
     def compare_entropy(self, start_slice, end_slice, slice, difference):
-        """
-        Calculate the entropy of two slices (from the start
-        and end of an axis), returning a tuple containing
-        the amount that should be added to the start
-        and removed from the end of the axis.
-
+        """ Calculate the entropy of two slices (from the start
+            and end of an axis), returning a tuple containing
+            the amount that should be added to the start
+            and removed from the end of the axis.
         """
         start_entropy = histogram_entropy(start_slice)
         end_entropy = histogram_entropy(end_slice)

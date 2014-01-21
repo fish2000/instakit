@@ -9,10 +9,10 @@ Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 
 import numpy, imread
 from os.path import join
-from collections import namedtuple, defaultdict
+from collections import defaultdict
 
 from PIL import Image
-from math import floor
+#from math import floor
 
 from instakit.utils.colortype import ColorType
 from instakit.utils import static
@@ -54,8 +54,6 @@ class RGBTable(defaultdict):
             [(idx >> (8*i)) & 255 for i in range(3)]))
     
     def lookup(self, color):
-        #print color
-        #print self._xy(color)
         return self.color_at(*self._xy(color))
     
     def _xy(self, color):
@@ -82,7 +80,6 @@ class LUT(RGBTable):
     
     def __init__(self, name='identity'):
         RGBTable.__init__(self)
-        #self.identity = self._read_png_matrix('identity')
         self.name = name
         self.data = self._read_png_matrix(self.name)
     
