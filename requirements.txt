@@ -1,6 +1,4 @@
 
-django>=1.4
-django-imagekit>=2.0.2
 PIL>=1.1.7
 numpy>=1.6.0
 scipy>=0.10.2

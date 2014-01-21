@@ -27,7 +27,7 @@ from __future__ import print_function
 import sys
 import os
 
-name = 'django-instakit'
+name = 'instakit'
 version = '0.1.4'
 packages = []
 description = 'Image processors and filters.'
@@ -88,9 +88,9 @@ setup(
     packages=find_packages(),
     package_data={'': ['*.*']},
     include_package_data=True,
+    zip_safe=False,
     
     install_requires=[
-        'django', 'django-imagekit',
         'numpy', 'scipy', 'imread',
         'PIL'],
     

@@ -23,13 +23,13 @@ class ChannelFork(defaultdict):
         - applies a default processor.
         
         * Ex. 1: apply the Atkinson ditherer to each of an images' channels:
-        >>> from django_instakit.utils.pipeline import ChannelFork
-        >>> from django_instakit.processors.halftone import Atkinson
+        >>> from instakit.utils.pipeline import ChannelFork
+        >>> from instakit.processors.halftone import Atkinson
         >>> ChannelFork(Atkinson).process(my_image)
         
         * Ex. 2: apply the Atkinson ditherer to only one channel:
-        >>> from django_instakit.utils.pipeline import ChannelFork
-        >>> from django_instakit.processors.halftone import Atkinson
+        >>> from instakit.utils.pipeline import ChannelFork
+        >>> from instakit.processors.halftone import Atkinson
         >>> cfork = ChannelFork(None)
         >>> cfork['G'] = Atkinson()
         >>> cfork.process(my_image) """
@@ -137,8 +137,8 @@ class ChannelOverprinter(ChannelFork):
 
 
 if __name__ == '__main__':
-    from django_instakit.utils import static
-    from django_instakit.processors.halftone import Atkinson
+    from instakit.utils import static
+    from instakit.processors.halftone import Atkinson
     
     image_paths = map(
         lambda image_file: static.path('img', image_file),

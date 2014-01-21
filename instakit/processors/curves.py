@@ -20,7 +20,7 @@ from struct import unpack
 from scipy import interpolate
 from PIL import Image
 
-from django_instakit.utils import static
+from instakit.utils import static
 
 class Channel(list):
     def __init__(self, name, *args):

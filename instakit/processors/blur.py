@@ -6,7 +6,7 @@ blur.py
 Created by FI$H 2000 on 2012-08-23.
 Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 """
-from django_instakit.utils import kernels
+from instakit.utils import kernels
 
 class GaussianBlur(object):
     """ Gaussian Blur """
@@ -28,7 +28,7 @@ class GaussianBlur(object):
 
 if __name__ == '__main__':
     from PIL import Image
-    from django_instakit.utils import static
+    from instakit.utils import static
     
     image_paths = map(
         lambda image_file: static.path('img', image_file),

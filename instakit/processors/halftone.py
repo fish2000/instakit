@@ -11,8 +11,8 @@ from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageStat
 
-from django_instakit.utils import pipeline
-from django_instakit.utils.gcr import gcr
+from instakit.utils import pipeline
+from instakit.utils.gcr import gcr
 
 class Atkinson(object):
     
@@ -91,7 +91,7 @@ class CMYKDotScreen(object):
 
 
 if __name__ == '__main__':
-    from django_instakit.utils import static
+    from instakit.utils import static
     
     image_paths = map(
         lambda image_file: static.path('img', image_file),
