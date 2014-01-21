@@ -1,39 +1,18 @@
-*.eprj
-*.svn
 *.pyc
 *.orig
 .DS_Store
 *~
 \#*\#
+Icon*
 
 *.o
 *.so
-
 *.dmg
 *.jar
 
-*.hg
-*.hgignore
-.hg/*
-.hgignore
-.tm_properties
-
-*.dropbox
-.dropbox
-
-Icon*
-
 instakit.egg-info/
 django_instakit.egg-info/
-etc/
 build/
 dist/
 sdist/
-include/
-instance/Django-*
-lib/
-logs/
-man/
-share/
-var/
 
