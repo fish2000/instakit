@@ -1,6 +1,8 @@
 INSTAKIT
 ========
 
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/fish2000/django-instakit/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
 Image processors and filters, for processing PIL images.
 
 InstaKit processors use the same API as [PILKit](https://github.com/matthewwithanm/pilkit)'s,
@@ -15,6 +17,4 @@ As of this first draft there are [Instagrammy](http://www.instagram.com/) image-
 
 ![three](http://i.imgur.com/MBuC5.jpg)
 
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/fish2000/django-instakit/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 

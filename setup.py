@@ -29,7 +29,6 @@ import os
 
 name = 'instakit'
 version = '0.1.5'
-packages = []
 description = 'Image processors and filters.'
 keywords = 'python django imagekit image processing filters'
 
@@ -54,16 +53,16 @@ except ImportError:
         """
         packages = {}
         for item in os.listdir(path):
-            dir = os.path.join(path, item)
-            if is_package(dir):
+            pth = os.path.join(path, item)
+            if is_package(pth):
                 if base:
                     module_name = "%(base)s.%(item)s" % vars()
                 else:
                     module_name = item
-                packages[module_name] = dir
+                packages[module_name] = pth
                 packages.update(
                     find_packages(
-                        dir, module_name))
+                        pth, module_name))
         return packages
 
 if 'sdist' in sys.argv and 'upload' in sys.argv:
