@@ -95,7 +95,7 @@ setup(
         'numpy',
         'scipy',
         'imread',
-        'PIL'],
+        'Pillow'],
     
     
     classifiers=classifiers+[
