@@ -14,25 +14,31 @@ from PIL import ImageStat
 from instakit.utils import pipeline
 from instakit.utils.gcr import gcr
 
-class Atkinson(object):
+
+try:
+    from instakit.processors.ext.halftone import Atkinson
+
+except ImportError:
     
-    threshold = 128.0
-    threshold_matrix = int(threshold)*[0] + (256-int(threshold))*[255]
-    
-    def process(self, img):
-        img = img.convert('L')
-        for y in range(img.size[1]):
-            for x in range(img.size[0]):
-                old = img.getpixel((x, y))
-                new = self.threshold_matrix[old]
-                err = (old - new) >> 3 # divide by 8.
-                img.putpixel((x, y), new)
-                for nxy in [(x+1, y), (x+2, y), (x-1, y+1), (x, y+1), (x+1, y+1), (x, y+2)]:
-                    try:
-                        img.putpixel(nxy, img.getpixel(nxy) + err)
-                    except IndexError:
-                        pass # it happens, evidently.
-        return img
+    class Atkinson(object):
+        
+        def __init__(self, threshold=128.0):
+            self.threshold_matrix = int(threshold)*(0,) + (256-int(threshold))*(255,)
+        
+        def process(self, img):
+            img = img.convert('L')
+            for y in xrange(img.size[1]):
+                for x in xrange(img.size[0]):
+                    old = img.getpixel((x, y))
+                    new = self.threshold_matrix[old]
+                    err = (old - new) >> 3 # divide by 8.
+                    img.putpixel((x, y), new)
+                    for nxy in [(x+1, y), (x+2, y), (x-1, y+1), (x, y+1), (x+1, y+1), (x, y+2)]:
+                        try:
+                            img.putpixel(nxy, img.getpixel(nxy) + err)
+                        except IndexError:
+                            pass # it happens, evidently.
+            return img
 
 
 class DotScreen(object):
@@ -73,7 +79,7 @@ class DotScreen(object):
 class CMYKDotScreen(object):
     
     def __init__(self,
-        gcr=0, sample=10, scale=1,
+        gcr=20, sample=10, scale=10,
         thetaC=0, thetaM=15, thetaY=30, thetaK=45):
         
         self.gcr = max(min(100, gcr), 0)
@@ -100,10 +106,10 @@ if __name__ == '__main__':
         lambda image_path: Image.open(image_path).convert('RGB'),
             image_paths)
     
-    for image_input in image_inputs[:2]:
+    for image_input in image_inputs:
         #image_input.show()
-        #Atkinson().process(image_input).show()
-        CMYKDotScreen(sample=6, scale=2).process(image_input).show()
+        Atkinson(threshold=128.0).process(image_input).show()
+        #CMYKDotScreen(sample=2, scale=2).process(image_input).show()
     
     print image_paths
     

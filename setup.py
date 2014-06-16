@@ -27,8 +27,34 @@ from __future__ import print_function
 import sys
 import os
 
+try:
+    from setuptools import setup, Extension
+except ImportError:
+    from ez_setup import use_setuptools
+    use_setuptools()
+    from setuptools import setup, Extension
+
+def cython_module(*args):
+    ext_package = ".".join(args)
+    ext_pth = "/".join(args) + ".pyx"
+    return Extension(ext_package, [ext_pth],
+        extra_compile_args=["-Wno-unused-function"])
+
+def cython_ext(name):
+    return cython_module('instakit', 'processors', 'ext', name)
+
+def console_script(command_name, module_pth, func_name='main', command_prefix='pylire'):
+    if not command_prefix:
+        raise ValueError(
+            "console_script() requires a non-False-y command_prefix argument")
+    return "%s-%s = %s:%s" % (
+        command_prefix, command_name, module_pth, func_name)
+
+from Cython.Distutils import build_ext
+from distutils.sysconfig import get_python_inc
+
 name = 'instakit'
-version = '0.1.7'
+version = '0.2.0'
 description = 'Image processors and filters.'
 keywords = 'python django imagekit image processing filters'
 
@@ -36,11 +62,17 @@ classifiers = [
     'Development Status :: 5 - Production/Stable']
 
 try:
-    from setuptools import setup, find_packages
+    import numpy
+except ImportError:
+    class FakeNumpy(object):
+        def get_include(self):
+            return "."
+    numpy = FakeNumpy()
+
+try:
+    from setuptools import find_packages
 
 except ImportError:
-    from distutils.core import setup
-
     def is_package(path):
         return (os.path.isdir(path) and \
             os.path.isfile(
@@ -95,6 +127,14 @@ setup(
         'scipy',
         'imread',
         'Pillow'],
+    
+    ext_modules=[
+        cython_ext("halftone")],
+    
+    cmdclass=dict(build_ext=build_ext),
+    include_dirs=[
+        numpy.get_include(),
+        get_python_inc(plat_specific=1)],
     
     classifiers=classifiers+[
         'License :: OSI Approved :: MIT License',
