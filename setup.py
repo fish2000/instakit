@@ -43,13 +43,6 @@ def cython_module(*args):
 def cython_ext(name):
     return cython_module('instakit', 'processors', 'ext', name)
 
-def console_script(command_name, module_pth, func_name='main', command_prefix='pylire'):
-    if not command_prefix:
-        raise ValueError(
-            "console_script() requires a non-False-y command_prefix argument")
-    return "%s-%s = %s:%s" % (
-        command_prefix, command_name, module_pth, func_name)
-
 from Cython.Distutils import build_ext
 from distutils.sysconfig import get_python_inc
 

@@ -51,10 +51,7 @@ cdef class Atkinson:
                 new = <INT_t>threshold_matrix[old]
                 err = (old - new) >> 3
 
-                #image_i[x, y] = image_i[x, y] + err
                 image_i[x, y] = new
-                #image_i[x, y] = adderror(new, err)
-                #image_i[x, y] = adderror(image_i[x, y], err)
 
                 if x+1 < w:
                     image_i[x+1, y] = adderror(image_i[x+1, y], err)
