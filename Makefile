@@ -1,7 +1,7 @@
 
 clean: clean-pyc clean-cython
 
-distclean: clean-all-pyc clean-all-cython
+distclean: clean-all-pyc clean-cython clean-build-artifacts
 
 clean-pyc:
 	find . -name \*.pyc -print -delete
@@ -15,6 +15,9 @@ clean-cython:
 clean-all-cython:
 	find . -name \*.so -print -delete
 	find . -name \*.c -print -delete
+
+clean-build-artifacts:
+	rm -rf build dist instakit.egg-info
 
 cython:
 	python setup.py build_ext --inplace
