@@ -10,6 +10,7 @@ Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 from instakit.utils.ndarrays import NDProcessor
 
 class Noise(NDProcessor):
+    """ Base noise processor (defaults to 'localvar' mode) """
     
     mode = 'localvar'
     
@@ -19,28 +20,35 @@ class Noise(NDProcessor):
             random_noise(ndimage,
                 mode=self.mode))
 
+
 class GaussianNoise(Noise):
+    """ Add Gaussian noise """
     mode = 'gaussian'
 
 class PoissonNoise(Noise):
+    """ Add Poisson-distributed noise """
     mode = 'poisson'
 
 class GaussianLocalVarianceNoise(Noise):
+    """ Add Gaussian noise, with image-dependant local variance """
     mode = 'localvar'
 
 class SaltNoise(Noise):
+    """ Add 'salt noise' -- replace random pixel values with 1.0f (255) """
     mode = 'salt'
 
 class PepperNoise(Noise):
+    """ Add 'pepper noise' -- replace random pixel values with zero """
     mode = 'pepper'
 
 class SaltAndPepperNoise(Noise):
+    """ Add 'salt and pepper noise' -- replace random pixel values with 1.0f (255) or zero """
     mode = 's&p'
 
 class SpeckleNoise(Noise):
+    """ Add multiplicative noise using out = image + n*image
+        (where n is uniform noise with specified mean & variance) """
     mode = 'speckle'
-
-
 
 
 if __name__ == '__main__':
