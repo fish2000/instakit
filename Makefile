@@ -3,6 +3,8 @@ clean: clean-pyc clean-cython
 
 distclean: clean-all-pyc clean-cython clean-build-artifacts
 
+dist: cython distclean upload
+
 clean-pyc:
 	find . -name \*.pyc -print -delete
 
@@ -22,4 +24,7 @@ clean-build-artifacts:
 cython:
 	python setup.py build_ext --inplace
 
-.PHONY: distclean clean cython
+upload:
+	python setup.py sdist upload
+
+.PHONY: clean distclean dist cython upload
