@@ -1,3 +1,4 @@
+exclude *.pyc *~ *.so .DS_Store
 include .gitignore
 include README.md
 include setup.py
