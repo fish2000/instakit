@@ -23,9 +23,11 @@ class NDProcessor(object):
         """ Override me! """
         return ndimage
     
-    def compand(self, ndimage):
+    @staticmethod
+    def compand(ndimage):
         return numpy.uint8(
             numpy.float32(ndimage) * 255.0)
     
-    def uncompand(self, ndimage):
+    @staticmethod
+    def uncompand(ndimage):
         return numpy.float32(ndimage) / 255.0
