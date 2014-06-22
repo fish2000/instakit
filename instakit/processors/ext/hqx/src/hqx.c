@@ -19,7 +19,7 @@
 #include <unistd.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <hqx.h>
+#include "hqx.h"
 #include <IL/il.h>
 
 static inline uint32_t swapByteOrder(uint32_t ui)
