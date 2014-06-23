@@ -12,7 +12,7 @@ ctypedef numpy.uint32_t UINT32_t
 
 cdef class HQx:
 
-    cdef UINT8_t factor
+    cdef int factor
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
@@ -31,14 +31,14 @@ cdef class HQx:
 
         w = <int>ndimage_in.shape[0]
         h = <int>ndimage_in.shape[1]
-        ndimage_out = numpy.zeros((w * factor, h * factor, 4)), dtype=UINT32)
+        ndimage_out = numpy.zeros((w * factor, h * factor, 4), dtype=UINT32)
 
         if self.factor == 2:
-            hqx.hq2x_32(&ndimage_in[0, 0], &ndimage_out[0, 0], w, h)
+            hqx.hq2x_32(&ndimage_in[0, 0, 0], &ndimage_out[0, 0, 0], w, h)
         elif self.factor == 3:
-            hqx.hq3x_32(&ndimage_in[0, 0], &ndimage_out[0, 0], w, h)
+            hqx.hq3x_32(&ndimage_in[0, 0, 0], &ndimage_out[0, 0, 0], w, h)
         elif self.factor == 4:
-            hqx.hq4x_32(&ndimage_in[0, 0], &ndimage_out[0, 0], w, h)
+            hqx.hq4x_32(&ndimage_in[0, 0, 0], &ndimage_out[0, 0, 0], w, h)
         else:
             pass
 
