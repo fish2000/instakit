@@ -122,10 +122,17 @@ setup(
         'Pillow'],
     
     ext_modules=[
-        cython_ext("halftone")],
+        cython_ext("halftone"),
+        Extension('instakit.processors.ext.scale', [
+                'instakit/processors/ext/scale.pyx',
+                'instakit/processors/ext/hqx/src/hq2x.c',
+                'instakit/processors/ext/hqx/src/hq3x.c',
+                'instakit/processors/ext/hqx/src/hq4x.c'],
+            extra_compile_args=["-Wno-unused-function"])],
     
     cmdclass=dict(build_ext=build_ext),
     include_dirs=[
+        os.path.join('instakit', 'processors', 'ext', 'hqx', 'src'),
         numpy.get_include(),
         get_python_inc(plat_specific=1)],
     

@@ -25,7 +25,7 @@ cdef class Atkinson:
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.cdivision(True)
-    def __cinit__(self not None, FLOAT32_t threshold=128.0):
+    def __cinit__(object self not None, FLOAT32_t threshold=128.0):
         cdef INT_t i
         for i in range(255):
             threshold_matrix[i] = <unsigned char>(<INT_t>(<FLOAT32_t>i / threshold) * 255)
@@ -33,7 +33,7 @@ cdef class Atkinson:
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.cdivision(True)
-    def process(self not None, pilimage not None):
+    def process(object self not None, object pilimage not None):
         in_array = misc.fromimage(pilimage.convert('L')).astype(INT)
         self.atkinson(in_array, in_array.shape[0], in_array.shape[1])
         return misc.toimage(in_array)
@@ -41,7 +41,7 @@ cdef class Atkinson:
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.cdivision(True)
-    def atkinson(self not None, numpy.ndarray[INT_t, ndim=2, mode="c"] image_i not None, INT_t w, INT_t h):
+    def atkinson(object self not None, numpy.ndarray[INT_t, ndim=2, mode="c"] image_i not None, INT_t w, INT_t h):
 
         cdef INT_t x, y, i, err, old, new
 
