@@ -1,8 +1,11 @@
 from libc.stdint cimport uint32_t
 
+# cdef extern from "hqx/src/common.h":
+#     pass
+
 cdef extern from "hqx/src/hqx.h":
     
-    void hqxInit()
+    # void hqxInit()
     
     void hq2x_32(
         uint32_t* src,

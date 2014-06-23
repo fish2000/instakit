@@ -43,7 +43,7 @@
     #define HQX_API
 #endif
 
-HQX_API void HQX_CALLCONV hqxInit(void);
+/*HQX_API void HQX_CALLCONV hqxInit(void);*/
 HQX_API void HQX_CALLCONV hq2x_32( uint32_t * src, uint32_t * dest, int width, int height );
 HQX_API void HQX_CALLCONV hq3x_32( uint32_t * src, uint32_t * dest, int width, int height );
 HQX_API void HQX_CALLCONV hq4x_32( uint32_t * src, uint32_t * dest, int width, int height );

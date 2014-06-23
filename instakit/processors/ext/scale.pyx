@@ -18,15 +18,16 @@ cdef class HQx:
     @cython.wraparound(False)
     @cython.cdivision(True)
     def __cinit__(object self not None, int factor=2):
-        self.factor = <int>factor
+        self.factor = factor
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.cdivision(True)
     def process(object self not None, object pilimage not None):
         cdef int w, h, factor = self.factor
-        cdef numpy.ndarray[UINT32_t, ndim=3, mode="c"] ndimage_in = misc.fromimage(
-            pilimage.convert('RGBA')).astype(UINT32)
+        cdef numpy.ndarray[UINT32_t, ndim=3, mode="c"] ndimage_in = numpy.ascontiguousarray(
+            misc.fromimage(
+                pilimage.convert('RGBA')), dtype=UINT32)
         cdef numpy.ndarray[UINT32_t, ndim=3, mode="c"] ndimage_out
 
         w = <int>ndimage_in.shape[0]

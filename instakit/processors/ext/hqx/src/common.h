@@ -27,7 +27,7 @@
 
 #define MASK_2     0x0000FF00
 #define MASK_13    0x00FF00FF
-#define MASK_RGB   0x00FFFFFF
+/*#define MASK_RGB   0x00FFFFFF*/
 #define MASK_ALPHA 0xFF000000
 
 #define Ymask 0x00FF0000
@@ -37,13 +37,24 @@
 #define trU   0x00000700
 #define trV   0x00000006
 
-/* RGB to YUV lookup table */
-extern uint32_t RGBtoYUV[16777216];
-
+/* RGB to YUV on-call colorspace conversion
+   (in leu of the externed lookup table)
+   
+   See also: 
+   http://www.wiseandroid.com/post/2010/09/16/Porting-C-code-HQ4X-pixel-scaling-algorithm-on-Android.aspx
+*/
 static inline uint32_t rgb_to_yuv(uint32_t c)
 {
-    // Mask against MASK_RGB to discard the alpha channel
-    return RGBtoYUV[MASK_RGB & c];
+    int r, g, b, y, u, v;
+
+    r = (c & 0xFF0000) >> 16;
+    g = (c & 0x00FF00) >> 8;
+    b = c & 0x0000FF;
+    y = (uint32_t)(0.299*r + 0.587*g + 0.114*b);
+    u = (uint32_t)(-0.169*r - 0.331*g + 0.5*b) + 128;
+    v = (uint32_t)(0.5*r - 0.419*g - 0.081*b) + 128;
+
+    return (y << 16) + (u << 8) + v;
 }
 
 /* Test if there is difference in color */
