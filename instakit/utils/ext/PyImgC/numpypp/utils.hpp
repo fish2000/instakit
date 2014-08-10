@@ -1,9 +1,11 @@
-// Part of mahotas. See LICENSE file for License
-// Copyright 2008-2012 Luis Pedro Coelho <luis@luispedro.org>
+/* Copyright 2010-2012 (C)
+ * Luis Pedro Coelho <luis@luispedro.org>
+ * License: MIT
+ * Annotated and rearranged by FI$H 2000
+ */
 
 #include <Python.h>
 #include <numpy/ndarrayobject.h>
-
 
 // holdref is a RAII object for decreasing a reference at scope exit
 struct holdref {

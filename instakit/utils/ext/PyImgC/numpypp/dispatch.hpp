@@ -1,5 +1,12 @@
+/* Copyright 2010-2012 (C)
+ * Luis Pedro Coelho <luis@luispedro.org>
+ * License: MIT
+ * Annotated by FI$H 2000
+ */
+
 typedef unsigned char uchar;
 typedef unsigned short ushort;
+
 #define HANDLE_INTEGER_TYPES() \
     case NPY_BOOL: HANDLE(bool); break; \
     case NPY_UBYTE: HANDLE(unsigned char); break; \
@@ -51,7 +58,6 @@ typedef unsigned short ushort;
         } \
     } \
     CATCH_PYTHON_EXCEPTIONS
-
 
 #define CATCH_PYTHON_EXCEPTIONS \
     catch (const PythonException& pe) { \
