@@ -31,7 +31,7 @@ class PoissonNoise(Noise):
 
 class GaussianLocalVarianceNoise(Noise):
     """ Add Gaussian noise, with image-dependant local variance """
-    mode = 'localvar'
+    pass
 
 class SaltNoise(Noise):
     """ Add 'salt noise' -- replace random pixel values with 1.0f (255) """
