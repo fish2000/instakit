@@ -50,7 +50,6 @@ namespace numpy {
             return this->position_[pos];
         }
 
-        
         bool operator == (const position& other) {
             return !std::memcmp(
                 this->position_,
@@ -154,8 +153,8 @@ namespace numpy {
                 :size_(s) {}
 
             position operator[](const unsigned i) const {
-                assert((i*size_) < store_.size());
-                position res(&store_[i*size_], size_);
+                assert((i * size_) < store_.size());
+                position res(&store_[i * size_], size_);
                 return res;
             }
 
@@ -188,8 +187,8 @@ namespace numpy {
 
             position top_pop() {
                 assert(!empty());
-                position res(&store_[store_.size()-size_], size_);
-                store_.erase(store_.end()-size_, store_.end());
+                position res(&store_[store_.size() - size_], size_);
+                store_.erase(store_.end() - size_, store_.end());
                 return res;
             }
 
@@ -212,7 +211,7 @@ namespace numpy {
         }
 
         bool empty() const {
-            return this->size()  == 0;
+            return this->size() == 0;
         }
 
         position top() const {
@@ -241,7 +240,7 @@ namespace numpy {
     };
 
     template <typename BaseType>
-    struct iterator_base : std::iterator<std::forward_iterator_tag, BaseType>{
+    struct iterator_base : std::iterator<std::forward_iterator_tag, BaseType> {
         friend struct ::filter_iterator<BaseType>;
 
         protected:
@@ -273,7 +272,7 @@ namespace numpy {
                 unsigned cummul = 0;
                 for (int i = 0; i != position_.nd_; ++i) {
                     dimensions_[i] = PyArray_DIM(array, nd - i - 1);
-                    steps_[i] = PyArray_STRIDE(array, nd - i - 1) / sizeof(BaseType)-cummul;
+                    steps_[i] = PyArray_STRIDE(array, nd - i - 1) / sizeof(BaseType) - cummul;
                     cummul *= PyArray_DIM(array, nd - i - 1);
                     cummul += steps_[i]*PyArray_DIM(array, nd - i - 1);
                 }
@@ -317,7 +316,7 @@ namespace numpy {
 
             ::numpy::position position() const {
                 ::numpy::position res = position_;
-                std::reverse(res.position_,res.position_+res.nd_);
+                std::reverse(res.position_, res.position_ + res.nd_);
                 return res;
             }
 
@@ -371,7 +370,7 @@ namespace numpy {
                 typename no_const<BaseType>::type res;
                 ///     -fish
 
-                std::memcpy(&res,this->data_,sizeof(res));
+                std::memcpy(&res, this->data_, sizeof(res));
                 return res;
             }
     };
@@ -400,7 +399,7 @@ namespace numpy {
             void* raw_data(const position& pos) const {
                 assert(this->validposition(pos));
                 return PyArray_GetPtr(
-                    array_,const_cast<npy_intp*>(pos.position_));
+                    array_, const_cast<npy_intp*>(pos.position_));
             }
 
         public:
@@ -464,7 +463,7 @@ namespace numpy {
 
             index_type dim(index_type i) const {
                 assert(i < this->ndims());
-                return PyArray_DIM(array_,i);
+                return PyArray_DIM(array_, i);
             }
 
             unsigned stride(unsigned i) const {
@@ -535,7 +534,7 @@ namespace numpy {
 
             iterator end() {
                 iterator res = begin();
-                for (unsigned i = 0, N = this->size(); i!= N; ++i) {
+                for (unsigned i = 0, N = this->size(); i != N; ++i) {
                     ++res;
                 }
                 return res;
@@ -543,7 +542,7 @@ namespace numpy {
 
             const_iterator end() const {
                 const_iterator res = begin();
-                for (unsigned i = 0, N = this->size(); i!= N; ++i) {
+                for (unsigned i = 0, N = this->size(); i != N; ++i) {
                     ++res;
                 }
                 return res;
@@ -579,17 +578,19 @@ namespace numpy {
 
             iterator end() {
                 iterator res = begin();
-                for (unsigned i = 0, N = this->size(); i!= N; ++i) {
+                for (unsigned i = 0, N = this->size(); i != N; ++i) {
                     ++res;
                 }
                 return res;
             }
 
             npy_intp stride(npy_intp i) const {
-                return this->raw_stride(i)/sizeof(BaseType);
+                return this->raw_stride(i) / sizeof(BaseType);
             }
 
-            bool is_carray() const { return is_carray_; }
+            bool is_carray() const {
+                return is_carray_;
+            }
 
             BaseType* data() {
                 return reinterpret_cast<BaseType*>(PyArray_DATA(this->array_));
@@ -768,7 +769,11 @@ namespace numpy {
     template <typename BaseType>
     aligned_array<BaseType> array_like(const array_base<BaseType>& orig) {
         PyArrayObject* array = orig.raw_array();
-        return aligned_array<BaseType>((PyArrayObject*)PyArray_SimpleNew(PyArray_NDIM(array), PyArray_DIMS(array), PyArray_TYPE(array)));
+        return aligned_array<BaseType>(
+            (PyArrayObject*)PyArray_SimpleNew(
+                PyArray_NDIM(array),
+                PyArray_DIMS(array),
+                PyArray_TYPE(array)));
     }
 
     inline
