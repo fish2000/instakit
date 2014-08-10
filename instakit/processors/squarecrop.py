@@ -18,8 +18,8 @@ def histogram_entropy(im):
         return 0  # Fall back to a constant entropy.
 
     histogram = im.histogram()
-    hist_ceil = float(sum(histogram))
-    histonorm = [histocol / hist_ceil for histocol in histogram]
+    histosum = float(sum(histogram))
+    histonorm = [histocol / histosum for histocol in histogram]
 
     return -sum([p * math.log(p, 2) for p in histonorm if p != 0])
 
