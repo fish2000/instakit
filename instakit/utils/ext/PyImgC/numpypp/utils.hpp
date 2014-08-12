@@ -24,6 +24,7 @@ private:
 };
 
 // gil_release is a sort of reverse RAII object: it acquires the GIL on scope exit
+/// [... would that not then make this a RAID, since the resource is allocated on destruction? -fish]
 struct gil_release {
     gil_release() {
         _save = PyEval_SaveThread();

@@ -24,6 +24,33 @@
 
 //////////////////// EXTEND CIMG ////////////////////
 
+// Check if this CImg<T> instance and a given PyBuffer have identical pixel types.
+bool not_pixel_type_of(const Py_buffer *const pybuffer) const {
+    const char *const format = (char *)pybuffer->format;
+    const char format_key = (char)format[0];
+    
+    return (
+        format_key == "b" && typeid(T) != typeid(char)) ||
+        format_key == "h" && typeid(T) != typeid(short)) ||
+        format_key == "i" && typeid(T) != typeid(int)) ||
+        format_key == "l" && typeid(T) != typeid(long)) ||
+        format_key == "q" && typeid(T) != typeid(long long)) ||
+
+        format_key == "B" && typeid(T) != typeid(unsigned char)) ||
+        format_key == "H" && typeid(T) != typeid(unsigned short)) ||
+        format_key == "I" && typeid(T) != typeid(unsigned int)) ||
+        format_key == "L" && typeid(T) != typeid(unsigned long)) ||
+        format_key == "Q" && typeid(T) != typeid(unsigned long long)) ||
+
+        format_key == "d" && typeid(T) != typeid(float)) ||
+        format_key == "g" && typeid(T) != typeid(double))
+    );
+}
+
+/// in-place constructor
+CImg<T>& assign(const Py_buffer *const pybuffer) {
+    
+}
 
 
 

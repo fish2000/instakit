@@ -802,14 +802,16 @@ namespace numpy {
     
     inline
     bool are_arrays(PyArrayObject* a, PyArrayObject* b, PyArrayObject* c) {
-        return PyArray_Check(a) && PyArray_Check(b) && PyArray_Check(c);
+        return PyArray_Check(a) &&
+            PyArray_Check(b) &&
+            PyArray_Check(c);
     }
 
     inline
     bool arrays_of_same_shape_type(PyArrayObject* a, PyArrayObject* b) {
         return are_arrays(a,b) &&
-                PyArray_EquivTypenums(PyArray_TYPE(a), PyArray_TYPE(b)) &&
-                same_shape(a,b);
+            PyArray_EquivTypenums(PyArray_TYPE(a), PyArray_TYPE(b)) &&
+            same_shape(a,b);
     }
 
     inline
@@ -824,7 +826,9 @@ namespace numpy {
 
     inline
     bool equiv_typenums(PyArrayObject* a, PyArrayObject* b, PyArrayObject* c, PyArrayObject* d) {
-        return equiv_typenums(a, b) && equiv_typenums(a, c) && equiv_typenums(a, d);
+        return equiv_typenums(a, b) &&
+            equiv_typenums(a, c) &&
+            equiv_typenums(a, d);
     }
 
 } // namespace numpy
