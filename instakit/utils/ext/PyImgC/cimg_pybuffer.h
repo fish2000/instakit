@@ -1,6 +1,4 @@
 
-//#include "PyImgC_PyBuffer.h"
-
 #ifndef cimg_plugin_pybuffer
 #define cimg_plugin_pybuffer
 /// INSERT PLUGIN HERE
@@ -20,7 +18,6 @@
 #ifndef cimg_version
 #error You need to hash-define PyImgC_PyBuffer.h as a plugin and then include CImg.h (it's wonky I know)
 #endif
-
 
 //////////////////// EXTEND CIMG ////////////////////
 
@@ -47,9 +44,26 @@ bool not_pixel_type_of(const Py_buffer *const pybuffer) const {
     );
 }
 
+/// conversion constructor
+CImg(const PyBuffer *pybuffer):_width(0),_height(0),_depth(0),_spectrum(0),_is_shared(false),_data(0) {
+    assign(pybuffer);
+}
+
 /// in-place constructor
-CImg<T>& assign(const Py_buffer *const pybuffer) {
-    
+
+template <typename TYPE>
+CImg<T>& assign(const Py_buffer *pybuffer) {
+    if (!pybuffer) { return assign() }
+    typename TYPE = typecodes[pybuffer->format];
+    int colordepth = (pybuffer->ndim > 2) ? pybuffer->shape[2] : 1;
+    CImg<TYPE>(
+        (TYPE)pybuffer->buf,            /// data ptr
+        pybuffer->shape[1],             /// width
+        pybuffer->shape[0],             /// height
+        1,                              /// z-depth (unused)
+        colordepth,                     /// color depth
+        True);                          /// it is shared
+    return *this;
 }
 
 

@@ -14,6 +14,7 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
+
 #include "numpy.hpp"
 
 #ifndef __GNUC__

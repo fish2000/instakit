@@ -29,13 +29,6 @@ Py_buffer *PyImgC_BufferFromImage(CImg<T>& cimage) {
 
 //////////////////// CREATE AN NDARRAY ////////////////////
 
-template <typename DTYPE>
-struct dtyper {
-    DTYPE operator()(DTYPE cdtype) {
-        
-    }
-};
-
 template <typename T>
 Py_buffer *PyImgC_ArrayFromImage(CImg<T>& cimage) {
     int was_buffer_filled = -2;
