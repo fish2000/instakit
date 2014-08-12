@@ -1,10 +1,4 @@
 #include <Python.h>
-#include "structmember.h"
-
-#include "numpypp/array.hpp"
-#include "numpypp/dispatch.hpp"
-#include "numpypy/utils.hpp"
-
 #include "PyImgC_Interface.h"
 
 typedef struct {

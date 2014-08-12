@@ -1,3 +1,6 @@
+//#include <unordered_map>
+//#include <map>
+
 #ifndef PyImgC_CONSTANTS_H
 #define PyImgC_CONSTANTS_H
 /// INSERT PYTHON C-API STUFF HERE
@@ -13,25 +16,22 @@
 #define None NULL
 #endif
 
-template <typename T>
-inline char typecode();
-
-unordered_map<(const char *), typename> typecodes;
+template <typename _T>
+const char * typecode();
 
 #define DECLARE_TYPECODE(type, constant) \
     template <> inline \
-    char typecode<type>() { return constant; } \
+    const char *typecode<type>() { return constant; } \
     \
     template <> inline \
-    char typecode<const type>() { return constant; } \
+    const char *typecode<const type>() { return constant; } \
     \
     template <> inline \
-    char typecode<volatile type>() { return constant; } \
+    const char *typecode<volatile type>() { return constant; } \
     \
     template <> inline \
-    char typecode<volatile const type>() { return constant; } \
-    \
-    typecodes.emplace(constant, type);
+    const char *typecode<volatile const type>() { return constant; }
+
 
 DECLARE_TYPECODE(float, "d")
 DECLARE_TYPECODE(double, "g")
@@ -52,15 +52,18 @@ DECLARE_TYPECODE(unsigned int, "I")
 DECLARE_TYPECODE(unsigned long, "L")
 DECLARE_TYPECODE(unsigned long long, "Q")
 
-DECLARE_TYPECODE((char *), "s")
-DECLARE_TYPECODE((char *), "p")
-DECLARE_TYPECODE((void *), "P")
+//DECLARE_TYPECODE(char *, "s")
+//DECLARE_TYPECODE(char *, "p")
+//DECLARE_TYPECODE(void *, "P")
 
 /*
 DECLARE_TYPECODE(std::complex<float>, NPY_CFLOAT)
 DECLARE_TYPECODE(std::complex<double>, NPY_CDOUBLE)
 */
 
+        //#define DECODE_TYPE(typecode) __TYPECODE_#s
+
+/*
 int image_typecode() const {
     if (typeid(T) == typeid(unsigned char))  return IPL_DEPTH_8U;
     if (typeid(T) == typeid(char))           return IPL_DEPTH_8S;
@@ -71,7 +74,7 @@ int image_typecode() const {
     if (typeid(T) == typeid(double))         return IPL_DEPTH_64F;
     return False;
 }
-
+*/
 
 
 /// END OF PYTHON C-API STUFF'S LIMINAL HASH-IFNDEF
