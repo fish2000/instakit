@@ -20,33 +20,43 @@ from instakit.utils import static
 class RGBTable(defaultdict):
     RGB = ColorType('RGB', dtype=numpy.uint8)
     identity = numpy.zeros(
-        shape=(512, 512, 3),
-        dtype=RGB.dtype)
+        shape=(512, 512),
+        dtype=numpy.uint64)
     
     for bx in xrange(0, 8):
         for by in xrange(0, 8):
             for r in xrange(0, 64):
                 for g in xrange(0, 64):
                     identity[
-                        int(g + by * 64),
-                        int(r + bx * 64)] = RGB(
+                        int(g + float(by) * 64.0 + 0.5),
+                        int(r + float(bx) * 64.0 + 0.5)] = hash(RGB(
                             int(r * 255.0 / 63.0 + 0.5),
                             int(g * 255.0 / 63.0 + 0.5),
-                            int((bx + by * 8.0) * 255.0 / 63.0 + 0.5))
+                            int((bx + by * 8.0) * 255.0 / 63.0 + 0.5)))
     
     def __init__(self):
         super(RGBTable, self).__init__(default_factory=None)
         self.data = self.identity
     
+    '''
     def __getitem__(self, color):
-        return defaultdict.__getitem__(self, self._idx(color))
+        return defaultdict.__getitem__(self, hash(color))
+    '''
     
-    def __missing__(self, idx):
-        self[idx] = value = self.lookup(self._rgb(idx))
+    def __missing__(self, color):
+        self[color] = value = self.lookup(color)
         return value
     
+    '''
     def _idx(self, color):
+        print "_idx COLOR:"
+        print color
+        print "_idx WAT:"
+        print int('%02x%02x%02x' % color, 16)
+        print "hash COLOR:"
+        print hash(color)
         return int('%02x%02x%02x' % color, 16)
+    '''
     
     def _rgb(self, idx):
         RGB = self.RGB
@@ -54,21 +64,29 @@ class RGBTable(defaultdict):
             [(idx >> (8*i)) & 255 for i in range(3)]))
     
     def lookup(self, color):
+        print "lookup COLOR:"
+        print color
         return self.color_at(*self._xy(color))
     
     def _xy(self, color):
+        where = numpy.where(
+            self.identity[:,:] == hash(color))
+        print "WHERE:"
+        print len(zip(*where))
         try:
-            return zip(*numpy.where(
-                numpy.all(
-                    RGBTable.identity == color,
-                    axis=-1)))[0]
+            return zip(*where)[0]
         except IndexError:
             return []
     
     def color_at(self, x, y, data=None):
+        print "X, Y: %s, %s" % (x, y)
+        print "data: %s" % data
         if data is None:
             data = self.data
-        return tuple(data[x, y])
+        print "DATA.shape:"
+        print self.data.shape
+        print data[x, y]
+        return self.RGB(*data[x, y])
     
     def float_color_at(self, x, y, data=None):
         if data is None:
@@ -85,7 +103,7 @@ class LUT(RGBTable):
     
     @classmethod
     def _read_png_matrix(cls, name):
-        print "Reading LUT image: %s" % name
+        print "Reading LUT image: %s" % static.path(join('lut', '%s.png' % name))
         return imread.imread(
             static.path(join('lut', '%s.png' % name)))
 
@@ -94,7 +112,7 @@ def main():
 
     RGB = ColorType('RGB')
     RGB24 = ColorType('RGB', dtype=numpy.uint8)
-    YCrCb = ColorType('YCrCb', dtype=numpy.uint16)
+    YCrCb = ColorType('YCrCb', dtype=numpy.uint8)
     
     print RGB(2, 3, 4)
     print RGB24
@@ -103,10 +121,18 @@ def main():
     identity = LUT()
     amatorka = LUT('amatorka')
     
+    print identity.identity
+    print RGB(22,33,44)
+    print int(RGB(22,33,44))
+    print int(RGB(55,66,77))
+    print numpy.any(identity.identity[:,:] == int(RGB(11,44,99)))
+    print numpy.max(identity.identity)
+    print RGB(111, 222, 11).dtype_composite
+    
     print ""
     print identity[RGB(146,146,36)]
-    print identity[RGB(22,33,44)]
-    print identity[RGB(255, 25, 25)]
+    #print identity[RGB(22,33,44)]
+    print identity[RGB(132, 166, 188)]
     
     print ""
     print "YO DOGG"
