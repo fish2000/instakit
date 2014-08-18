@@ -3,6 +3,7 @@
 
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <numpy/arrayobject.h>
+#include <numpy/ndarraytypes.h>
 
 /// lil' bit pythonic
 #ifndef False
@@ -23,14 +24,15 @@
 #define PyMODINIT_FUNC void
 #endif
 
-
+#ifndef BAIL_WITHOUT
+#define BAIL_WITHOUT(thing) if (!thing) { return None; }
+#endif
 
 typedef struct {
     PyObject_HEAD
     PyObject *buffer;
-    //Py_buffer *pybuffer;
     PyObject *source;
-    PyArray_Descr *dtype;
+    PyObject *dtype;
 } Image;
 
 static PyObject *Image_new(PyTypeObject *type, PyObject *args, PyObject *kwargs) {
@@ -38,7 +40,6 @@ static PyObject *Image_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
     self = (Image *)type->tp_alloc(type, 0);
     if (self != None) {
         self->buffer = None;
-        //self->pybuffer = None;
         self->source = None;
         self->dtype = None;
     }
@@ -46,62 +47,64 @@ static PyObject *Image_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
 }
 
 static int Image_init(Image *self, PyObject *args, PyObject *kwargs) {
-    PyObject *source=None, *dtypeobj=None, *fake;
+    PyObject *source=None, *dtype=None, *fake;
     static char *keywords[] = { "source", "dtype", None };
     
     if (!PyArg_ParseTupleAndKeywords(
         args, kwargs, "|OO",
         keywords,
-        &source, &dtypeobj)) { return -1; }
+        &source, &dtype)) { return -1; }
         
 #if PY_VERSION_HEX <= 0x03000000
-        /// Try the legacy buffer interface while it's here
-        if (PyObject_CheckReadBuffer(source)) {
-            self->buffer = PyBuffer_FromObject(source, (Py_ssize_t)0, Py_END_OF_BUFFER);
-            goto through;
+    /// Try the legacy buffer interface while it's here
+    if (PyObject_CheckReadBuffer(source)) {
+        self->buffer = PyBuffer_FromObject(source, (Py_ssize_t)0, Py_END_OF_BUFFER);
+        goto through;
+    } else {
 #ifdef PYIMGC_DEBUG
-        } else {
-            printf("YO DOGG: legacy buffer check failed");
+        printf("YO DOGG: legacy buffer check failed");
 #endif
-        }
+    }
 #endif
-        /// In the year 3000 the old ways are long gone
-        if (PyObject_CheckBuffer(source)) {
-            self->buffer = PyMemoryView_FromObject(source);
-            goto through;
+    /// In the year 3000 the old ways are long gone
+    if (PyObject_CheckBuffer(source)) {
+        self->buffer = PyMemoryView_FromObject(source);
+        goto through;
+    } else {
 #ifdef PYIMGC_DEBUG
-        } else {
-            printf("YO DOGG: buffer3000 check failed");
+        printf("YO DOGG: buffer3000 check failed");
 #endif
-        }
-        
-        /// return before 'through' cuz IT DIDNT WORK DAMNIT
-        return 0;
-        
-    through:
-#ifdef PYIMGC_DEBUG
-        printf("YO DOGG WERE THROUGH");
-#endif
-        fake = self->source;        Py_INCREF(source);
-        self->source = source;      Py_XDECREF(fake);
     }
     
+    /// return before 'through' cuz IT DIDNT WORK DAMNIT
+    return 0;
+    
+through:
+#ifdef PYIMGC_DEBUG
+    printf("YO DOGG WERE THROUGH");
+#endif
+    fake = self->source;        Py_INCREF(source);
+    self->source = source;      Py_XDECREF(fake);
+
     if ((source && !self->source) || source != self->source) {
-        PyArray_Descr *dtype;
-        if (!dtypeobj && PyArray_Check(source)) {
-            dtype = ((PyArrayObject *)source)->descr;
-        } else if (dtypeobj && !self->dtype) {
-            if (!PyArray_DescrConverter(dtypeobj, &dtype)) {
+        static PyArray_Descr *descr;
+        if (!dtype && PyArray_Check(source)) {
+            //descr = ((PyArrayObject *)source)->descr;
+            //descr = PyArray_DescrFromObject(source, PyArray_DescrFromType(NPY_USHORT));
+            descr = PyArray_DESCR((PyArrayObject *)source);
+        } else if (dtype && !self->dtype) {
+            if (!PyArray_DescrConverter(dtype, &descr)) {
                 printf("Couldn't convert dtype arg");
             }
-            Py_DECREF(dtypeobj);
+            Py_DECREF(dtype);
         }
-    
+    }
+
     if ((dtype && !self->dtype) || dtype != self->dtype) {
         fake = self->dtype;         Py_INCREF(dtype);
         self->dtype = dtype;        Py_XDECREF(fake);
     }
-    
+
     return 0;
 }
 
@@ -133,11 +136,12 @@ typedef struct {
     void *buf;
 } rawbuffer_t;
 
-static void *PyImgC_rawbuffer(PyObject *buffer) {
-    rawbuffer_t *raw = (rawbuffer_t)malloc(sizeof(rawbuffer_t));
+static rawbuffer_t *PyImgC_rawbuffer(PyObject *buffer) {
+    rawbuffer_t *raw = (rawbuffer_t *)malloc(sizeof(rawbuffer_t));
     if (PyObject_CheckBuffer(buffer)) {
         /// buffer3000
-        Py_buffer *buf = PyObject_GetBuffer(buffer);
+        Py_buffer *buf = 0;
+        PyObject_GetBuffer(buffer, buf, PyBUF_SIMPLE); BAIL_WITHOUT(buf)
         raw->len = buf->len;
         raw->buf = buf->buf;
         PyBuffer_Release(buf);
@@ -145,10 +149,10 @@ static void *PyImgC_rawbuffer(PyObject *buffer) {
     } else if (PyBuffer_Check(buffer)) {
         /// legacybuf
         PyObject *bufferobj = PyBuffer_FromObject(buffer, (Py_ssize_t)0, Py_END_OF_BUFFER);
-        const void *buf;
+        const void *buf = 0;
         Py_ssize_t len;
-        PyObject_AsReadBuffer(bufferobj, &buf, &len);
-        raw->buf = buf;
+        PyObject_AsReadBuffer(bufferobj, &buf, &len); BAIL_WITHOUT(buf)
+        raw->buf = (void *)buf;
         raw->len = len;
         Py_XDECREF(bufferobj);
         return raw;
@@ -159,12 +163,14 @@ static void *PyImgC_rawbuffer(PyObject *buffer) {
 static PyObject *Image_as_ndarray(Image *self) {
     if (self->source && self->dtype) {
         rawbuffer_t *raw = PyImgC_rawbuffer(self->buffer);
+        npy_intp *shape = &raw->len;
+        PyArray_Descr *descr = 0;
+        PyArray_DescrConverter(self->dtype, &descr); BAIL_WITHOUT(descr)
         int ndims = 1;
-        int *shape = { raw->len, };
-        int typenum = (int)self->dtype->type_num;
+        int typenum = (int)descr->type_num;
         //Py_ssize_t *dims = { PySequence_Length(self->buffer), };
         
-        PyArrayObject *ndarray = PyArray_SimpleNewFromData(
+        PyObject *ndarray = PyArray_SimpleNewFromData(
             ndims, shape, typenum, raw->buf);
         Py_INCREF(ndarray);
         return (PyObject *)ndarray;
@@ -189,7 +195,7 @@ static PyTypeObject ImageType = {
     PyObject_HEAD_INIT(NULL)
     0,                                                          /* ob_size */
     "PyImgC.Image",                                             /* tp_name */
-    sizeof(PyImgC_Image),                                       /* tp_basicsize */
+    sizeof(Image),                                              /* tp_basicsize */
     0,                                                          /* tp_itemsize */
     (destructor)Image_dealloc,                                  /* tp_dealloc */
     0,                                                          /* tp_print */
@@ -241,13 +247,16 @@ PyMODINIT_FUNC initPyImgC(void) {
         "PyImgC",
         PyImgC_methods,
         "PyImgC buffer interface module");
-
+    
+    if (module == None) {
+        return;
+    }
+    
     import_array();
 
     Py_INCREF(&ImageType);
     PyModule_AddObject(
-        module, "Image",
-        (PyObject *)&ImageType);
+        module, "Image", (PyObject *)&ImageType);
 }
 
 
