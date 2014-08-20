@@ -2,6 +2,9 @@
 #define PyImgC_PYBUFFER_H
 /// INSERT PYTHON C-API STUFF HERE
 
+#include <Python.h>
+
+
 //////////////////// CREATE A PYBUFFER ////////////////////
 
 template <typename T>

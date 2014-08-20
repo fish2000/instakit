@@ -19,6 +19,9 @@ namespace numpy {
     ///     -fish
     template <typename T>
     inline npy_intp dtype_code();
+    
+    template <typename T>
+    inline PyArray_Descr dtype_struct();
 
     /// Meta-macro, templating all essential storage-class declaration permutations
     /// one needs when furnishing an API with the kind of clean, functional syntax
@@ -36,7 +39,19 @@ namespace numpy {
         npy_intp dtype_code<volatile type>() { return constant; } \
         \
         template <> inline \
-        npy_intp dtype_code<volatile const type>() { return constant; }
+        npy_intp dtype_code<volatile const type>() { return constant; } \
+        \
+        template <> inline \
+        PyArray_Descr dtype_struct<type>() { return PyArray_DescrFromType(constant); } \
+        \
+        template <> inline \
+        PyArray_Descr dtype_struct<const type>() { return PyArray_DescrFromType(constant); } \
+        \
+        template <> inline \
+        PyArray_Descr dtype_struct<volatile type>() { return PyArray_DescrFromType(constant); } \
+        \
+        template <> inline \
+        PyArray_Descr dtype_struct<volatile const type>() { return PyArray_DescrFromType(constant); }
     
     /// Piping each of numpy's core dtype codes into the DECLARE_DTYPE_CODE()
     /// template macro needs only to happen once -- this handles all four possible

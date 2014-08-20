@@ -31,25 +31,23 @@ long_description = open('README.md').read()
 undef_macros = []
 define_macros = []
 
-DEBUG = os.environ.get('DEBUG', False)
-EXCLUDE_WEBP = os.environ.get('EXCLUDE_WEBP', False)
+DEBUG = os.environ.get('DEBUG', '2')
 
-define_macros.append(
-    ('NPY_NO_DEPRECATED_API', 'NPY_1_7_API_VERSION'))
-define_macros.append(
-    ('PY_ARRAY_UNIQUE_SYMBOL', 'PyImgC_PyArray_API_Symbol'))
+# define_macros.append(
+#     ('PY_ARRAY_UNIQUE_SYMBOL', 'PyImgC_PyArray_API_Symbol'))
 
 if DEBUG:
-    undef_macros = ['NDEBUG']
+    #undef_macros = ['NDEBUG']
     if os.environ.get('DEBUG') == '2':
         define_macros.append(
-            ('PYIMGC_DEBUG', '1'))
+            ('IMGC_DEBUG', DEBUG))
         define_macros.append(
             ('_GLIBCXX_DEBUG', '1'))
 
 include_dirs = [
     numpy.get_include(),
-    get_python_inc(plat_specific=1)]
+    get_python_inc(plat_specific=1),
+    os.getcwd()]
 library_dirs = []
 
 
@@ -62,7 +60,7 @@ for pth in ('/usr/local/lib', '/usr/X11/lib'):
         library_dirs.append(pth)
 
 extensions = {
-    'PyImgC': [
+    '_PyImgC': [
         "PyImgC/pyimgc.cpp"]
     }
 
@@ -116,15 +114,3 @@ setuptools.setup(name='imread',
     package_dir=package_dir,
     package_data=package_data,
     test_suite='nose.collector')
-
-'''
-setup(
-    name="PyImgC",
-    version="0.1.0",
-    ext_modules=[
-        Extension("PyImgC",
-            ["PyImgC/pyimgc.cpp"])],
-    include_dirs=[
-        numpy.get_include(),
-        ],
-    )'''

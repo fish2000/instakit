@@ -1,81 +1,57 @@
 
 #include "pyimgc.h"
+#include "PyImgC_CImage.h"
+using namespace cimg_library;
 
-typedef struct {
-    PyObject_HEAD
-    PyObject *buffer;
-    PyObject *source;
-    PyObject *dtype;
-} Image;
 
-static PyObject *Image_new(PyTypeObject *type, PyObject *args, PyObject *kwargs) {
+static PyObject *CImage_new(PyTypeObject *type, PyObject *args, PyObject *kwargs) {
     Image *self;
     self = (Image *)type->tp_alloc(type, 0);
     if (self != None) {
-        self->buffer = None;
-        self->source = None;
         self->dtype = None;
+        self->cimage = None;
     }
     return (PyObject *)self;
 }
 
-static int Image_init(Image *self, PyObject *args, PyObject *kwargs) {
+static int CImage_init(Image *self, PyObject *args, PyObject *kwargs) {
     PyObject *source=None, *dtype=None, *fake;
-    static char *keywords[] = { "source", "dtype", None };
+    //static char *keywords[] = { "source", "dtype", None };
+    static char *keywords[] = {
+        "shape", "dtype",
+        "buffer", "offset", "strides",
+        "order", NULL
+    };
+
+    PyArray_Descr *descr = NULL;
+    int itemsize;
+    PyArray_Dims dims = {NULL, 0};
+    PyArray_Dims strides = {NULL, 0};
+    PyArray_Chunk buffer;
+    npy_longlong offset = 0;
+    NPY_ORDER order = NPY_CORDER;
+    int is_f_order = 0;
+    //CImg<>
 
     if (!PyArg_ParseTupleAndKeywords(
-        args, kwargs, "|OO",
-        keywords,
-        &source, &dtype)) { return -1; }
-
-    /// ok to pass nothing
-    if (!source && !dtype) { return 0; }
-
-    if (IMGC_PY2) {
-        /// Try the legacy buffer interface while it's here
-        if (PyObject_CheckReadBuffer(source)) {
-            self->buffer = PyBuffer_FromObject(source,
-                (Py_ssize_t)0,
-                Py_END_OF_BUFFER);
-            goto through;
-        } else {
-            IMGC_TRACE("YO DOGG: legacy buffer check failed");
+                                        args, kwargs,
+                                        "O&|O&O&LO&O&", keywords,
+        PyArray_IntpConverter,          &dims,
+        PyArray_DescrConverter,         &descr,
+        PyArray_BufferConverter,        &buffer,
+                                        &offset,
+        &PyArray_IntpConverter,         &strides,
+        &PyArray_OrderConverter,        &order)) {
+            Py_XDECREF(dtype);
+            return -1;
         }
+    if (order == NPY_FORTRANORDER) {
+        is_f_order = 1;
+    }
+    if (descr == NULL) {
+        descr = PyArray_DescrFromType(NPY_DEFAULT_TYPE);
     }
 
-    /// In the year 3000 the old ways are long gone
-    if (PyObject_CheckBuffer(source)) {
-        self->buffer = PyMemoryView_FromObject(source);
-        goto through;
-    } else {
-        IMGC_TRACE("YO DOGG: buffer3000 check failed");
-    }
-    
-    /// return before 'through' cuz IT DIDNT WORK DAMNIT
-    return 0;
-    
-through:
-    IMGC_TRACE("YO DOGG WERE THROUGH");
-    fake = self->source;        Py_INCREF(source);
-    self->source = source;      Py_XDECREF(fake);
-
-    if ((source && !self->source) || source != self->source) {
-        static PyArray_Descr *descr;
-
-        if (!dtype && PyArray_Check(source)) {
-            descr = PyArray_DESCR((PyArrayObject *)source);
-        } else if (dtype && !self->dtype) {
-            if (!PyArray_DescrConverter(dtype, &descr)) {
-                IMGC_TRACE("Couldn't convert dtype arg");
-            }
-            Py_DECREF(dtype);
-        }
-    }
-
-    if ((dtype && !self->dtype) || dtype != self->dtype) {
-        fake = self->dtype;         Py_INCREF(dtype);
-        self->dtype = dtype;        Py_XDECREF(fake);
-    }
 
     return 0;
 }
