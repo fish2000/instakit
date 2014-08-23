@@ -3,6 +3,45 @@
 /// INSERT PYTHON C-API STUFF HERE
 
 #include <Python.h>
+#include "numpypp/numpy.hpp"
+
+
+
+//////////////////// CREATE AN IMAGEVIEW //////////////////
+/// CImg<decoder<NPY_UBYTE>::type> image(...);
+/// PyArray_DESCR() -> (PyArray_Descr *)descr_struct
+/// PyArray_BYTES() | PyArray_DATA() [?]
+/// PyArray_NDIM(a) -> len(a.shape)
+/// PyArray_STRIDES() -> *strides
+/// PyArray_DIM(a, dim) -> shape of a at `dim`
+/// PyArray_SHAPE(a) | PyArray_DIMS(a) -> (npy_intp *)a.shape
+/// PyArray_TYPE(a) -> NPY_UBYTE (and friends)
+/// PyArray_SIZE(a) -> len(a.flatten())
+/// PyArray_NBYTES(a) ~> sizeof(a)
+/// PyArray_GetPtr(a, dim) -> (void *)a.data
+
+template <typename T, typename shape>
+CImg<T> PyImgC_ImageFromBuffer(Py_buffer *buffer) {
+    return CImg<>
+}
+
+
+
+
+
+template <typename DTYPE>
+CImg<typename no_ptr<T>::type>
+
+template <> inline
+CImg<type> cimage_view<constant>() {
+    return CImg<type>;
+}
+
+int sX = 640;
+int sY = 480;
+int channels = 3;
+CImg<unsigned char> view(charbuffer, sX, sY, 1, channels, is_shared=True);
+
 
 
 //////////////////// CREATE A PYBUFFER ////////////////////

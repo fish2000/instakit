@@ -62,5 +62,3 @@ void IMGC_OUT(FILE *stream, const char *format, ...) {
 #else
     #define IMGC_TRACE(format, ...) ((void)0)
 #endif
-
-

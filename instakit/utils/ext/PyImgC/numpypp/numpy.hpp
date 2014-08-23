@@ -23,35 +23,45 @@ namespace numpy {
     template <typename T>
     inline PyArray_Descr dtype_struct();
 
+    template<typename DTYPE_CODE>
+    struct decoder;
+
     /// Meta-macro, templating all essential storage-class declaration permutations
     /// one needs when furnishing an API with the kind of clean, functional syntax
     /// one needs to not go totally fucking insane while managing dtype struct internals,
     /// here in post-apocalyptic c++-istan. THEYRE NOT BY ME LUIS WROTE EM, FUCK YES
     ///     -fish
-    #define DECLARE_DTYPE_CODE(type, constant) \
+    
+    /// NOTA BENE: use the decoder like so:
+    ///     CImg<decoder<NPY_UBYTE>::type> image(...);
+    
+    #define DECLARE_DTYPE_CODE(ctype, constant) \
         template <> inline \
-        npy_intp dtype_code<type>() { return constant; } \
+        npy_intp dtype_code<ctype>() { return constant; } \
         \
         template <> inline \
-        npy_intp dtype_code<const type>() { return constant; } \
+        npy_intp dtype_code<const ctype>() { return constant; } \
         \
         template <> inline \
-        npy_intp dtype_code<volatile type>() { return constant; } \
+        npy_intp dtype_code<volatile ctype>() { return constant; } \
         \
         template <> inline \
-        npy_intp dtype_code<volatile const type>() { return constant; } \
+        npy_intp dtype_code<volatile const ctype>() { return constant; } \
         \
         template <> inline \
-        PyArray_Descr dtype_struct<type>() { return PyArray_DescrFromType(constant); } \
+        PyArray_Descr dtype_struct<ctype>() { return PyArray_DescrFromType(constant); } \
         \
         template <> inline \
-        PyArray_Descr dtype_struct<const type>() { return PyArray_DescrFromType(constant); } \
+        PyArray_Descr dtype_struct<const ctype>() { return PyArray_DescrFromType(constant); } \
         \
         template <> inline \
-        PyArray_Descr dtype_struct<volatile type>() { return PyArray_DescrFromType(constant); } \
+        PyArray_Descr dtype_struct<volatile ctype>() { return PyArray_DescrFromType(constant); } \
         \
         template <> inline \
-        PyArray_Descr dtype_struct<volatile const type>() { return PyArray_DescrFromType(constant); }
+        PyArray_Descr dtype_struct<volatile const ctype>() { return PyArray_DescrFromType(constant); } \
+        \
+        template <> inline \
+        struct decoder<constant> { typedef ctype type; };
     
     /// Piping each of numpy's core dtype codes into the DECLARE_DTYPE_CODE()
     /// template macro needs only to happen once -- this handles all four possible
