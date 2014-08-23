@@ -5,59 +5,34 @@
 #include <vector>
 #include <map>
 #include <string>
+#include "structcode.hpp"
 using namespace std;
 
-//#define as ,
-//#define foreach(str, c) for (const char *c = (const char *)str; *c; c++)
-#define foreach(str, c) for (char &c : str)
 
-int main(void) {
-    
-    map<string, char> native_map = {
-        {"?", '?'},
-        {"b", 'b'},
-        {"B", 'B'},
-        {"h", 'h'},
-        {"H", 'H'},
-        {"i", 'i'},
-        {"I", 'I'},
-        {"l", 'l'},
-        {"L", 'L'},
-        {"q", 'q'},
-        {"Q", 'Q'},
-        {"e", 'e'},
-        {"f", 'f'},
-        {"d", 'd'},
-        {"g", 'g'},
-        {"Zf", 'F'},
-        {"Zd", 'D'},
-        {"Zg", 'G'},
-        {"s", 'S'},
-        {"w", 'U'},
-        {"O", 'O'},
-        {"x", 'V'}, /// padding
-    };
-    
-    
+int plain(void) {
     string most = string("?bhilqefdgswxBHILQO");
     int i = 0;
     foreach (most, chr) {
-        //printf("NATIVE: %c -> %c\n", chr, native_map[string(&chr)]);
         string key = string(&chr).substr(0, 1);
-        //string idx = string(&most[i]);
-        //string key = string(idx)[0];
-        cout << "NATIVE: " << key << " -> " << native_map[key] << "\n";
+        cout << "NATIVE: " << key << " -> " << typecodemaps::native.at(key) << "\n";
         i++;
     }
-    
-    /*
-    int i = 0;
-    foreach ("YO DOGG", chr) {
-        printf("CHAR AT %i: %c\n", i, *chr);
-        i++;
-    }
-    */
-    
     printf("\n");
     return 0;
+}
+
+int main(void) {
+    vector<string> codes = {
+        "B", "L", "b", "f", "Zd",
+        ">Zd", ">I", ">h",
+        "w8", ">w8", ">w8(640, 480)",
+        "B(640, 480)",
+        ">B(640, 480)"
+    };
+    
+    for (auto code = begin(codes); code != end(codes); ++code) {
+        vector<string> parsed = parse(*code);
+        string dtype = parsed.back();
+        cout << "CODE: " << *code << " -> " << dtype << "\n";
+    }
 }
