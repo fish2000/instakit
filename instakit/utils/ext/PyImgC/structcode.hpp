@@ -341,4 +341,6 @@ vector<pair<string, string>> parse(string typecode, bool toplevel=true) {
     return fields;
 }
 
+///// FORWARD DECLARATIONS
+
 #endif
