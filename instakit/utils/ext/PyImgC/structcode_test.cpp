@@ -6,7 +6,7 @@
 #include <vector>
 #include <string>
 
-#include "structcode.hpp"
+#include "numpypp/structcode.hpp"
 using namespace std;
 
 int plain(void) {

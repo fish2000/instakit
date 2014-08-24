@@ -229,7 +229,7 @@ static PyObject     *Image_GET_source(Image *self, void *closure) {
     return self->source;
 }
 static int           Image_SET_source(Image *self, PyObject *value, void *closure) {
-    if (self->buffer) { Py_DECREF(self->source); }
+    if (self->source) { Py_DECREF(self->source); }
     Py_INCREF(value);
     self->source = value;
     return 0;
@@ -241,7 +241,7 @@ static PyObject     *Image_GET_dtype(Image *self, void *closure) {
     return self->dtype;
 }
 static int           Image_SET_dtype(Image *self, PyObject *value, void *closure) {
-    if (self->buffer) { Py_DECREF(self->dtype); }
+    if (self->dtype) { Py_DECREF(self->dtype); }
     Py_INCREF(value);
     self->dtype = value;
     return 0;

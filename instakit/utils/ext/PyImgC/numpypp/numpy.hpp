@@ -21,10 +21,10 @@ namespace numpy {
     inline npy_intp dtype_code();
     
     template <typename T>
-    inline PyArray_Descr dtype_struct();
+    inline PyArray_Descr *dtype_struct();
 
-    template<typename DTYPE_CODE>
-    inline struct decoder;
+    template<int>
+    struct decoder;
 
     /// Meta-macro, templating all essential storage-class declaration permutations
     /// one needs when furnishing an API with the kind of clean, functional syntax
@@ -49,18 +49,18 @@ namespace numpy {
         npy_intp dtype_code<volatile const ctype>() { return constant; } \
         \
         template <> inline \
-        PyArray_Descr dtype_struct<ctype>() { return PyArray_DescrFromType(constant); } \
+        PyArray_Descr *dtype_struct<ctype>() { return PyArray_DescrFromType(constant); } \
         \
         template <> inline \
-        PyArray_Descr dtype_struct<const ctype>() { return PyArray_DescrFromType(constant); } \
+        PyArray_Descr *dtype_struct<const ctype>() { return PyArray_DescrFromType(constant); } \
         \
         template <> inline \
-        PyArray_Descr dtype_struct<volatile ctype>() { return PyArray_DescrFromType(constant); } \
+        PyArray_Descr *dtype_struct<volatile ctype>() { return PyArray_DescrFromType(constant); } \
         \
         template <> inline \
-        PyArray_Descr dtype_struct<volatile const ctype>() { return PyArray_DescrFromType(constant); } \
+        PyArray_Descr *dtype_struct<volatile const ctype>() { return PyArray_DescrFromType(constant); } \
         \
-        template <> inline \
+        template <> \
         struct decoder<constant> { typedef ctype type; };
     
     /// Piping each of numpy's core dtype codes into the DECLARE_DTYPE_CODE()
