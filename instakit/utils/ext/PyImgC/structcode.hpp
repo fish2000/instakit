@@ -252,11 +252,6 @@ vector<string> parse(string typecode, bool toplevel=true) {
             code += string(typecode.substr(0, codelen));
             typecode.erase(0, codelen);
             
-            /// The program segfaults itself if I don't do this:
-            //ostringstream wat;
-            //wat << "Typecode: " << code << "\n";
-            //wat.str();
-            
             /// field name
             if (typecode.substr(0, 1) == ":") {
                 typecode.erase(0, 1);

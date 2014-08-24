@@ -38,7 +38,6 @@ int main(void) {
     for (auto code = begin(codes); code != end(codes); ++code) {
         vector<string> vec = parse(*code);
         string dtype = accumulate(vec.begin(), vec.end(), string(""));
-        //string dtype = parse(*code).back();
         cout << "CODE: " << *code << " -> " << dtype << "\n";
     }
 }
