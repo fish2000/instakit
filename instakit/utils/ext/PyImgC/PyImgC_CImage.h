@@ -5,18 +5,18 @@
 #define cimg_verbosity 1                /// log to the console
 #define cimg_display 0                  /// don't need this
 
-//#define cimg_use_png 1                  /// png
-//#define cimg_use_jpeg 1                 /// jpeg
-//#define cimg_use_tiff 1                 /// tiff
-//#define cimg_use_zlib 1                 /// compressed output
-//#define cimg_use_magick 1               /// ImageMagick++ I/O
-//#define cimg_use_fftw3 1                /// libFFTW3
+#define cimg_use_png 1                  /// png
+#define cimg_use_jpeg 1                 /// jpeg
+#define cimg_use_tiff 1                 /// tiff
+#define cimg_use_zlib 1                 /// compressed output
+#define cimg_use_magick 1               /// ImageMagick++ I/O
+#define cimg_use_fftw3 1                /// libFFTW3
 //#define cimg_use_openexr 1              /// OpenEXR
 //#define cimg_use_lapack 1               /// LAPACK
 
 #include <Python.h>
 #include <structmember.h>
-
+#include "numpypp/numpy.hpp"
 #include "cimg/CImg.h"
 using namespace cimg_library;
 

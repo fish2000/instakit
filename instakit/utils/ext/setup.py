@@ -33,8 +33,12 @@ define_macros = []
 
 DEBUG = os.environ.get('DEBUG', '1')
 
-# define_macros.append(
-#     ('PY_ARRAY_UNIQUE_SYMBOL', 'PyImgC_PyArray_API_Symbol'))
+define_macros.append(
+     ('PY_ARRAY_UNIQUE_SYMBOL', 'PyImgC_PyArray_API_Symbol'))
+define_macros.append(
+     ('MAGICKCORE_QUANTUM_DEPTH', '16'))
+define_macros.append(
+     ('MAGICKCORE_HDRI_ENABLE', '1'))
 
 if DEBUG:
     #undef_macros = ['NDEBUG']
@@ -51,11 +55,17 @@ include_dirs = [
 library_dirs = []
 
 
-for pth in ('/usr/local/include', '/usr/X11/include'):
+for pth in (
+    '/usr/local/include',
+    '/usr/X11/include',
+    '/usr/local/opt/imagemagick/include/ImageMagick-6'):
     if os.path.isdir(pth):
         include_dirs.append(pth)
 
-for pth in ('/usr/local/lib', '/usr/X11/lib'):
+for pth in (
+    '/usr/local/lib',
+    '/usr/X11/lib',
+    '/usr/local/opt/imagemagick/lib'):
     if os.path.isdir(pth):
         library_dirs.append(pth)
 
