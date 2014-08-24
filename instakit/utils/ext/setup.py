@@ -60,9 +60,9 @@ for pth in ('/usr/local/lib', '/usr/X11/lib'):
         library_dirs.append(pth)
 
 extensions = {
-    '_PyImgC': [
-        "PyImgC/pyimgc.cpp"]
-    }
+    '_PyImgC': ["PyImgC/pyimgc.cpp"],
+    '_structcode': ["PyImgC/structcode.cpp"],
+}
 
 libraries = []
 
@@ -75,6 +75,7 @@ ext_modules = [
         undef_macros=undef_macros,
         define_macros=define_macros,
         extra_compile_args=[
+            '-std=c++11',
             '-Wno-error=unused-command-line-argument-hard-error-in-future',
             '-Wno-unused-function',
             '-Wno-deprecated-writable-strings',

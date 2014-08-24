@@ -1,6 +1,10 @@
 #ifndef PyImgC_STRUCTCODE_H
 #define PyImgC_STRUCTCODE_H
 
+#ifndef IMGC_DEBUG
+#define IMGC_DEBUG 0
+#endif
+
 #if IMGC_DEBUG > 0
     #define IMGC_COUT(x) cout << x << "\n"
     #define IMGC_CERR(x) cerr << x << "\n"

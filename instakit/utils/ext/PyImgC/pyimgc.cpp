@@ -44,7 +44,7 @@ static PyObject *PyImgC_PyBufferDict(PyObject *self, PyObject *args) {
         }
 
         if (buf.format) {
-            PyDict_SetItemString(buffer_dict, "format", PyString_FromString(buf.format));
+            PyDict_SetItemString(buffer_dict, "format", PyString_InternFromString(buf.format));
         } else {
             PyDict_SetItemString(buffer_dict, "format", PyGetNone);
         }
@@ -399,12 +399,9 @@ PyMODINIT_FUNC init_PyImgC(void) {
         _PyImgC_methods,
         "PyImgC buffer interface module");
 
-    if (module == None) {
-        return;
-    }
+    if (module == None) { return; }
 
     import_array();
-
     Py_INCREF(&ImageType);
     PyModule_AddObject(
         module, "Image", (PyObject *)&ImageType);
