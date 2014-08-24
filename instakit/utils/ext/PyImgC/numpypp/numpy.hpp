@@ -24,7 +24,7 @@ namespace numpy {
     inline PyArray_Descr dtype_struct();
 
     template<typename DTYPE_CODE>
-    struct decoder;
+    inline struct decoder;
 
     /// Meta-macro, templating all essential storage-class declaration permutations
     /// one needs when furnishing an API with the kind of clean, functional syntax

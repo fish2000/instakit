@@ -47,6 +47,15 @@
 #define IMGC_PY2 False
 #endif
 
+#ifndef PyGetNone
+#define PyGetNone Py_BuildValue("")
+#endif
+
+//////////////// TYPEDEFS
+typedef struct {
+    Py_ssize_t len;
+    void *buf;
+} rawbuffer_t;
 
 //////////////// MACROS
 void IMGC_OUT(FILE *stream, const char *format, ...) {

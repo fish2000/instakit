@@ -8,6 +8,110 @@ typedef struct {
     PyObject *dtype;
 } Image;
 
+static PyObject *PyImgC_PyBufferDict(PyObject *self, PyObject *args) {
+    PyObject *buffer_dict = PyDict_New();
+    PyObject *buffer = self;
+
+    if (!PyArg_ParseTuple(args, "|O", &buffer)) {
+        PyErr_SetString(PyExc_ValueError,
+            "cannot get Py_buffer (bad argument)");
+        return NULL;
+    }
+
+    if (PyObject_CheckBuffer(buffer)) {
+        /// buffer3000
+        Py_buffer buf;
+        if (PyObject_GetBuffer(buffer, &buf, PyBUF_FORMAT) == -1) {
+            if (PyObject_GetBuffer(buffer, &buf, PyBUF_SIMPLE) == -1) {
+                PyErr_Format(PyExc_ValueError,
+                    "cannot get Py_buffer from %.200s instance (tried PyBUF_FORMAT and PyBUF_SIMPLE)",
+                    buffer->ob_type->tp_name);
+                return NULL;
+            }
+        }
+
+        /// len, readonly, format, ndim, Py_ssize_t *shape, Py_ssize_t *strides, Py_ssize_t *suboffsets, Py_ssize_t itemsize,  
+        if (buf.len) {
+            PyDict_SetItemString(buffer_dict, "len", PyInt_FromSsize_t(buf.len));
+        } else {
+            PyDict_SetItemString(buffer_dict, "len", PyGetNone);
+        }
+
+        if (buf.readonly) {
+            PyDict_SetItemString(buffer_dict, "readonly", PyBool_FromLong((long)buf.readonly));
+        } else {
+            PyDict_SetItemString(buffer_dict, "readonly", PyGetNone);
+        }
+
+        if (buf.format) {
+            PyDict_SetItemString(buffer_dict, "format", PyString_FromString(buf.format));
+        } else {
+            PyDict_SetItemString(buffer_dict, "format", PyGetNone);
+        }
+
+        if (buf.ndim) {
+            PyDict_SetItemString(buffer_dict, "ndim", PyInt_FromLong((long)buf.ndim));
+
+            if (buf.shape) {
+                PyObject *shape = PyTuple_New((Py_ssize_t)buf.ndim);
+                for (int idx = 0; idx < (int)buf.ndim; idx++) {
+                    PyTuple_SET_ITEM(shape, (Py_ssize_t)idx, PyInt_FromSsize_t(buf.shape[idx]));
+                }
+                PyDict_SetItemString(buffer_dict, "shape", shape);
+            } else {
+                PyDict_SetItemString(buffer_dict, "shape", PyGetNone);
+            }
+
+            if (buf.strides) {
+                PyObject *strides = PyTuple_New((Py_ssize_t)buf.ndim);
+                for (int idx = 0; idx < (int)buf.ndim; idx++) {
+                    PyTuple_SET_ITEM(strides, (Py_ssize_t)idx, PyInt_FromSsize_t(buf.strides[idx]));
+                }
+                PyDict_SetItemString(buffer_dict, "strides", strides);
+            } else {
+                PyDict_SetItemString(buffer_dict, "strides", PyGetNone);
+            }
+
+            if (buf.suboffsets) {
+                PyObject *suboffsets = PyTuple_New((Py_ssize_t)buf.ndim);
+                for (int idx = 0; idx < (int)buf.ndim; idx++) {
+                    PyTuple_SET_ITEM(suboffsets, (Py_ssize_t)idx, PyInt_FromSsize_t(buf.suboffsets[idx]));
+                }
+                PyDict_SetItemString(buffer_dict, "suboffsets", suboffsets);
+            } else {
+                PyDict_SetItemString(buffer_dict, "suboffsets", PyGetNone);
+            }
+
+        } else {
+            PyDict_SetItemString(buffer_dict, "ndim", PyGetNone);
+            PyDict_SetItemString(buffer_dict, "shape", PyGetNone);
+            PyDict_SetItemString(buffer_dict, "strides", PyGetNone);
+            PyDict_SetItemString(buffer_dict, "suboffsets", PyGetNone);
+        }
+
+        if (buf.itemsize) {
+            PyDict_SetItemString(buffer_dict, "itemsize", PyInt_FromSsize_t(buf.itemsize));
+        } else {
+            PyDict_SetItemString(buffer_dict, "itemsize", PyGetNone);
+        }
+
+        PyBuffer_Release(&buf);
+        return Py_BuildValue("O", buffer_dict);
+        
+    } else if (PyBuffer_Check(buffer)) {
+        /// legacybuf
+        PyErr_Format(PyExc_ValueError,
+            "cannot get a buffer from %.200s instance (only supports legacy PyBufferObject)",
+            buffer->ob_type->tp_name);
+        return NULL;
+    }
+
+    PyErr_Format(PyExc_ValueError,
+        "no buffer info for %.200s instance (no buffer API supported)",
+        buffer->ob_type->tp_name);
+    return NULL;
+}
+
 static PyObject *Image_new(PyTypeObject *type, PyObject *args, PyObject *kwargs) {
     Image *self;
     self = (Image *)type->tp_alloc(type, 0);
@@ -162,13 +266,6 @@ static PyGetSetDef Image_getset[] = {
     SENTINEL
 };
 
-
-
-typedef struct {
-    Py_ssize_t len;
-    void *buf;
-} rawbuffer_t;
-
 static rawbuffer_t *PyImgC_rawbuffer(PyObject *buffer) {
 
     rawbuffer_t *raw = (rawbuffer_t *)malloc(sizeof(rawbuffer_t));
@@ -207,7 +304,8 @@ static PyObject *Image_as_ndarray(Image *self) {
 
         npy_intp *shape = &raw->len;
         PyArray_Descr *descr = 0;
-        PyArray_DescrConverter(self->dtype, &descr); BAIL_WITHOUT(descr);
+        PyArray_DescrConverter(self->dtype, &descr);
+        BAIL_WITHOUT(descr);
 
         int ndims = 1;
         int typenum = (int)descr->type_num;
@@ -228,6 +326,11 @@ static PyMethodDef Image_methods[] = {
             (PyCFunction)Image_as_ndarray,
             METH_NOARGS,
             "Cast to NumPy array"},
+    {
+        "buffer_info",
+            (PyCFunction)PyImgC_PyBufferDict,
+            METH_VARARGS,
+            "Get buffer info dict"},
     SENTINEL
 };
 
@@ -276,112 +379,6 @@ static PyTypeObject ImageType = {
     0,                                                          /* tp_alloc */
     Image_new,                                                  /* tp_new */
 };
-
-#define PyGetNone Py_BuildValue("")
-
-static PyObject *PyImgC_PyBufferDict(PyObject *self, PyObject *args) {
-    PyObject *buffer_dict = PyDict_New();
-    PyObject *buffer;
-
-    if (!PyArg_ParseTuple(args, "O", &buffer)) {
-        PyErr_SetString(PyExc_ValueError,
-            "cannot get Py_buffer (bad instance)");
-        return NULL;
-    }
-
-    if (PyObject_CheckBuffer(buffer)) {
-        /// buffer3000
-        Py_buffer buf;
-        if (PyObject_GetBuffer(buffer, &buf, PyBUF_FORMAT) == -1) {
-            if (PyObject_GetBuffer(buffer, &buf, PyBUF_SIMPLE) == -1) {
-                PyErr_Format(PyExc_ValueError,
-                    "cannot get Py_buffer from %.200s instance (tried PyBUF_FORMAT and PyBUF_SIMPLE)",
-                    buffer->ob_type->tp_name);
-                return NULL;
-            }
-        }
-
-        /// len, readonly, format, ndim, Py_ssize_t *shape, Py_ssize_t *strides, Py_ssize_t *suboffsets, Py_ssize_t itemsize,  
-        if (buf.len) {
-            PyDict_SetItemString(buffer_dict, "len", PyInt_FromSsize_t(buf.len));
-        } else {
-            PyDict_SetItemString(buffer_dict, "len", PyGetNone);
-        }
-
-        if (buf.readonly) {
-            PyDict_SetItemString(buffer_dict, "readonly", PyBool_FromLong((long)buf.readonly));
-        } else {
-            PyDict_SetItemString(buffer_dict, "readonly", PyGetNone);
-        }
-
-        if (buf.format) {
-            PyDict_SetItemString(buffer_dict, "format", PyString_FromString(buf.format));
-        } else {
-            PyDict_SetItemString(buffer_dict, "format", PyGetNone);
-        }
-
-        if (buf.ndim) {
-            PyDict_SetItemString(buffer_dict, "ndim", PyInt_FromLong((long)buf.ndim));
-
-            if (buf.shape) {
-                PyObject *shape = PyTuple_New((Py_ssize_t)buf.ndim);
-                for (int idx = 0; idx < (int)buf.ndim; idx++) {
-                    PyTuple_SET_ITEM(shape, (Py_ssize_t)idx, PyInt_FromSsize_t(buf.shape[idx]));
-                }
-                PyDict_SetItemString(buffer_dict, "shape", shape);
-            } else {
-                PyDict_SetItemString(buffer_dict, "shape", PyGetNone);
-            }
-
-            if (buf.strides) {
-                PyObject *strides = PyTuple_New((Py_ssize_t)buf.ndim);
-                for (int idx = 0; idx < (int)buf.ndim; idx++) {
-                    PyTuple_SET_ITEM(strides, (Py_ssize_t)idx, PyInt_FromSsize_t(buf.strides[idx]));
-                }
-                PyDict_SetItemString(buffer_dict, "strides", strides);
-            } else {
-                PyDict_SetItemString(buffer_dict, "strides", PyGetNone);
-            }
-
-            if (buf.suboffsets) {
-                PyObject *suboffsets = PyTuple_New((Py_ssize_t)buf.ndim);
-                for (int idx = 0; idx < (int)buf.ndim; idx++) {
-                    PyTuple_SET_ITEM(suboffsets, (Py_ssize_t)idx, PyInt_FromSsize_t(buf.suboffsets[idx]));
-                }
-                PyDict_SetItemString(buffer_dict, "suboffsets", suboffsets);
-            } else {
-                PyDict_SetItemString(buffer_dict, "suboffsets", PyGetNone);
-            }
-
-        } else {
-            PyDict_SetItemString(buffer_dict, "ndim", PyGetNone);
-            PyDict_SetItemString(buffer_dict, "shape", PyGetNone);
-            PyDict_SetItemString(buffer_dict, "strides", PyGetNone);
-            PyDict_SetItemString(buffer_dict, "suboffsets", PyGetNone);
-        }
-
-        if (buf.itemsize) {
-            PyDict_SetItemString(buffer_dict, "itemsize", PyInt_FromSsize_t(buf.itemsize));
-        } else {
-            PyDict_SetItemString(buffer_dict, "itemsize", PyGetNone);
-        }
-
-        PyBuffer_Release(&buf);
-        return Py_BuildValue("O", buffer_dict);
-        
-    } else if (PyBuffer_Check(buffer)) {
-        /// legacybuf
-        PyErr_Format(PyExc_ValueError,
-            "cannot get a buffer from %.200s instance (only supports legacy PyBufferObject)",
-            buffer->ob_type->tp_name);
-        return NULL;
-    }
-
-    PyErr_Format(PyExc_ValueError,
-        "no buffer info for %.200s instance (no buffer API supported)",
-        buffer->ob_type->tp_name);
-    return NULL;
-}
 
 static PyMethodDef _PyImgC_methods[] = {
     {
