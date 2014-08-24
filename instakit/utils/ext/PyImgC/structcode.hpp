@@ -89,6 +89,7 @@ const map<string, string> typecodemaps::native = typecodemaps::init_native();
 const map<string, string> typecodemaps::standard = typecodemaps::init_standard();
 
 vector<int> parse_shape(string shapecode) {
+    //cerr << "Shape string: " << shapecode << "\n";
     string segment;
     vector<int> shape_elems;
     while (shapecode.find(",", 0) != string::npos) {
@@ -105,11 +106,66 @@ vector<string> parse(string typecode, bool toplevel=true) {
     vector<string> tokens;
     
     string byteorder = "@";
+    string code = "xxx";
     size_t itemsize = 1;
+    size_t multiplier = 1;
     vector<int> shape = {0};
+    const vector<int> noshape = shape;
     
     while (true) {
         if (typecode.size() == 0) {
+            if (code == "xxx") {
+                break;
+            }
+            string dtypechar;
+            string multiplierstr = "";
+            if (multiplier > 1) {
+                multiplierstr = to_string(multiplier);
+            }
+            
+            if (byteorder == "@" || byteorder == "^") {
+                try {
+                    dtypechar = multiplierstr + typecodemaps::native.at(code);
+                } catch (const out_of_range &err) {
+                    cerr    << ">>> Native typecode symbol not found: "
+                            << code << "\n>>> Exception message: "
+                            << err.what() << "\n";
+                    break;
+                }
+            } else {
+                try {
+                    dtypechar = byteorder + multiplierstr + typecodemaps::standard.at(code);
+                } catch (const out_of_range &err) {
+                    cerr    << ">>> Standard typecode symbol not found: "
+                            << code << "\n>>> Exception message: "
+                            << err.what() << "\n";
+                    break;
+                }
+            }
+            
+            const char last = dtypechar.back();
+            if (last == 'U' || last == 'S' || last == 'V') {
+                if (itemsize > 1) {
+                    ostringstream outstream;
+                    outstream << itemsize;
+                    dtypechar += outstream.str();
+                }
+            }
+            
+            if (shape != noshape) {
+                ostringstream outstream;
+                outstream << "(";
+                for (auto shape_elem = begin(shape); shape_elem != end(shape); ++shape_elem) {
+                    outstream << *shape_elem;
+                    if (shape_elem + 1 != end(shape)) {
+                        outstream << ", ";
+                    }
+                }
+                outstream << ")";
+                dtypechar += outstream.str();
+            }
+            
+            tokens.push_back(dtypechar);
             break;
         }
         switch (typecode[0]) {
@@ -142,7 +198,8 @@ vector<string> parse(string typecode, bool toplevel=true) {
                 if (pos) { break; } /// too many open-parens
                 string shapestr = typecode.substr(0, siz-1);
                 shape = parse_shape(shapestr);
-                typecode.erase(0, siz+1);
+                typecode.erase(0, siz);
+                //cerr << "Typecode after shape erasure: " << typecode << "\n";
             }
             break;
             case '@':
@@ -180,21 +237,28 @@ vector<string> parse(string typecode, bool toplevel=true) {
             case '9':
             {
                 size_t siz;
-                bool still_digits = true;
-                for (siz = 0; still_digits && (siz != typecode.size()); ++siz) {
-                    still_digits = isdigit(typecode[siz]);
+                char digit;
+                int still_digits = 1;
+                for (siz = 0; still_digits && (siz < typecode.size()); siz++) {
+                    digit = typecode.c_str()[siz];
+                    still_digits = isdigit(digit) && digit != '(';
                 }
-                string itemsizestr = typecode.substr(0, siz);
-                //cout << "Number: " << itemsizestr << "\n";
-                itemsize = (size_t)stol(itemsizestr);
-                //cout << "Itemsize: " << itemsize << "\n";
+                string numstr = string(typecode.substr(0, siz));
+                if (code == "xxx") {
+                    /// it's a multiplier
+                    multiplier = (size_t)stol(numstr);
+                } else {
+                    /// it's an item size
+                    itemsize = (size_t)stol(numstr);
+                }
                 typecode.erase(0, siz);
+                if (numstr.back() == '(') {
+                    typecode = "(" + typecode;
+                }
             }
             break;
             default:
             size_t codelen = 1;
-            string code;
-            string dtypechar;
             if (typecode.substr(0, 1) == "Z") {
                 /// add next character
                 codelen++;
@@ -202,37 +266,6 @@ vector<string> parse(string typecode, bool toplevel=true) {
             
             code = typecode.substr(0, codelen);
             typecode.erase(0, codelen);
-            //if (code == "" || code == " ") {
-            //    break;
-            //}
-            if (byteorder == "@" || byteorder == "^") {
-                try {
-                    dtypechar = typecodemaps::native.at(code);
-                } catch (const out_of_range &err) {
-                    cerr    << ">>> Native typecode symbol not found: "
-                            << code << "\n>>> Exception message: "
-                            << err.what() << "\n";
-                    break;
-                }
-            } else {
-                try {
-                    dtypechar = byteorder + typecodemaps::standard.at(code);
-                } catch (const out_of_range &err) {
-                    cerr    << ">>> Standard typecode symbol not found: "
-                            << code << "\n>>> Exception message: "
-                            << err.what() << "\n";
-                    break;
-                }
-            }
-            
-            if (dtypechar == "U" || dtypechar == "S" || dtypechar == "V") {
-                if (itemsize > 1) {
-                    ostringstream outstream;
-                    outstream << itemsize;
-                    dtypechar += outstream.str();
-                }
-            }
-            tokens.push_back(dtypechar);
             break;
         }
     }

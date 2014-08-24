@@ -25,14 +25,15 @@ int main(void) {
     vector<string> codes = {
         "B", "L", "b", "f", "Zd",
         ">Zd", ">I", ">h",
-        "w8", ">w8", ">w8(640, 480)",
+        //"2B", "4L", "8b", "16f", "32Zd",
+        "w8", ">w8", ">w8(640, 480)", ">w16(640, 480)",
         "B(640, 480)",
         ">B(640, 480)"
     };
     
     for (auto code = begin(codes); code != end(codes); ++code) {
-        vector<string> parsed = parse(*code);
-        string dtype = parsed.back();
+        //vector<string> parsed = parse(*code);
+        string dtype = parse(*code).back();
         cout << "CODE: " << *code << " -> " << dtype << "\n";
     }
 }

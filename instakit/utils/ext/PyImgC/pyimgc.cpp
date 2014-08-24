@@ -289,7 +289,6 @@ static PyObject *PyImgC_PyBufferDict(PyObject *self, PyObject *args) {
         return NULL;
     }
 
-
     if (PyObject_CheckBuffer(buffer)) {
         /// buffer3000
         Py_buffer buf;
