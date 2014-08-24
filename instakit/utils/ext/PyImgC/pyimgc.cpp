@@ -1,5 +1,8 @@
 
 #include "pyimgc.h"
+#include "numpypp/numpy.hpp"
+#include "PyImgC_CImage.h"
+#include "PyImgC_StructCodeAPI.h"
 
 typedef struct {
     PyObject_HEAD
@@ -398,10 +401,15 @@ PyMODINIT_FUNC init_PyImgC(void) {
         "_PyImgC",
         _PyImgC_methods,
         "PyImgC buffer interface module");
-
     if (module == None) { return; }
-
+    
+    /// bring in structcode PyCapsule
+    if (PyImgC_import_structcode() < 0) { return; }
+    
+    /// Bring in NumPy
     import_array();
+    
+    /// Set up Image object
     Py_INCREF(&ImageType);
     PyModule_AddObject(
         module, "Image", (PyObject *)&ImageType);

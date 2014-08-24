@@ -1,5 +1,5 @@
-#ifndef PyImgC_INTERFACE_H
-#define PyImgC_INTERFACE_H
+#ifndef PyImgC_CIMAGE_H
+#define PyImgC_CIMAGE_H
 
 #define cimg_OS 1                       /// unix-like
 #define cimg_verbosity 1                /// log to the console
@@ -17,11 +17,28 @@
 #include <Python.h>
 #include <structmember.h>
 
-#include "numpypp/array.hpp"
 #include "cimg/CImg.h"
+using namespace cimg_library;
+
+#ifndef cimg_imagepath
+#define cimg_imagepath "cimg/img/"
+#endif
+
+#define Tx(NPY_TYPE) typename numpy::decoder<NPY_TYPE>::type
+
+//CImg<TX> view(charbuffer, sX, sY, 1, channels, is_shared=True);
+
+template <npy_intp npy_type>
+struct CImageView {
+    CImg<Tx(npy_type)> operator()(Py_buffer *pybuffer,
+                        int sX, int sY, int channels,
+                        short int is_shared=True) {
+        CImg<Tx(npy_type)> view(pybuffer->buf, sX, sY, 1, channels, is_shared);
+    }
+};
 
 template <typename T>
-struct Image {
+struct CImage {
     PyObject_HEAD
     PyArray_Descr *dtype;
     CImg<T> *cimage;

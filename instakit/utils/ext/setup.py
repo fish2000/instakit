@@ -31,14 +31,14 @@ long_description = open('README.md').read()
 undef_macros = []
 define_macros = []
 
-DEBUG = os.environ.get('DEBUG', '2')
+DEBUG = os.environ.get('DEBUG', '1')
 
 # define_macros.append(
 #     ('PY_ARRAY_UNIQUE_SYMBOL', 'PyImgC_PyArray_API_Symbol'))
 
 if DEBUG:
     #undef_macros = ['NDEBUG']
-    if os.environ.get('DEBUG') == '2':
+    if DEBUG == '2':
         define_macros.append(
             ('IMGC_DEBUG', DEBUG))
         define_macros.append(
