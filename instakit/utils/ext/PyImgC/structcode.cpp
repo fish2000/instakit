@@ -1,25 +1,19 @@
 
-#include <stdio.h>
-#include <numeric>
+//#include <numeric> /// for accumulate()
+//#include <utility>
 #include <iostream>
-#include <utility>
 #include <vector>
-#include <map>
 #include <string>
+
 #include "structcode.hpp"
 using namespace std;
 
-#define foreach(str, c) for (char &c : str)
-
 int plain(void) {
     string most = string("?bhilqefdgswxBHILQO");
-    int i = 0;
-    foreach (most, chr) {
+    for (char &chr : most) {
         string key = string(&chr).substr(0, 1);
         cout << "NATIVE: " << key << " -> " << typecodemaps::native.at(key) << "\n";
-        i++;
     }
-    printf("\n");
     return 0;
 }
 
