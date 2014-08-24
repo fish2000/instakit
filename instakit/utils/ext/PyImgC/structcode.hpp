@@ -1,6 +1,14 @@
 #ifndef PyImgC_STRUCTCODE_H
 #define PyImgC_STRUCTCODE_H
 
+#if IMGC_DEBUG > 0
+    #define IMGC_COUT(x) cout << x << "\n"
+    #define IMGC_CERR(x) cerr << x << "\n"
+#else
+    #define IMGC_COUT(x)
+    #define IMGC_CERR(x)
+#endif
+
 #include <cstdio>
 #include <iostream>
 #include <sstream>
@@ -9,8 +17,6 @@
 #include <vector>
 #include <map>
 using namespace std;
-
-#define foreach(str, c) for (char &c : str)
 
 struct typecodemaps {
     
@@ -130,7 +136,7 @@ vector<int> parse_shape(string shapecode) {
     return shape_elems;
 }
 
-vector<string> parse(string typecode, bool toplevel=true) {
+vector<pair<string, string>> parse(string typecode, bool toplevel=true) {
     vector<string> tokens;
     vector<pair<string, string>> fields;
     field_namer field_names;
@@ -140,7 +146,7 @@ vector<string> parse(string typecode, bool toplevel=true) {
     vector<int> shape = {0};
     const vector<int> noshape = shape;
     
-    //cerr << "Typecode string: " << typecode << "\n";
+    IMGC_CERR("Typecode string: " << typecode);
     
     while (true) {
         if (typecode.size() == 0) { break; }
@@ -155,11 +161,11 @@ vector<string> parse(string typecode, bool toplevel=true) {
                 }
                 if (pos) { break; } /// too many open-brackets
                 string temp = typecode.substr(0, siz-1);
-                vector<string> temp_tokens;
-                temp_tokens = parse(temp, toplevel=false);
+                vector<pair<string, string>> pairvec;
+                pairvec = parse(temp, toplevel=false);
                 typecode.erase(0, siz+1);
-                for (size_t idx = 0; idx < temp_tokens.size(); ++idx) {
-                    tokens.push_back(temp_tokens[idx]);
+                for (size_t idx = 0; idx < pairvec.size(); ++idx) {
+                    fields.push_back(pairvec[idx]);
                 }
             }
             break;
@@ -175,7 +181,7 @@ vector<string> parse(string typecode, bool toplevel=true) {
                 string shapestr = typecode.substr(0, siz-1);
                 shape = parse_shape(shapestr);
                 typecode.erase(0, siz);
-                //cerr << "Typecode after shape erasure: " << typecode << "\n";
+                IMGC_CERR("Typecode after shape erasure: " << typecode);
             }
             break;
             case '*':
@@ -203,6 +209,7 @@ vector<string> parse(string typecode, bool toplevel=true) {
                 }
                 typecode.erase(0, 1);
                 tokens.push_back(byteorder);
+                fields.push_back(make_pair("__byteorder__", byteorder));
             }    
             break;
             case ' ':
@@ -235,7 +242,7 @@ vector<string> parse(string typecode, bool toplevel=true) {
                 if (!isdigit(numstr.back())) {
                     typecode = string(&numstr.back()) + typecode;
                 }
-                //cerr << "Typecode after number erasure: " << typecode << "\n";
+                IMGC_CERR("Typecode after number erasure: " << typecode);
             }
             break;
             default:
@@ -320,15 +327,14 @@ vector<string> parse(string typecode, bool toplevel=true) {
     }
     
     if (toplevel) {
-        cout        << "> BYTE ORDER: " << byteorder << "\n";
+        IMGC_COUT(      "> BYTE ORDER: "    << byteorder);
         for (size_t idx = 0; idx < fields.size(); idx++) {
-            cout    << "> FIELD: " << fields[idx].first
-                    << " -> " << fields[idx].second
-                    << "\n";
+            IMGC_COUT(  "> FIELD: "         << fields[idx].first
+                    <<  " -> "              << fields[idx].second);
         }
     }
     
-    return tokens;
+    return fields;
 }
 
 #endif

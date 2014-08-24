@@ -9,6 +9,7 @@
 #include "structcode.hpp"
 using namespace std;
 
+#define foreach(str, c) for (char &c : str)
 
 int plain(void) {
     string most = string("?bhilqefdgswxBHILQO");
@@ -28,7 +29,7 @@ int main(void) {
         ">Zd", ">I", ">h",
         "2B", "4L", "8b", "16f", "32Zd",
         ">2Zd", ">4I", ">8h",
-        "w8", ">w8", ">w8(640, 480)", ">w16(640, 480)",
+        "8w", ">8w", ">(640, 480)8w", ">(640, 480)16w",
         "(640, 480)B",
         "(640, 480)B:mybytes:",
         ">(640, 480)B",
@@ -36,8 +37,19 @@ int main(void) {
     };
     
     for (auto code = begin(codes); code != end(codes); ++code) {
+        vector<pair<string, string>> pairvec = parse(*code);
+        string dtype = "";
+        for (size_t idx = 0; idx < pairvec.size(); idx++) {
+            dtype += pairvec[idx].second;
+        }
+        cout << "CODE: " << *code << " -> " << dtype << "\n";
+    }
+    
+    /*
+    for (auto code = begin(codes); code != end(codes); ++code) {
         vector<string> vec = parse(*code);
         string dtype = accumulate(vec.begin(), vec.end(), string(""));
         cout << "CODE: " << *code << " -> " << dtype << "\n";
     }
+    */
 }
