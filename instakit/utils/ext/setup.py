@@ -12,7 +12,7 @@ setuptools not found.
 On linux, the package is often called python-setuptools''')
     sys.exit(1)
 
-# basicaly `backticks` (cribbed from plotdevice)
+# GOSUB: basicaly `backticks` (cribbed from plotdevice)
 def gosub(cmd, on_err=True):
     """Run a shell command and return the output"""
     from subprocess import Popen, PIPE
@@ -60,14 +60,13 @@ USE_OPENCV = os.environ.get('USE_OPENCV', '0') # libtbb won't link
 
 # 'other, misc'
 USE_MINC2 = os.environ.get('USE_MINC2', '0')
-
+USE_FFMPEG = os.environ.get('USE_FFMPEG', '0') # won't even work
+USE_LAPACK = os.environ.get('USE_LAPACK', '0') # HOW U MAEK LINKED
 
 undef_macros = []
 define_macros = []
 define_macros.append(
      ('PY_ARRAY_UNIQUE_SYMBOL', 'PyImgC_PyArray_API_Symbol'))
-# define_macros.append(('MAGICKCORE_QUANTUM_DEPTH', '16'))
-# define_macros.append(('MAGICKCORE_HDRI_ENABLE', '1'))
 
 if DEBUG:
     undef_macros = ['NDEBUG']
@@ -103,10 +102,10 @@ extensions = {
     '_structcode': ["PyImgC/structcode.cpp"],
 }
 
-libraries = [
-    'png', 'jpeg', 'z', 'm', 'pthread',
-]
+# the basics
+libraries = ['png', 'jpeg', 'z', 'm', 'pthread']
 
+# the addenda
 def parse_config_flags(config, config_flags=None):
     if config_flags is None: # need something in there
         config_flags = ['']
@@ -134,6 +133,7 @@ def parse_config_flags(config, config_flags=None):
                         include_dirs.append(flag[2:])
                     continue
 
+# if we're using it, ask it how to fucking work it
 if int(USE_TIFF):
     parse_config_flags(
         which('pkg-config'),
