@@ -30,8 +30,9 @@ static PyObject *PyImgC_CImageTest(PyObject *self, PyObject *args, PyObject *kwa
     }
 
     const npy_intp typenum = (npy_intp)type->type_num;
-    auto cimage_wrapper = typecodemap::cimage_wrappers.at(typenum);
-    CImg<> cii = cimage_wrapper.as_pyarray((PyArrayObject *)obj);
+    auto *wrapper = dynamic_cast<Tx>(CImage_Wrapper(typenum));
+    
+    CImg<> cii = wrapper->as_pyarray((PyArrayObject *)obj);
     
     //CImageView<t> CImage;
     //CImg<t> cii = CImage<t>((PyArrayObject *)obj);

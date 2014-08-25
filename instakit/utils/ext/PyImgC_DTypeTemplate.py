@@ -3,44 +3,14 @@
 import xerox
 
 template = u'''
-typedef struct CImage_NPY_%(npytype)s : public CImage_Base {
+struct CImage_NPY_%(npytype)s : public CImage_Type<%(ctype)s> {
     const char structcode[%(structcodelen)s] = { '%(structcode)s', NILCODE };
     const unsigned int structcode_length = %(structcodelen)s;
-    const npy_intp typecode = NPY_%(npytype)s;
+    //const npy_intp typecode = NPY_%(npytype)s;
     const bool native = %(native)s;
     const bool complex = %(complicated)s;
-
     CImage_NPY_%(npytype)s() {}
-
-    virtual CImg<%(ctype)s> as_pybuffer(Py_buffer *pybuffer, bool is_shared=true) {
-        return from_pybuffer<%(ctype)s>(pybuffer, is_shared); }
-
-    virtual CImg<%(ctype)s> as_pybuffer_with_dims(Py_buffer *pybuffer,
-        int sW, int sH, int channels=3,
-        bool is_shared=true) {
-        return from_pybuffer<%(ctype)s>(pybuffer, sW, sH, channels, is_shared); }
-
-    virtual CImg<%(ctype)s> as_pyarray(PyArrayObject *pyarray, bool is_shared=true) {
-        return from_pyarray<%(ctype)s>(pyarray, is_shared); }
-
-    virtual CImg<%(ctype)s> as_datasource(PyObject *datasource, bool is_shared=true) {
-        return from_pyobject<%(ctype)s>(datasource, is_shared); }
-
-    virtual CImg<%(ctype)s> as_datasource_with_dims(Py_buffer *pybuffer,
-        int sW, int sH, int channels=3,
-        bool is_shared=true) {
-        return from_pybuffer<%(ctype)s>(pybuffer, sW, sH, channels, is_shared); }
-
-    virtual inline bool operator()(const char sc) {
-        for (int idx = 0; structcode[idx] != NILCODE; ++idx) {
-            if (structcode[idx] == sc) { return true; }
-        }
-        return false; }
-    virtual inline bool operator[](const npy_intp tc) { return tc == typecode; }
-
-} CImage_NPY_%(npytype)s;
-
-REGISTER_TYPESTRUCT(CImage_NPY_%(npytype)s, NPY_%(npytype)s)
+};
 
 '''
 
