@@ -138,13 +138,6 @@ static PyGetSetDef Image_getset[] = {
     SENTINEL
 };
 
-
-
-typedef struct {
-    Py_ssize_t len;
-    void *buf;
-} rawbuffer_t;
-
 static rawbuffer_t *PyImgC_rawbuffer(PyObject *buffer) {
 
     rawbuffer_t *raw = (rawbuffer_t *)malloc(sizeof(rawbuffer_t));

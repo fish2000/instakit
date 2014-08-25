@@ -5,13 +5,7 @@
 #define IMGC_DEBUG 0
 #endif
 
-#if IMGC_DEBUG > 0
-    #define IMGC_COUT(x) cout << x << "\n"
-    #define IMGC_CERR(x) cerr << x << "\n"
-#else
-    #define IMGC_COUT(x)
-    #define IMGC_CERR(x)
-#endif
+#include "../pyimgc.h"
 
 #include <cstdio>
 #include <iostream>

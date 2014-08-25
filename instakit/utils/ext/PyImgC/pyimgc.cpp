@@ -20,7 +20,8 @@ static PyObject *PyImgC_CImageTest(PyObject *self, PyObject *args, PyObject *kwa
     Py_ssize_t nin = -1, offset = 0;
     static char *kwlist[] = { "buffer", "dtype", "count", "offset", NULL };
     PyArray_Descr *type = NULL;
-    //typenum = 0;
+
+    IMGC_COUT("+ About to parse arg tuple in PyImgC_CImageTest()");
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
                 "O|O&" NPY_SSIZE_T_PYFMT NPY_SSIZE_T_PYFMT, kwlist,
@@ -30,14 +31,17 @@ static PyObject *PyImgC_CImageTest(PyObject *self, PyObject *args, PyObject *kwa
     }
 
     if (type == NULL) {
+        IMGC_COUT("+ NULL TYPE passed to PyImgC_CImageTest()");
         type = PyArray_DescrFromType(NPY_DEFAULT_TYPE);
     }
 
     const npy_intp typenum = (npy_intp)type->type_num;
+    IMGC_COUT("+ typenum = " << typenum);
+    
     auto npair = CImage_ForTypecode(typenum);
     //typedef npair.second CImage_Functor;
     //typedef npair.second::value_type vtype;
-    cout << typeid(npair.second).name() << "\n";
+    IMGC_COUT("+ PAIR, SECOND" << typeid(npair.second).name());
     
     /*
     CImage_Functor functor;

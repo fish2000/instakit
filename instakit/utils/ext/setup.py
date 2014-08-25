@@ -41,12 +41,14 @@ define_macros.append(
      ('MAGICKCORE_HDRI_ENABLE', '1'))
 
 if DEBUG:
-    #undef_macros = ['NDEBUG']
-    if DEBUG == '2':
+    undef_macros = ['NDEBUG']
+    if int(DEBUG) > 2:
         define_macros.append(
             ('IMGC_DEBUG', DEBUG))
         define_macros.append(
             ('_GLIBCXX_DEBUG', '1'))
+
+print(""" ********************* DEBUG: %s ********************* """ % DEBUG)
 
 include_dirs = [
     numpy.get_include(),
