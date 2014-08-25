@@ -3,7 +3,6 @@
 #include "numpypp/numpy.hpp"
 #include "PyImgC_CImage.h"
 #include "PyImgC_StructCodeAPI.h"
-#include "PyImgC_StructCodeLUT.h"
 
 typedef struct {
     PyObject_HEAD
@@ -30,11 +29,12 @@ static PyObject *PyImgC_CImageTest(PyObject *self, PyObject *args, PyObject *kwa
         type = PyArray_DescrFromType(NPY_DEFAULT_TYPE);
     }
 
-    //return PyArray_FromBuffer(obj, type, (npy_intp)nin, (npy_intp)offset);
     const npy_intp typenum = (npy_intp)type->type_num;
-    const structcode::map_type(typenum);
-    CImageView<t> CImage;
-    CImg<t> cii = CImage<t>((PyArrayObject *)obj);
+    auto cimage_wrapper = typecodemap::cimage_wrappers.at(typenum);
+    CImg<> cii = cimage_wrapper.as_pyarray((PyArrayObject *)obj);
+    
+    //CImageView<t> CImage;
+    //CImg<t> cii = CImage<t>((PyArrayObject *)obj);
     //CImg<structcode::map_type(typenum)> cii = 
     
     cii.noise(0.5, 0).noise(0.5, 1).noise(0.5, 2);

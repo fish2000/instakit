@@ -1,49 +1,11 @@
 #ifndef PyImgC_STRUCTCODELUT_H
 #define PyImgC_STRUCTCODELUT_H
 
-#include <map>
-
 #include <Python.h>
 #include <numpy/ndarrayobject.h>
 using namespace std;
 
 namespace structcode {
-
-    template <typename T>
-    struct txbase { typedef T type; };
-
-    struct tx_npy_bool : txbase<npy_bool> {
-        static txbase *create() { return new tx_npy_bool; }
-    };
-
-    struct tx_npy_byte : txbase<npy_byte> {
-        static txbase *create() { return new tx_npy_byte; }
-    };
-
-    struct tx_npy_ubyte : txbase<npy_ubyte> {
-        static txbase *create() { return new tx_npy_ubyte; }
-    };
-
-    struct tx_npy_short : txbase<npy_short> {
-        static txbase *create() { return new tx_npy_short; }
-    };
-
-    struct tx_npy_int16 : txbase<npy_int16> {
-        static txbase *create() { return new tx_npy_int16; }
-    };
-
-    map<int, txbase<void *> * (*)()> typemap;
-
-    typemap[NPY_BOOL] = &tx_npy_bool::create;
-    typemap[NPY_BYTE] = &tx_npy_byte::create;
-    typemap[NPY_UBYTE] = &tx_npy_ubyte::create;
-    typemap[NPY_SHORT] = &tx_npy_short::create;
-    typemap[NPY_INT16] = &tx_npy_int16::create;
-
-    txbase<void *> map_type(npy_intp npy_typenum) {
-        return typemap[npy_typenum]()::type;
-    }
-
 
     inline int struct_to_typecode(char letter, int native=1, int complex=0) {
         switch (letter)
