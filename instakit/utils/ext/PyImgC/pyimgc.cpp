@@ -3,6 +3,7 @@
 #include "numpypp/numpy.hpp"
 #include "PyImgC_CImage.h"
 #include "PyImgC_StructCodeAPI.h"
+#include "PyImgC_StructCodeLUT.h"
 
 typedef struct {
     PyObject_HEAD
@@ -10,6 +11,51 @@ typedef struct {
     PyObject *source;
     PyObject *dtype;
 } Image;
+
+static PyObject *PyImgC_CImageTest(PyObject *self, PyObject *args, PyObject *kwargs) {
+    PyObject *obj = NULL;
+    Py_ssize_t nin = -1, offset = 0;
+    static char *kwlist[] = { "buffer", "dtype", "count", "offset", NULL };
+    PyArray_Descr *type = NULL;
+    //typenum = 0;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+                "O|O&" NPY_SSIZE_T_PYFMT NPY_SSIZE_T_PYFMT, kwlist,
+                &obj, PyArray_DescrConverter, &type, &nin, &offset)) {
+        Py_XDECREF(type);
+        return NULL;
+    }
+
+    if (type == NULL) {
+        type = PyArray_DescrFromType(NPY_DEFAULT_TYPE);
+    }
+
+    //return PyArray_FromBuffer(obj, type, (npy_intp)nin, (npy_intp)offset);
+    const npy_intp typenum = (npy_intp)type->type_num;
+    const structcode::map_type(typenum);
+    CImageView<t> CImage;
+    CImg<t> cii = CImage<t>((PyArrayObject *)obj);
+    //CImg<structcode::map_type(typenum)> cii = 
+    
+    cii.noise(0.5, 0).noise(0.5, 1).noise(0.5, 2);
+    
+    // PyTuple_Pack(3,
+    // PyInt_FromLong((long)cii.height()),
+    // PyInt_FromLong((long)cii.width()),
+    // PyInt_FromLong((long)cii.spectrum()))
+    
+    npy_intp shape[] = {
+        (npy_intp)cii.height(),
+        (npy_intp)cii.width(),
+        (npy_intp)cii.spectrum()
+    };
+    
+    PyObject *ndarray = PyArray_SimpleNewFromData(3, shape, typenum, cii.data());
+    
+    Py_INCREF(obj);
+
+    return Py_BuildValue("O", ndarray);
+}
 
 static PyObject *PyImgC_PyBufferDict(PyObject *self, PyObject *args) {
     PyObject *buffer_dict = PyDict_New();
@@ -389,6 +435,11 @@ static PyMethodDef _PyImgC_methods[] = {
             (PyCFunction)PyImgC_PyBufferDict,
             METH_VARARGS,
             "Get Py_buffer info dict for an object"},
+    {
+        "cimage_test",
+            (PyCFunction)PyImgC_CImageTest,
+            METH_VARARGS,
+            "<<<<< TEST CIMG CALLS >>>>>"},
     SENTINEL
 };
 

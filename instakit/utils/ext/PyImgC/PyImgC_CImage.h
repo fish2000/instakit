@@ -16,10 +16,11 @@
 
 #include <Python.h>
 #include <structmember.h>
+#include <numpy/ndarrayobject.h>
+#include <numpy/ndarraytypes.h>
 #include "numpypp/numpy.hpp"
 #include "cimg/CImg.h"
 using namespace cimg_library;
-
 #ifndef cimg_imagepath
 #define cimg_imagepath "cimg/img/"
 #endif
@@ -28,12 +29,45 @@ using namespace cimg_library;
 
 //CImg<TX> view(charbuffer, sX, sY, 1, channels, is_shared=True);
 
-template <npy_intp npy_type>
+template <typename T>
 struct CImageView {
-    CImg<Tx(npy_type)> operator()(Py_buffer *pybuffer,
-                        int sX, int sY, int channels,
+    CImageView() {}
+    CImg<T> operator()(Py_buffer *pybuffer,
+                        int sW, int sH, int channels,
                         short int is_shared=True) {
-        CImg<Tx(npy_type)> view(pybuffer->buf, sX, sY, 1, channels, is_shared);
+        CImg<T> view(pybuffer->buf, sW, sH,
+            1, channels, is_shared);
+        return view;
+    }
+    CImg<T> operator()(PyArrayObject *pyarray,
+                        short int is_shared=True) {
+        int sW = 0;
+        int sH = 0;
+        int channels = 0;
+        switch (PyArray_NDIM(pyarray)) {
+            case 3:
+            {
+                channels = PyArray_DIM(pyarray, 2); /// starts from zero, right?...
+                sW = PyArray_DIM(pyarray, 1);
+                sH = PyArray_DIM(pyarray, 0);
+            }
+            break;
+            case 2:
+            {
+                channels = 1;
+                sW = PyArray_DIM(pyarray, 1);
+                sH = PyArray_DIM(pyarray, 0);
+            }
+            break;
+            default:
+            {
+                return NULL;
+            }
+            break;
+        }
+        CImg<T> view(PyArray_DATA(pyarray), sW, sH,
+            1, channels, is_shared);
+        return view;
     }
 };
 
