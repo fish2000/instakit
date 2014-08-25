@@ -1,9 +1,12 @@
+
 #ifndef PY_ARRAY_UNIQUE_SYMBOL
 #define PY_ARRAY_UNIQUE_SYMBOL PyImgC_PyArray_API_Symbol
 #endif /// PY_ARRAY_UNIQUE_SYMBOL
 
 #include <Python.h>
 #include <structmember.h>
+#include <iostream>
+#include <string>
 
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 

@@ -21,7 +21,7 @@ static PyObject *PyImgC_CImageTest(PyObject *self, PyObject *args, PyObject *kwa
     static char *kwlist[] = { "buffer", "dtype", "count", "offset", NULL };
     PyArray_Descr *type = NULL;
 
-    IMGC_COUT("+ About to parse arg tuple in PyImgC_CImageTest()");
+    IMGC_TRACE("+ About to parse arg tuple in PyImgC_CImageTest()");
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
                 "O|O&" NPY_SSIZE_T_PYFMT NPY_SSIZE_T_PYFMT, kwlist,
@@ -31,7 +31,7 @@ static PyObject *PyImgC_CImageTest(PyObject *self, PyObject *args, PyObject *kwa
     }
 
     if (type == NULL) {
-        IMGC_COUT("+ NULL TYPE passed to PyImgC_CImageTest()");
+        IMGC_TRACE("+ NULL TYPE passed to PyImgC_CImageTest()");
         type = PyArray_DescrFromType(NPY_DEFAULT_TYPE);
     }
 
@@ -76,6 +76,8 @@ static PyObject *PyImgC_CImageTest(PyObject *self, PyObject *args, PyObject *kwa
 static PyObject *PyImgC_PyBufferDict(PyObject *self, PyObject *args) {
     PyObject *buffer_dict = PyDict_New();
     PyObject *buffer = self;
+
+    IMGC_TRACE("+ About to parse arg tuple in PyImgC_CImageTest()");
 
     if (!PyArg_ParseTuple(args, "|O", &buffer)) {
         PyErr_SetString(PyExc_ValueError,
