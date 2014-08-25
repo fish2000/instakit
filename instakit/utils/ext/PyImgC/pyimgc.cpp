@@ -450,7 +450,7 @@ static PyMethodDef _PyImgC_methods[] = {
     {
         "cimage_test",
             (PyCFunction)PyImgC_CImageTest,
-            METH_VARARGS,
+            METH_VARARGS | METH_KEYWORDS,
             "<<<<< TEST CIMG CALLS >>>>>"},
     SENTINEL
 };

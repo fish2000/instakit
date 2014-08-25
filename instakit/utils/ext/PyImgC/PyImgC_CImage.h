@@ -9,7 +9,7 @@
 #define cimg_use_jpeg 1                 /// jpeg
 #define cimg_use_tiff 1                 /// tiff
 #define cimg_use_zlib 1                 /// compressed output
-#define cimg_use_magick 1               /// ImageMagick++ I/O
+//#define cimg_use_magick 1               /// ImageMagick++ I/O
 #define cimg_use_fftw3 1                /// libFFTW3
 //#define cimg_use_openexr 1              /// OpenEXR
 //#define cimg_use_lapack 1               /// LAPACK
