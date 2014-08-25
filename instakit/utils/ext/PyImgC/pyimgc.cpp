@@ -1,3 +1,7 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <typeinfo>
 
 #include "pyimgc.h"
 #include "numpypp/numpy.hpp"
@@ -30,9 +34,14 @@ static PyObject *PyImgC_CImageTest(PyObject *self, PyObject *args, PyObject *kwa
     }
 
     const npy_intp typenum = (npy_intp)type->type_num;
-    auto *wrapper = dynamic_cast<Tx>(CImage_Wrapper(typenum));
+    auto npair = CImage_ForTypecode(typenum);
+    //typedef npair.second CImage_Functor;
+    //typedef npair.second::value_type vtype;
+    cout << typeid(npair.second).name() << "\n";
     
-    CImg<> cii = wrapper->as_pyarray((PyArrayObject *)obj);
+    /*
+    CImage_Functor functor;
+    CImg<vtype> cii = functor->as_pyarray((PyArrayObject *)obj);
     
     //CImageView<t> CImage;
     //CImg<t> cii = CImage<t>((PyArrayObject *)obj);
@@ -56,6 +65,8 @@ static PyObject *PyImgC_CImageTest(PyObject *self, PyObject *args, PyObject *kwa
     Py_INCREF(obj);
 
     return Py_BuildValue("O", ndarray);
+    */
+    return Py_BuildValue("");
 }
 
 static PyObject *PyImgC_PyBufferDict(PyObject *self, PyObject *args) {
