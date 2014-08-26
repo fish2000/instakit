@@ -2,17 +2,30 @@
 
 import xerox
 
+# //const npy_intp typecode = NPY_%(npytype)s;
+
 template = u'''
 struct CImage_NPY_%(npytype)s : public CImage_Type<%(ctype)s> {
     const char structcode[%(structcodelen)s] = { '%(structcode)s', NILCODE };
     const unsigned int structcode_length = %(structcodelen)s;
-    //const npy_intp typecode = NPY_%(npytype)s;
     const bool native = %(native)s;
     const bool complex = %(complicated)s;
     CImage_NPY_%(npytype)s() {}
 };
 
+template <>
+struct CImage_Functor<NPY_%(npytype)s> {
+    typedef CImage_NPY_%(npytype)s impl;
+    typedef std::integral_constant<NPY_TYPES, NPY_%(npytype)s>::value_type value_type;
+};
+
 '''
+
+template = u'''
+    typedef integral_constant<NPY_TYPES, NPY_%(npytype)s> ENUM_NPY_%(npytype)s;'''
+
+template = u'''
+    { NPY_%(npytype)s, ENUM_NPY_%(npytype)s }, '''
 
 # TRAILING TUPLE: (native, complex)
 
@@ -31,14 +44,14 @@ types = [
     ('ULONG', 'unsigned long', ('L',), (True, False)),
     ('ULONGLONG', 'unsigned long long', ('Q',), (True, False)),
 
-    ('INT16', 'short', ('h',), (False, False)),
-    ('INT32', 'int', ('i', 'l'), (False, False)),
+    #('INT16', 'short', ('h',), (False, False)),
+    #('INT32', 'int', ('i', 'l'), (False, False)),
     #('INT32', 'long', ('l',), (False, False)),
-    ('INT64', 'long long', ('q',), (False, False)),
-    ('UINT16', 'unsigned short', ('H',), (False, False)),
-    ('UINT32', 'unsigned int', ('I', 'L'), (False, False)),
+    #('INT64', 'long long', ('q',), (False, False)),
+    #('UINT16', 'unsigned short', ('H',), (False, False)),
+    #('UINT32', 'unsigned int', ('I', 'L'), (False, False)),
     #('UINT32', 'unsigned long', ('L',), (False, False)),
-    ('UINT64', 'unsigned long long', ('Q',), (False, False)),
+    #('UINT64', 'unsigned long long', ('Q',), (False, False)),
 
     ('CFLOAT', 'std::complex<float>', ('f',), (False, True)),
     ('CDOUBLE', 'std::complex<double>', ('d',), (False, True)),

@@ -16,7 +16,7 @@
 #include <map>
 using namespace std;
 
-struct typecodemaps {
+struct structcodemaps {
     
     static map<string, string> init_byteorder() {
         map<string, string> _byteorder_map = {
@@ -89,9 +89,9 @@ struct typecodemaps {
     static const map<string, string> standard;
 };
 
-const map<string, string> typecodemaps::byteorder = typecodemaps::init_byteorder();
-const map<string, string> typecodemaps::native = typecodemaps::init_native();
-const map<string, string> typecodemaps::standard = typecodemaps::init_standard();
+const map<string, string> structcodemaps::byteorder = structcodemaps::init_byteorder();
+const map<string, string> structcodemaps::native = structcodemaps::init_native();
+const map<string, string> structcodemaps::standard = structcodemaps::init_standard();
 
 struct field_namer {
     int idx;
@@ -134,7 +134,7 @@ vector<int> parse_shape(string shapecode) {
     return shape_elems;
 }
 
-vector<pair<string, string>> parse(string typecode, bool toplevel=true) {
+vector<pair<string, string>> parse(string structcode, bool toplevel=true) {
     vector<string> tokens;
     vector<pair<string, string>> fields;
     field_namer field_names;
@@ -144,51 +144,51 @@ vector<pair<string, string>> parse(string typecode, bool toplevel=true) {
     vector<int> shape = {0};
     const vector<int> noshape = shape;
     
-    IMGC_CERR("Typecode string: " << typecode);
+    IMGC_CERR("Structcode string: " << structcode);
     
     while (true) {
-        if (typecode.size() == 0) { break; }
-        switch (typecode[0]) {
+        if (structcode.size() == 0) { break; }
+        switch (structcode[0]) {
             case '{': {
-                typecode.erase(0, 1);
+                structcode.erase(0, 1);
                 int pos = 1;
                 size_t siz;
-                for (siz = 0; pos && (siz != typecode.size()); ++siz) {
-                    if (typecode[siz] == '{') { ++pos; }
-                    if (typecode[siz] == '}') { --pos; }
+                for (siz = 0; pos && (siz != structcode.size()); ++siz) {
+                    if (structcode[siz] == '{') { ++pos; }
+                    if (structcode[siz] == '}') { --pos; }
                 }
                 if (pos) { break; } /// too many open-brackets
-                string temp = typecode.substr(0, siz-1);
+                string temp = structcode.substr(0, siz-1);
                 vector<pair<string, string>> pairvec;
                 pairvec = parse(temp, toplevel=false);
-                typecode.erase(0, siz+1);
+                structcode.erase(0, siz+1);
                 for (size_t idx = 0; idx < pairvec.size(); ++idx) {
                     fields.push_back(pairvec[idx]);
                 }
             }
             break;
             case '(': {
-                typecode.erase(0, 1);
+                structcode.erase(0, 1);
                 int pos = 1;
                 size_t siz;
-                for (siz = 0; pos && (siz != typecode.size()); ++siz) {
-                    if (typecode[siz] == '(') { ++pos; }
-                    if (typecode[siz] == ')') { --pos; }
+                for (siz = 0; pos && (siz != structcode.size()); ++siz) {
+                    if (structcode[siz] == '(') { ++pos; }
+                    if (structcode[siz] == ')') { --pos; }
                 }
                 if (pos) { break; } /// too many open-parens
-                string shapestr = typecode.substr(0, siz-1);
+                string shapestr = structcode.substr(0, siz-1);
                 shape = parse_shape(shapestr);
-                typecode.erase(0, siz);
-                IMGC_CERR("Typecode after shape erasure: " << typecode);
+                structcode.erase(0, siz);
+                IMGC_CERR("Typecode after shape erasure: " << structcode);
             }
             break;
             case '*':
             {
-                typecode.erase(0, 1);
-                size_t pos = typecode.find("*", 0);
-                string explicit_name = typecode.substr(0, pos);
+                structcode.erase(0, 1);
+                size_t pos = structcode.find("*", 0);
+                string explicit_name = structcode.substr(0, pos);
                 field_names.add(explicit_name);
-                typecode.erase(0, pos+1);
+                structcode.erase(0, pos+1);
             }
             break;
             case '@':
@@ -199,13 +199,13 @@ vector<pair<string, string>> parse(string typecode, bool toplevel=true) {
             case '!':
             {
                 try {
-                    byteorder = typecodemaps::byteorder.at(typecode.substr(0, 1));
+                    byteorder = structcodemaps::byteorder.at(structcode.substr(0, 1));
                 } catch (const out_of_range &err) {
                     cerr    << ">>> Byte order symbol not found: "
-                            << typecode.substr(0, 1) << "\n>>> Exception message: "
+                            << structcode.substr(0, 1) << "\n>>> Exception message: "
                             << err.what() << "\n";
                 }
-                typecode.erase(0, 1);
+                structcode.erase(0, 1);
                 tokens.push_back(byteorder);
                 fields.push_back(make_pair("__byteorder__", byteorder));
             }    
@@ -213,7 +213,7 @@ vector<pair<string, string>> parse(string typecode, bool toplevel=true) {
             case ' ':
             {
                 /// NOP
-                typecode.erase(0, 1);
+                structcode.erase(0, 1);
             }
             break;
             case '0':
@@ -230,17 +230,17 @@ vector<pair<string, string>> parse(string typecode, bool toplevel=true) {
                 size_t siz;
                 char digit;
                 int still_digits = 1;
-                for (siz = 0; still_digits && (siz < typecode.size()); siz++) {
-                    digit = typecode.c_str()[siz];
+                for (siz = 0; still_digits && (siz < structcode.size()); siz++) {
+                    digit = structcode.c_str()[siz];
                     still_digits = isdigit(digit) && digit != '(';
                 }
-                string numstr = string(typecode.substr(0, siz));
+                string numstr = string(structcode.substr(0, siz));
                 itemsize = (size_t)stol(numstr);
-                typecode.erase(0, siz);
+                structcode.erase(0, siz);
                 if (!isdigit(numstr.back())) {
-                    typecode = string(&numstr.back()) + typecode;
+                    structcode = string(&numstr.back()) + structcode;
                 }
-                IMGC_CERR("Typecode after number erasure: " << typecode);
+                IMGC_CERR("Typecode after number erasure: " << structcode);
             }
             break;
             default:
@@ -249,39 +249,39 @@ vector<pair<string, string>> parse(string typecode, bool toplevel=true) {
             string name = "";
             string dtypechar = "";
             
-            if (typecode.substr(0, codelen) == "Z") {
+            if (structcode.substr(0, codelen) == "Z") {
                 /// add next character
                 codelen++;
             }
             
-            code += string(typecode.substr(0, codelen));
-            typecode.erase(0, codelen);
+            code += string(structcode.substr(0, codelen));
+            structcode.erase(0, codelen);
             
             /// field name
-            if (typecode.substr(0, 1) == ":") {
-                typecode.erase(0, 1);
-                size_t pos = typecode.find(":", 0);
-                name = typecode.substr(0, pos);
+            if (structcode.substr(0, 1) == ":") {
+                structcode.erase(0, 1);
+                size_t pos = structcode.find(":", 0);
+                name = structcode.substr(0, pos);
                 field_names.add(name);
-                typecode.erase(0, pos+1);
+                structcode.erase(0, pos+1);
             }
             
             name = name.size() ? name : field_names();
             
             if (byteorder == "@" || byteorder == "^") {
                 try {
-                    dtypechar = typecodemaps::native.at(code);
+                    dtypechar = structcodemaps::native.at(code);
                 } catch (const out_of_range &err) {
-                    cerr    << ">>> Native typecode symbol not found: "
+                    cerr    << ">>> Native structcode symbol not found: "
                             << code << "\n>>> Exception message: "
                             << err.what() << "\n";
                     break;
                 }
             } else {
                 try {
-                    dtypechar = typecodemaps::standard.at(code);
+                    dtypechar = structcodemaps::standard.at(code);
                 } catch (const out_of_range &err) {
-                    cerr    << ">>> Standard typecode symbol not found: "
+                    cerr    << ">>> Standard structcode symbol not found: "
                             << code << "\n>>> Exception message: "
                             << err.what() << "\n";
                     break;
@@ -334,7 +334,5 @@ vector<pair<string, string>> parse(string typecode, bool toplevel=true) {
     
     return fields;
 }
-
-///// FORWARD DECLARATIONS
 
 #endif

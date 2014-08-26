@@ -4,6 +4,7 @@
 #include <typeinfo>
 
 #include "pyimgc.h"
+#include "numpypp/typecode.hpp"
 #include "numpypp/numpy.hpp"
 #include "PyImgC_CImage.h"
 #include "PyImgC_StructCodeAPI.h"
@@ -35,29 +36,29 @@ static PyObject *PyImgC_CImageTest(PyObject *self, PyObject *args, PyObject *kwa
         type = PyArray_DescrFromType(NPY_DEFAULT_TYPE);
     }
 
-    const npy_intp typenum = (npy_intp)type->type_num;
-    IMGC_COUT("+ typenum = " << typenum);
+    const int typenum = (const int)type->type_num;
+    //static NPY_TYPES TYPENUM = CImage_FunctorType::typecode_cast(typenum);
+    //auto functor = CImage_Functor<std::integral_constant<NPY_TYPES, static_cast<NPY_TYPES>(typenum)>>::impl();
+    //constexpr NPY_TYPES typecode = typecodemaps::type_enum.at(typenum);
+    //const NPY_TYPES typecode = static_cast<NPY_TYPES>(typenum);
+    static const NPY_TYPES typecode = CImage_FunctorType::typecode_cast(typenum);
     
-    auto npair = CImage_ForTypecode(typenum);
-    //typedef npair.second CImage_Functor;
-    //typedef npair.second::value_type vtype;
-    IMGC_COUT("+ PAIR, SECOND" << typeid(npair.second).name());
+    auto functor = CImage_Functor<typecode>::impl();
     
-    /*
-    CImage_Functor functor;
-    CImg<vtype> cii = functor->as_pyarray((PyArrayObject *)obj);
+    return Py_BuildValue("");
+    //CImg<vtype> cii = functor->as_pyarray((PyArrayObject *)obj);
     
     //CImageView<t> CImage;
     //CImg<t> cii = CImage<t>((PyArrayObject *)obj);
     //CImg<structcode::map_type(typenum)> cii = 
     
-    cii.noise(0.5, 0).noise(0.5, 1).noise(0.5, 2);
+    //cii.noise(0.5, 0).noise(0.5, 1).noise(0.5, 2);
     
     // PyTuple_Pack(3,
     // PyInt_FromLong((long)cii.height()),
     // PyInt_FromLong((long)cii.width()),
     // PyInt_FromLong((long)cii.spectrum()))
-    
+    /*
     npy_intp shape[] = {
         (npy_intp)cii.height(),
         (npy_intp)cii.width(),
@@ -68,9 +69,7 @@ static PyObject *PyImgC_CImageTest(PyObject *self, PyObject *args, PyObject *kwa
     
     Py_INCREF(obj);
 
-    return Py_BuildValue("O", ndarray);
-    */
-    return Py_BuildValue("");
+    return Py_BuildValue("O", ndarray); */
 }
 
 static PyObject *PyImgC_PyBufferDict(PyObject *self, PyObject *args) {

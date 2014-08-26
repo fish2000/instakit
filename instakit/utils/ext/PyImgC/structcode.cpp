@@ -62,7 +62,7 @@ static PyObject *PyImgC_ParseSingleStructAtom(PyObject *self, PyObject *args) {
 
     if (!pairvec.size()) {
         PyErr_Format(PyExc_ValueError,
-            "Struct typecode string %.200s parsed to zero-length pair vector",
+            "Structcode string %.200s parsed to zero-length pair vector",
             structcode);
         return NULL;
     }
