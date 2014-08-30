@@ -184,6 +184,7 @@ vector<pair<string, string>> parse(string structcode, bool toplevel=true) {
             break;
             case '*':
             {
+                /// SECRET NOOp
                 structcode.erase(0, 1);
                 size_t pos = structcode.find("*", 0);
                 string explicit_name = structcode.substr(0, pos);

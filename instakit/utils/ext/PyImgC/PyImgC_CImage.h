@@ -112,7 +112,7 @@ struct CImage_Base : public CImage_SubBase {
     typedef typename CImage_Traits<dT>::value_type value_type;
 
     CImg<value_type> as_pybuffer(Py_buffer *pybuffer, bool is_shared=true) {
-        return from_pybuffer<bool>(pybuffer, is_shared); }
+        return from_pybuffer<value_type>(pybuffer, is_shared); }
 
     CImg<value_type> as_pybuffer_with_dims(Py_buffer *pybuffer,
         int sW, int sH, int channels=3,
