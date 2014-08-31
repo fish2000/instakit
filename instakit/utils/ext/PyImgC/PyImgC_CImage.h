@@ -38,7 +38,7 @@ using namespace std;
 #endif
 
 template <typename T>
-CImage<T> from_pybuffer(Py_buffer *pybuffer, int sW, int sH,
+CImage<T> cimage_from_pybuffer(Py_buffer *pybuffer, int sW, int sH,
                     int channels, bool is_shared=true) {
     CImage<T> view(pybuffer->buf,
         sW, sH, 1,
@@ -47,7 +47,7 @@ CImage<T> from_pybuffer(Py_buffer *pybuffer, int sW, int sH,
 }
 
 template <typename T>
-CImg<T> from_pybuffer(Py_buffer *pybuffer, bool is_shared=true) {
+CImg<T> cimage_from_pybuffer(Py_buffer *pybuffer, bool is_shared=true) {
     CImg<T> view(
         pybuffer->buf,
         pybuffer->shape[1],
@@ -57,7 +57,7 @@ CImg<T> from_pybuffer(Py_buffer *pybuffer, bool is_shared=true) {
 }
 
 template <typename T>
-CImg<T> from_pyarray(PyArrayObject *pyarray, bool is_shared=true) {
+CImg<T> cimage_from_pyarray(PyArrayObject *pyarray, bool is_shared=true) {
     int sW = 0;
     int sH = 0;
     int channels = 0;
@@ -88,14 +88,14 @@ CImg<T> from_pyarray(PyArrayObject *pyarray, bool is_shared=true) {
 }
 
 template <typename T>
-CImg<T> from_pyobject(PyObject *datasource, int sW, int sH,
+CImg<T> cimage_from_pyobject(PyObject *datasource, int sW, int sH,
                     int channels, bool is_shared=true) {
     CImg<T> view(sW, sH, 1, channels, is_shared);
     return view;
 }
 
 template <typename T>
-CImg<T> from_pyobject(PyObject *datasource, bool is_shared=true) {
+CImg<T> cimage_from_pyobject(PyObject *datasource, bool is_shared=true) {
     CImg<T> view(640, 480, 1, 3, is_shared);
     return view;
 }
@@ -113,48 +113,50 @@ template <typename dT>
 struct CImage_Base : public CImage_SubBase {
     typedef typename CImage_Traits<dT>::value_type value_type;
 
-    CImg<value_type> as_pybuffer(Py_buffer *pybuffer, bool is_shared=true) {
-        return from_pybuffer<value_type>(pybuffer, is_shared); }
+    CImg<value_type> from_pybuffer(Py_buffer *pybuffer, bool is_shared=true) {
+        return cimage_from_pybuffer<value_type>(pybuffer, is_shared);
+    }
 
-    CImg<value_type> as_pybuffer_with_dims(Py_buffer *pybuffer,
+    CImg<value_type> from_pybuffer_with_dims(Py_buffer *pybuffer,
         int sW, int sH, int channels=3,
         bool is_shared=true) {
-        return from_pybuffer<value_type>(pybuffer, sW, sH, channels, is_shared); }
+        return cimage_from_pybuffer<value_type>(pybuffer, sW, sH, channels, is_shared);
+    }
 
-    CImg<value_type> as_pyarray(PyArrayObject *pyarray, bool is_shared=true) {
-        return from_pyarray<value_type>(pyarray, is_shared); }
+    CImg<value_type> from_pyarray(PyArrayObject *pyarray, bool is_shared=true) {
+        return cimage_from_pyarray<value_type>(pyarray, is_shared);
+    }
 
-    CImg<value_type> as_datasource(PyObject *datasource, bool is_shared=true) {
-        return from_pyobject<value_type>(datasource, is_shared); }
+    CImg<value_type> from_datasource(PyObject *datasource, bool is_shared=true) {
+        return cimage_from_pyobject<value_type>(datasource, is_shared);
+    }
 
-    CImg<value_type> as_datasource_with_dims(Py_buffer *pybuffer,
+    CImg<value_type> from_datasource_with_dims(PyObject *datasource,
         int sW, int sH, int channels=3,
         bool is_shared=true) {
-        return from_pybuffer<value_type>(pybuffer, sW, sH, channels, is_shared); }
+        return cimage_from_pyobject<value_type>(datasource, sW, sH, channels, is_shared);
+    }
 
     inline bool operator()(const char sc) {
         dT self = static_cast<dT*>(this);
         for (int idx = 0; self->structcode[idx] != NILCODE; ++idx) {
             if (self->structcode[idx] == sc) { return true; }
         }
-        return false; }
+        return false;
+    }
 
     inline bool operator[](const npy_intp tc) {
         dT self = static_cast<dT*>(this);
         return tc == self->typecode();
-    }
-
-    template <typename... Args>
-    static dT& get_instance(Args... args) {
-        static dT instance{std::forward<Args>(args)...};
-        return instance;
     }
 };
 
 template <typename T>
 struct CImage_Type : public CImage_Base<CImage_Type<T>> {
     typedef typename CImage_Traits<CImage_Type<T>>::value_type value_type;
-    int typecode() { return static_cast<int>(numpy::dtype_code<value_type>()); }
+    int typecode() {
+        return static_cast<int>(numpy::dtype_code<value_type>());
+    }
 };
 
 template <typename T>
@@ -167,7 +169,6 @@ CImage_SubBase *create() {
     return new T();
 }
 
-///CImage_SubBase*(*)()
 typedef std::map<int, CImage_SubBase*(*)()> CImage_TypeMap;
 static CImage_TypeMap *tmap;
 
@@ -179,9 +180,11 @@ struct CImage_FunctorType {
 };
 
 template <typename dT>
-static inline CImage_Type<dT> *get_instance(int key) {
+static inline CImage_Type<dT> *CImage_NumpyConverter(int key) {
     CImage_TypeMap::iterator it = CImage_FunctorType::get_map()->find(key);
-    if (it == CImage_FunctorType::get_map()->end()) { return new CImage_Type<dT>(); }
+    if (it == CImage_FunctorType::get_map()->end()) {
+        return new CImage_Type<dT>();
+    }
     return dynamic_cast<CImage_Type<dT>*>(it->second());
 }
 

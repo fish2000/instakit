@@ -32,52 +32,15 @@ static PyObject *PyImgC_CImageTest(PyObject *self, PyObject *args, PyObject *kwa
     }
 
     if (type == NULL) {
-        //IMGC_TRACE("+ NULL TYPE passed to PyImgC_CImageTest()");
         if (PyArray_Check(buffer)) {
             type = PyArray_DESCR((PyArrayObject *)buffer);
         } else {
             type = PyArray_DescrFromType(NPY_DEFAULT_TYPE);
         }
     }
-
-    //const int typenum = (const int)type->type_num;
-    //static NPY_TYPES TYPENUM = CImage_FunctorType::typecode_cast(typenum);
-    //auto functor = CImage_Functor<std::integral_constant<NPY_TYPES, static_cast<NPY_TYPES>(typenum)>>::impl();
-    //constexpr NPY_TYPES typecode = typecodemaps::type_enum.at(typenum);
-    //const NPY_TYPES typecode = static_cast<NPY_TYPES>(typenum);
-    //static const NPY_TYPES typecode = CImage_FunctorType::typecode_cast(typenum);
-    //auto functor = CIMG_NPYTYPE(typenum);
-    auto cimage = get_instance<uint8>(type->type_num);
     
-    return Py_BuildValue("ii", type->type_num, cimage->typecode());
-    
-    //return Py_BuildValue("s", typeid(functor).name());
-    
-    
-    //CImg<vtype> cii = functor->as_pyarray((PyArrayObject *)obj);
-    
-    //CImageView<t> CImage;
-    //CImg<t> cii = CImage<t>((PyArrayObject *)obj);
-    //CImg<structcode::map_type(typenum)> cii = 
-    
-    //cii.noise(0.5, 0).noise(0.5, 1).noise(0.5, 2);
-    
-    // PyTuple_Pack(3,
-    // PyInt_FromLong((long)cii.height()),
-    // PyInt_FromLong((long)cii.width()),
-    // PyInt_FromLong((long)cii.spectrum()))
-    /*
-    npy_intp shape[] = {
-        (npy_intp)cii.height(),
-        (npy_intp)cii.width(),
-        (npy_intp)cii.spectrum()
-    };
-    
-    PyObject *ndarray = PyArray_SimpleNewFromData(3, shape, typenum, cii.data());
-    
-    Py_INCREF(obj);
-
-    return Py_BuildValue("O", ndarray); */
+    auto converter = CImage_NumpyConverter<uint8>(type->type_num);
+    return Py_BuildValue("ii", type->type_num, converter->typecode());
 }
 
 static PyObject *PyImgC_PyBufferDict(PyObject *self, PyObject *args) {

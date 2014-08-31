@@ -45,15 +45,6 @@ types = [
     ('ULONG', 'unsigned long', ('L',), (True, False)),
     ('ULONGLONG', 'unsigned long long', ('Q',), (True, False)),
 
-    #('INT16', 'short', ('h',), (False, False)),
-    #('INT32', 'int', ('i', 'l'), (False, False)),
-    #('INT32', 'long', ('l',), (False, False)),
-    #('INT64', 'long long', ('q',), (False, False)),
-    #('UINT16', 'unsigned short', ('H',), (False, False)),
-    #('UINT32', 'unsigned int', ('I', 'L'), (False, False)),
-    #('UINT32', 'unsigned long', ('L',), (False, False)),
-    #('UINT64', 'unsigned long long', ('Q',), (False, False)),
-
     ('CFLOAT', 'std::complex<float>', ('f',), (False, True)),
     ('CDOUBLE', 'std::complex<double>', ('d',), (False, True)),
     ('FLOAT', 'float', ('f',), (False, False)),
@@ -74,7 +65,6 @@ def render_template(template, types):
             structcodelen=len(structcode)+1,
             native=str(native).lower(),
             complicated=str(complicated).lower())
-    # out += u"\n"
     return out
 
 out = \
