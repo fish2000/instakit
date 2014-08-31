@@ -39,8 +39,14 @@ static PyObject *PyImgC_CImageTest(PyObject *self, PyObject *args, PyObject *kwa
         }
     }
     
-    auto converter = CImage_NumpyConverter<uint8>(type->type_num);
-    return Py_BuildValue("ii", type->type_num, converter->typecode());
+    if (PyArray_Check(buffer)) {
+        auto converter = CImage_NumpyConverter<uint8>(type->type_num);
+        CImg<uint8> cimage = converter->from_pyarray(buffer);
+        return Py_BuildValue("iiiii", type->type_num, converter->typecode(),
+                                    cimage.width(), cimage.height(), cimage.spectrum());
+    }
+    
+    return Py_BuildValue("");
 }
 
 static PyObject *PyImgC_PyBufferDict(PyObject *self, PyObject *args) {

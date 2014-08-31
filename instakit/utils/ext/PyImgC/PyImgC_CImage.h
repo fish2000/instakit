@@ -57,7 +57,11 @@ CImg<T> cimage_from_pybuffer(Py_buffer *pybuffer, bool is_shared=true) {
 }
 
 template <typename T>
-CImg<T> cimage_from_pyarray(PyArrayObject *pyarray, bool is_shared=true) {
+CImg<T> cimage_from_pyarray(PyObject *pyobj, bool is_shared=true) {
+    if (!PyArray_Check(pyobj)) {
+        return CImg<T>();
+    }
+    PyArrayObject *pyarray = (PyArrayObject *)pyobj;
     int sW = 0;
     int sH = 0;
     int channels = 0;
@@ -78,11 +82,13 @@ CImg<T> cimage_from_pyarray(PyArrayObject *pyarray, bool is_shared=true) {
         break;
         default:
         {
-            return NULL;
+            return CImg<T>();
         }
         break;
     }
-    CImg<T> view(PyArray_DATA(pyarray), sW, sH,
+    CImg<T> view(
+        numpy::ndarray_cast<T*>(pyarray),
+        sW, sH,
         1, channels, is_shared);
     return view;
 }
@@ -124,6 +130,10 @@ struct CImage_Base : public CImage_SubBase {
     }
 
     CImg<value_type> from_pyarray(PyArrayObject *pyarray, bool is_shared=true) {
+        return cimage_from_pyarray<value_type>((PyObject *)pyarray, is_shared);
+    }
+
+    CImg<value_type> from_pyarray(PyObject *pyarray, bool is_shared=true) {
         return cimage_from_pyarray<value_type>(pyarray, is_shared);
     }
 
