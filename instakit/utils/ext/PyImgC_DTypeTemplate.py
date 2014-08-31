@@ -4,28 +4,29 @@ import xerox
 
 # //const npy_intp typecode = NPY_%(npytype)s;
 
-template = u'''
+structs = u'''
 struct CImage_NPY_%(npytype)s : public CImage_Type<%(ctype)s> {
     const char structcode[%(structcodelen)s] = { '%(structcode)s', NILCODE };
     const unsigned int structcode_length = %(structcodelen)s;
     const bool native = %(native)s;
     const bool complex = %(complicated)s;
     CImage_NPY_%(npytype)s() {}
+    CImage_Functor<NPY_%(npytype)s, %(ctype)s> reg();
 };
-
-template <>
-struct CImage_Functor<NPY_%(npytype)s> {
-    typedef CImage_NPY_%(npytype)s impl;
-    typedef std::integral_constant<NPY_TYPES, NPY_%(npytype)s>::value_type value_type;
-};
-
 '''
 
-template = u'''
-    typedef integral_constant<NPY_TYPES, NPY_%(npytype)s> ENUM_NPY_%(npytype)s;'''
+functors = u'''
+template <>
+struct CImage_Functor<NPY_%(npytype)s, %(ctype)s> : public CImage_FunctorType {
+    CImage_Functor<NPY_%(npytype)s, %(ctype)s>(int const& key) {
+        get_map()->insert(make_pair(key, &create<CImage_NPY_%(npytype)s, %(ctype)s>));
+    }
+};
+'''
 
-template = u'''
-    { NPY_%(npytype)s, ENUM_NPY_%(npytype)s }, '''
+_registration = u'''
+CImage_Functor<NPY_%(npytype)s, %(ctype)s> CImage_NPY_%(npytype)s::reg(NPY_%(npytype)s);'''
+registration = u""
 
 # TRAILING TUPLE: (native, complex)
 
@@ -61,14 +62,25 @@ types = [
     ('LONGDOUBLE', 'std::complex<long double>', ('g',), (True, True)),
 ]
 
-out = u""
-for typedef in types:
-    npytype, ctype, structcode, flagtuple = typedef
-    native, complicated = flagtuple
-    out += template % dict(
-        npytype=npytype, ctype=ctype,
-        structcode=u"', '".join(structcode),
-        structcodelen=len(structcode)+1,
-        native=str(native).lower(),
-        complicated=str(complicated).lower())
+
+def render_template(template, types):
+    out = u""
+    for typedef in types:
+        npytype, ctype, structcode, flagtuple = typedef
+        native, complicated = flagtuple
+        out += template % dict(
+            npytype=npytype, ctype=ctype,
+            structcode=u"', '".join(structcode),
+            structcodelen=len(structcode)+1,
+            native=str(native).lower(),
+            complicated=str(complicated).lower())
+    # out += u"\n"
+    return out
+
+out = \
+    render_template(structs, types) \
+  + render_template(functors, types) \
+  + render_template(registration, types)
+
 xerox.copy(out)
+print out

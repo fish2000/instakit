@@ -1,13 +1,15 @@
+
+#include "pyimgc.h"
+#include "numpypp/numpy.hpp"
+#include "PyImgC_CImage.h"
+#include "PyImgC_StructCodeAPI.h"
+
 #include <iostream>
 #include <vector>
 #include <string>
 #include <typeinfo>
 
-#include "pyimgc.h"
-#include "numpypp/typecode.hpp"
-#include "numpypp/numpy.hpp"
-#include "PyImgC_CImage.h"
-#include "PyImgC_StructCodeAPI.h"
+using namespace std;
 
 typedef struct {
     PyObject_HEAD
@@ -17,35 +19,41 @@ typedef struct {
 } Image;
 
 static PyObject *PyImgC_CImageTest(PyObject *self, PyObject *args, PyObject *kwargs) {
-    PyObject *obj = NULL;
+    PyObject *buffer = NULL;
     Py_ssize_t nin = -1, offset = 0;
     static char *kwlist[] = { "buffer", "dtype", "count", "offset", NULL };
     PyArray_Descr *type = NULL;
 
-    IMGC_TRACE("+ About to parse arg tuple in PyImgC_CImageTest()");
-
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
                 "O|O&" NPY_SSIZE_T_PYFMT NPY_SSIZE_T_PYFMT, kwlist,
-                &obj, PyArray_DescrConverter, &type, &nin, &offset)) {
+                &buffer, PyArray_DescrConverter, &type, &nin, &offset)) {
         Py_XDECREF(type);
         return NULL;
     }
 
     if (type == NULL) {
-        IMGC_TRACE("+ NULL TYPE passed to PyImgC_CImageTest()");
-        type = PyArray_DescrFromType(NPY_DEFAULT_TYPE);
+        //IMGC_TRACE("+ NULL TYPE passed to PyImgC_CImageTest()");
+        if (PyArray_Check(buffer)) {
+            type = PyArray_DESCR((PyArrayObject *)buffer);
+        } else {
+            type = PyArray_DescrFromType(NPY_DEFAULT_TYPE);
+        }
     }
 
-    const int typenum = (const int)type->type_num;
+    //const int typenum = (const int)type->type_num;
     //static NPY_TYPES TYPENUM = CImage_FunctorType::typecode_cast(typenum);
     //auto functor = CImage_Functor<std::integral_constant<NPY_TYPES, static_cast<NPY_TYPES>(typenum)>>::impl();
     //constexpr NPY_TYPES typecode = typecodemaps::type_enum.at(typenum);
     //const NPY_TYPES typecode = static_cast<NPY_TYPES>(typenum);
-    static const NPY_TYPES typecode = CImage_FunctorType::typecode_cast(typenum);
+    //static const NPY_TYPES typecode = CImage_FunctorType::typecode_cast(typenum);
+    //auto functor = CIMG_NPYTYPE(typenum);
+    auto cimage = get_instance<uint8>(type->type_num);
     
-    auto functor = CImage_Functor<typecode>::impl();
+    return Py_BuildValue("ii", type->type_num, cimage->typecode());
     
-    return Py_BuildValue("");
+    //return Py_BuildValue("s", typeid(functor).name());
+    
+    
     //CImg<vtype> cii = functor->as_pyarray((PyArrayObject *)obj);
     
     //CImageView<t> CImage;
@@ -465,6 +473,9 @@ PyMODINIT_FUNC init_PyImgC(void) {
 
     if (PyType_Ready(&ImageType) < 0) { return; }
 
+    /// initialize CImage internals
+    CImage_Register();
+
     module = Py_InitModule3(
         "_PyImgC",
         _PyImgC_methods,
@@ -473,10 +484,10 @@ PyMODINIT_FUNC init_PyImgC(void) {
     
     /// bring in structcode PyCapsule
     if (PyImgC_import_structcode() < 0) { return; }
-    
+
     /// Bring in NumPy
     import_array();
-    
+
     /// Set up Image object
     Py_INCREF(&ImageType);
     PyModule_AddObject(

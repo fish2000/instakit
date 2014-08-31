@@ -103,7 +103,7 @@ extensions = {
 }
 
 # the basics
-libraries = ['png', 'jpeg', 'z', 'm', 'pthread']
+libraries = ['png', 'jpeg', 'z', 'm', 'pthread', 'c++']
 
 # the addenda
 def parse_config_flags(config, config_flags=None):
@@ -216,9 +216,11 @@ ext_modules = [
         sources=sources,
         undef_macros=undef_macros,
         define_macros=define_macros,
+        language='c++',
         extra_compile_args=[
             '-O2',
             '-std=c++11',
+            '-stdlib=libc++',
             '-Wno-error=unused-command-line-argument-hard-error-in-future',
             '-Wno-unused-function',
             '-Wno-deprecated-register', # CImg w/OpenEXR throws these
