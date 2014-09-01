@@ -181,7 +181,7 @@ struct CImage_Type : public CImage_Base<CImage_Type<T>> {
         return cimage_from_pybuffer<value_type>(this->pybuffer, sW, sH, channels, is_shared);
     }
 
-    CImg<value_type> from_pyarray(bool is_shared=true) {
+    CImg<value_type> from_pyobject(bool is_shared=true) {
         return cimage_from_pyarray<value_type>((PyObject *)this->datasource, is_shared);
     }
 
