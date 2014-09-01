@@ -164,6 +164,41 @@ struct CImage_Base : public CImage_SubBase {
 template <typename T>
 struct CImage_Type : public CImage_Base<CImage_Type<T>> {
     typedef typename CImage_Traits<CImage_Type<T>>::value_type value_type;
+    Py_buffer *buffer;
+    PyObject *datasource;
+    CImage_Type() {}
+    CImage_Type(Py_buffer *pybuffer) : buffer(pybuffer) {}
+    CImage_Type(PyArrayObject *pyarray) : datasource((PyObject *)pyarray) {}
+    CImage_Type(PyObject *datasource) : datasource(datasource) {}
+
+    CImg<value_type> from_pybuffer(bool is_shared=true) {
+        return cimage_from_pybuffer<value_type>(this->pybuffer, is_shared);
+    }
+
+    CImg<value_type> from_pybuffer_with_dims(
+        int sW, int sH, int channels=3,
+        bool is_shared=true) {
+        return cimage_from_pybuffer<value_type>(this->pybuffer, sW, sH, channels, is_shared);
+    }
+
+    CImg<value_type> from_pyarray(bool is_shared=true) {
+        return cimage_from_pyarray<value_type>((PyObject *)this->datasource, is_shared);
+    }
+
+    CImg<value_type> from_pyarray(bool is_shared=true) {
+        return cimage_from_pyarray<value_type>((PyArrayObject *)this->datasource, is_shared);
+    }
+
+    CImg<value_type> from_datasource(bool is_shared=true) {
+        return cimage_from_pyobject<value_type>(this->datasource, is_shared);
+    }
+
+    CImg<value_type> from_datasource_with_dims(
+        int sW, int sH, int channels=3,
+        bool is_shared=true) {
+        return cimage_from_pyobject<value_type>(this->datasource, sW, sH, channels, is_shared);
+    }
+    
     int typecode() {
         return static_cast<int>(numpy::dtype_code<value_type>());
     }

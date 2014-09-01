@@ -38,7 +38,7 @@ static PyObject *PyImgC_CImageTest(PyObject *self, PyObject *args, PyObject *kwa
             type = PyArray_DescrFromType(NPY_DEFAULT_TYPE);
         }
     }
-    
+
     if (PyArray_Check(buffer)) {
         auto converter = CImage_NumpyConverter<uint8>(type->type_num);
         CImg<uint8> cimage = converter->from_pyarray(buffer);
