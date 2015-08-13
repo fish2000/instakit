@@ -3,7 +3,7 @@
 #
 #    INSTAKIT -- Instagrammy PIL-based processors and tools
 #
-#    Copyright © 2012 Alexander Bohn
+#    Copyright © 2012-2025 Alexander Bohn
 #
 #    Permission is hereby granted, free of charge, to any person obtaining a copy 
 #    of this software and associated documentation files (the "Software"), to deal 
@@ -47,7 +47,7 @@ from Cython.Distutils import build_ext
 from distutils.sysconfig import get_python_inc
 
 name = 'instakit'
-version = '0.2.3'
+version = '0.2.5'
 description = 'Image processors and filters.'
 keywords = 'python django imagekit image processing filters'
 
@@ -118,7 +118,6 @@ setup(
     install_requires=[
         'numpy',
         'scipy',
-        'imread',
         'Pillow'],
     
     ext_modules=[

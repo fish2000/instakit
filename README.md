@@ -17,5 +17,6 @@ As of this first draft there are [Instagrammy](http://www.instagram.com/) image-
 
 ![three](http://i.imgur.com/MBuC5.jpg)
 
+Instakit is made available to you and the public at large under the [MIT license](http://opensource.org/licenses/MIT) -- see LICENSE.md for the full text.
 
  † née “django-instakit” – All dependencies and traces of Django have since been excised, with thanks to [matthewwithanm](https://github.com/matthewwithanm).

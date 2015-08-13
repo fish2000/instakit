@@ -38,16 +38,10 @@ class RGBTable(defaultdict):
         super(RGBTable, self).__init__(default_factory=None)
         self.data = self.identity
     
-    '''
-    def __getitem__(self, color):
-        return defaultdict.__getitem__(self, hash(color))
-    '''
-    
     def __missing__(self, color):
         self[color] = value = self.lookup(color)
         return value
     
-    '''
     def _idx(self, color):
         print "_idx COLOR:"
         print color
@@ -56,7 +50,6 @@ class RGBTable(defaultdict):
         print "hash COLOR:"
         print hash(color)
         return int('%02x%02x%02x' % color, 16)
-    '''
     
     def _rgb(self, idx):
         RGB = self.RGB
