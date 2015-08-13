@@ -34,14 +34,16 @@ except ImportError:
     use_setuptools()
     from setuptools import setup, Extension
 
-def cython_module(*args):
+def cython_module(*args, **kwargs):
+    include_dirs = kwargs.pop('include_dirs', [])
     ext_package = ".".join(args)
     ext_pth = "/".join(args) + ".pyx"
     return Extension(ext_package, [ext_pth],
+        include_dirs=include_dirs,
         extra_compile_args=["-Wno-unused-function"])
 
-def cython_ext(name):
-    return cython_module('instakit', 'processors', 'ext', name)
+def cython_ext(name, **kwargs):
+    return cython_module('instakit', 'processors', 'ext', name, **kwargs)
 
 from Cython.Distutils import build_ext
 from distutils.sysconfig import get_python_inc
@@ -100,6 +102,10 @@ if 'sdist' in sys.argv and 'upload' in sys.argv:
         commands.getstatusoutput(finder % theplace)
         print("")
 
+include_dirs = [
+    numpy.get_include(),
+    get_python_inc(plat_specific=1)]
+
 setup(
     name=name, version=version, description=description,
     keywords=keywords, platforms=['any'],
@@ -121,12 +127,10 @@ setup(
         'Pillow'],
     
     ext_modules=[
-        cython_ext("halftone")],
+        cython_ext("halftone", include_dirs=include_dirs)],
     
     cmdclass=dict(build_ext=build_ext),
-    include_dirs=[
-        numpy.get_include(),
-        get_python_inc(plat_specific=1)],
+    include_dirs=include_dirs,
     
     classifiers=classifiers+[
         'License :: OSI Approved :: MIT License',
