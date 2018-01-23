@@ -114,29 +114,38 @@ class ChannelOverprinter(ChannelFork):
     default_mode = 'CMYK'
     
     def _set_mode(self, mode_string):
-        if mode_string != self.default_mode:
+        if mode_string != self.default_mode: # CMYK
             raise AttributeError(
                 "ChannelOverprinter can operate in %s mode only" %
-                    self.default_mode)
+                    self.default_mode) # CMYK
     
     def compose(self, *channels):
         from PIL import ImageChops
         return reduce(ImageChops.multiply, channels)
     
     def process(self, img):
-        inks = zip(self.default_mode,
-            [CMYKInk(ink_label) \
-                for ink_label in CMYKInk.CMYK])
+        # Compile the standard CMYK ink values as a dict of processing ops,
+        # keyed with the letter of their channel name (e.g. C, M, Y, and K):
+        inks = zip(self.default_mode, # CMYK
+                  [CMYKInk(ink_label) for ink_label in CMYKInk.CMYK])
         
-        clone = ChannelOverprinter(
-            self.default_factory,
-            mode=self.channels.mode)
+        # Manually two-phase allocate/initialize a ChannelFork “clone” instance
+        # to run the ChannelOverprinter CMYK composition processing operations:
+        clone = super(ChannelOverprinter, self).__new__(self.default_factory,
+                                                        mode=self.channels.mode)
+        clone.__init__(self.default_factory,
+                       mode=self.channels.mode)
         
+        # Create a pipeline for each of the overprinters’ CMYK channel operations,
+        # and install the pipeline in the newly created “clone” ChannelFork:
         for channel_name, ink in inks:
-            clone[channel_name] = Pipe([
-                self[channel_name], ink])
+            # For each channel, first run the prescribed operations;
+            # and afterward, colorize the output (as per a duotone image) using
+            # the CMYK ink as the colorization value:
+            clone[channel_name] = Pipe([self[channel_name], ink])
         
-        return super(ChannelOverprinter, clone).process(img)
+        # Delegate processing to the “clone” instance:
+        return clone.process(img)
 
 
 
