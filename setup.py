@@ -49,7 +49,7 @@ from Cython.Distutils import build_ext
 from distutils.sysconfig import get_python_inc
 
 name = 'instakit'
-version = '0.2.6'
+version = '0.2.8'
 description = 'Image processors and filters.'
 keywords = 'python django imagekit image processing filters'
 
@@ -141,5 +141,7 @@ setup(
         'Operating System :: Unix',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
     ],
 )
