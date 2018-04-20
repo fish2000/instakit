@@ -19,15 +19,15 @@ def gcr(image, percentage, revert_mode=False):
     cmyk_image = image.mode is 'CMYK' and image.split() or image.convert('CMYK').split()
     
     cmyk = []
-    for idx in xrange(4):
+    for idx in range(4):
         cmyk.append(cmyk_image[idx].load())
     
-    for x in xrange(image.size[0]):
-        for y in xrange(image.size[1]):
+    for x in range(image.size[0]):
+        for y in range(image.size[1]):
             gray = min(cmyk[0][x, y],
                        cmyk[1][x, y],
                        cmyk[2][x, y]) * percentage / 100
-            for idx in xrange(3):
+            for idx in range(3):
                 cmyk[idx][x, y] -= gray
             cmyk[3][x, y] = gray
     

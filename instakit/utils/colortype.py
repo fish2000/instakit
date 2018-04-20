@@ -76,7 +76,7 @@ def ColorType(name, *args, **kwargs):
             def __eq__(self, other):
                 if not len(other) == len(self):
                     return False
-                return all([self[i] == other[i] for i in xrange(len(self))])
+                return all([self[i] == other[i] for i in range(len(self))])
             
             def __unicode__(self):
                 return unicode(repr(self))

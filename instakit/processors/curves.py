@@ -77,7 +77,7 @@ class CurveSet(object):
     def read_one_curve(self, acv_file, name):
         curve = Channel(name)
         points_in_curve, = unpack("!h", acv_file.read(2))
-        for j in xrange(points_in_curve):
+        for j in range(points_in_curve):
             y, x = unpack("!hh", acv_file.read(4))
             curve.append((x, y))
         #curve.interpolate()
@@ -90,7 +90,7 @@ class CurveSet(object):
             'acv', "%s.acv" % name)
         with open(acv_path, "rb") as acv_file:
             _, self.count = unpack("!hh", acv_file.read(4))
-            for i in xrange(self.count):
+            for i in range(self.count):
                 self.curves.append(
                     self.read_one_curve(
                         acv_file, self.channel_name(i)))
@@ -105,7 +105,7 @@ class CurveSet(object):
         # has to be RGB at this point
         img_channels = img.split()
         img_adjusted_channels = []
-        for i in xrange(len(img_channels)):
+        for i in range(len(img_channels)):
             img_adjusted_channels.append(
                 Image.eval(
                     img_channels[i],

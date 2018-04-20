@@ -24,10 +24,10 @@ class RGBTable(defaultdict):
         shape=(512, 512),
         dtype=numpy.uint64)
     
-    for bx in xrange(0, 8):
-        for by in xrange(0, 8):
-            for r in xrange(0, 64):
-                for g in xrange(0, 64):
+    for bx in range(0, 8):
+        for by in range(0, 8):
+            for r in range(0, 64):
+                for g in range(0, 64):
                     identity[
                         int(g + float(by) * 64.0 + 0.5),
                         int(r + float(bx) * 64.0 + 0.5)] = hash(RGB(
@@ -176,10 +176,10 @@ def old_main():
     im_old_identity = imread.imread(old_identity)
     im_identity = numpy.zeros_like(im_old_identity)
 
-    for bx in xrange(0, 8):
-        for by in xrange(0, 8):
-            for r in xrange(0, 64):
-                for g in xrange(0, 64):
+    for bx in range(0, 8):
+        for by in range(0, 8):
+            for r in range(0, 64):
+                for g in range(0, 64):
                     im_identity[
                         int(g + by * 64),
                         int(r + bx * 64)] = numpy.array((

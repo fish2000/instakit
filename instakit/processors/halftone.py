@@ -28,8 +28,8 @@ except ImportError:
         
         def process(self, img):
             img = img.convert('L')
-            for y in xrange(img.size[1]):
-                for x in xrange(img.size[0]):
+            for y in range(img.size[1]):
+                for x in range(img.size[0]):
                     old = img.getpixel((x, y))
                     new = self.threshold_matrix[old]
                     err = (old - new) >> 3 # divide by 8.
@@ -56,8 +56,8 @@ class DotScreen(object):
         halftone = Image.new('L', size)
         dotscreen = ImageDraw.Draw(halftone)
         
-        for x in xrange(0, img.size[0], self.sample):
-            for y in xrange(0, img.size[0], self.sample):
+        for x in range(0, img.size[0], self.sample):
+            for y in range(0, img.size[0], self.sample):
                 cropbox = img.crop(
                     (x, y, x+self.sample, y+self.sample))
                 stat = ImageStat.Stat(cropbox)
