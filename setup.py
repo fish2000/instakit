@@ -99,8 +99,8 @@ if 'sdist' in sys.argv and 'upload' in sys.argv:
     if theplace not in (".", "/"):
         print("+ Deleting crapola from %s..." % theplace)
         print("$ %s" % finder % theplace)
-        subprocess.getoutput(finder % theplace)
-        print("")
+        output = subprocess.getoutput(finder % theplace)
+        print(output)
 
 include_dirs = [
     numpy.get_include(),
