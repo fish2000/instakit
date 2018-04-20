@@ -93,13 +93,13 @@ except ImportError:
         return packages
 
 if 'sdist' in sys.argv and 'upload' in sys.argv:
-    import commands
+    import subprocess
     finder = "/usr/bin/find %s \( -name \*.pyc -or -name .DS_Store \) -delete"
     theplace = os.getcwd()
     if theplace not in (".", "/"):
         print("+ Deleting crapola from %s..." % theplace)
         print("$ %s" % finder % theplace)
-        commands.getstatusoutput(finder % theplace)
+        subprocess.getoutput(finder % theplace)
         print("")
 
 include_dirs = [
