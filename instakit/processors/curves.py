@@ -14,6 +14,7 @@ And also this:
 Created by FI$H 2000 on 2012-08-23.
 Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 """
+from __future__ import print_function
 
 import numpy
 from struct import unpack
@@ -84,7 +85,7 @@ class CurveSet(object):
         return curve
     
     def read_acv(self, name):
-        print "Reading curves from %s.acv" % name
+        print("Reading curves from %s.acv" % name)
         acv_path = static.path(
             'acv', "%s.acv" % name)
         with open(acv_path, "rb") as acv_file:
@@ -127,6 +128,6 @@ if __name__ == '__main__':
         for curve_set in curve_sets:
             curve_set.process(image_input).show()
     
-    print curve_sets
-    print image_paths
+    print(curve_sets)
+    print(image_paths)
     

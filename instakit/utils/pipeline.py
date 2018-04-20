@@ -1,3 +1,4 @@
+from __future__ import print_function
 
 from collections import defaultdict
 from PIL import Image
@@ -164,33 +165,33 @@ if __name__ == '__main__':
     for image_input in image_inputs[:2]:
         #ChannelOverprinter(Atkinson).process(image_input).show()
         
-        print 'Creating ChannelOverprinter and ChannelFork with Atkinson ditherer...'
+        print('Creating ChannelOverprinter and ChannelFork with Atkinson ditherer...')
         overatkins = ChannelOverprinter(Atkinson)
         forkatkins = ChannelFork(Atkinson)
         '''
-        print 'Processing image with ChannelForked Atkinson in default (RGB) mode...'
+        print('Processing image with ChannelForked Atkinson in default (RGB) mode...')
         forkatkins.process(image_input).show()
         forkatkins.mode = 'CMYK'
-        print 'Processing image with ChannelForked Atkinson in CMYK mode...'
+        print('Processing image with ChannelForked Atkinson in CMYK mode...')
         forkatkins.process(image_input).show()
         forkatkins.mode = 'RGB'
-        print 'Processing image with ChannelForked Atkinson in RGB mode...'
+        print('Processing image with ChannelForked Atkinson in RGB mode...')
         forkatkins.process(image_input).show()
         '''
         overatkins.mode = 'CMYK'
-        print 'Processing image with ChannelOverprinter-ized Atkinson in CMYK mode...'
+        print('Processing image with ChannelOverprinter-ized Atkinson in CMYK mode...')
         overatkins.process(image_input).show()
         
-        print 'Attempting to reset ChannelOverprinter to RGB mode...'
+        print('Attempting to reset ChannelOverprinter to RGB mode...')
         import traceback, sys
         try:
             overatkins.mode = 'RGB'
             overatkins.process(image_input).show()
         except:
-            print ">>>>>>>>>>>>>>>>>>>>> TRACEBACK <<<<<<<<<<<<<<<<<<<<<"
+            print(">>>>>>>>>>>>>>>>>>>>> TRACEBACK <<<<<<<<<<<<<<<<<<<<<")
             traceback.print_exc(file=sys.stdout)
-            print "<<<<<<<<<<<<<<<<<<<<< KCABECART >>>>>>>>>>>>>>>>>>>>>"
-            print ''
+            print("<<<<<<<<<<<<<<<<<<<<< KCABECART >>>>>>>>>>>>>>>>>>>>>")
+            print('')
     
-    print image_paths
+    print(image_paths)
     

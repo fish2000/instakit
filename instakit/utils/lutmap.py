@@ -6,6 +6,7 @@ lutmap.py
 Created by FI$H 2000 on 2012-08-23.
 Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 """
+from __future__ import print_function
 
 import numpy, imread
 from os.path import join
@@ -43,12 +44,12 @@ class RGBTable(defaultdict):
         return value
     
     def _idx(self, color):
-        print "_idx COLOR:"
-        print color
-        print "_idx WAT:"
-        print int('%02x%02x%02x' % color, 16)
-        print "hash COLOR:"
-        print hash(color)
+        print("_idx COLOR:")
+        print(color)
+        print("_idx WAT:")
+        print(int('%02x%02x%02x' % color, 16))
+        print("hash COLOR:")
+        print(hash(color))
         return int('%02x%02x%02x' % color, 16)
     
     def _rgb(self, idx):
@@ -57,28 +58,28 @@ class RGBTable(defaultdict):
             [(idx >> (8*i)) & 255 for i in range(3)]))
     
     def lookup(self, color):
-        print "lookup COLOR:"
-        print color
+        print("lookup COLOR:")
+        print(color)
         return self.color_at(*self._xy(color))
     
     def _xy(self, color):
         where = numpy.where(
             self.identity[:,:] == hash(color))
-        print "WHERE:"
-        print len(zip(*where))
+        print("WHERE:")
+        print(len(zip(*where)))
         try:
             return zip(*where)[0]
         except IndexError:
             return []
     
     def color_at(self, x, y, data=None):
-        print "X, Y: %s, %s" % (x, y)
-        print "data: %s" % data
+        print("X, Y: %s, %s" % (x, y))
+        print("data: %s" % data)
         if data is None:
             data = self.data
-        print "DATA.shape:"
-        print self.data.shape
-        print data[x, y]
+        print("DATA.shape:")
+        print(self.data.shape)
+        print(data[x, y])
         return self.RGB(*data[x, y])
     
     def float_color_at(self, x, y, data=None):
@@ -96,7 +97,7 @@ class LUT(RGBTable):
     
     @classmethod
     def _read_png_matrix(cls, name):
-        print "Reading LUT image: %s" % static.path(join('lut', '%s.png' % name))
+        print("Reading LUT image: %s" % static.path(join('lut', '%s.png' % name)))
         return imread.imread(
             static.path(join('lut', '%s.png' % name)))
 
@@ -107,31 +108,31 @@ def main():
     RGB24 = ColorType('RGB', dtype=numpy.uint8)
     YCrCb = ColorType('YCrCb', dtype=numpy.uint8)
     
-    print RGB(2, 3, 4)
-    print RGB24
-    print YCrCb(8, 88, 808)
+    print(RGB(2, 3, 4))
+    print(RGB24)
+    print(YCrCb(8, 88, 808))
     
     identity = LUT()
     amatorka = LUT('amatorka')
     
-    print identity.identity
-    print RGB(22,33,44)
-    print int(RGB(22,33,44))
-    print int(RGB(55,66,77))
-    print numpy.any(identity.identity[:,:] == int(RGB(11,44,99)))
-    print numpy.max(identity.identity)
-    print RGB(111, 222, 11).dtype_composite
+    print(identity.identity)
+    print(RGB(22,33,44))
+    print(int(RGB(22,33,44)))
+    print(int(RGB(55,66,77)))
+    print(numpy.any(identity.identity[:,:] == int(RGB(11,44,99))))
+    print(numpy.max(identity.identity))
+    print(RGB(111, 222, 11).dtype_composite)
     
-    print ""
-    print identity[RGB(146,146,36)]
-    #print identity[RGB(22,33,44)]
-    print identity[RGB(132, 166, 188)]
+    print("")
+    print(identity[RGB(146,146,36)])
+    #print(identity[RGB(22,33,44)])
+    print(identity[RGB(132, 166, 188)])
     
-    print ""
-    print "YO DOGG"
-    print amatorka[RGB(146,146,36)]
-    print identity[RGB(22,33,44)]
-    print identity[RGB(255, 25, 25)]
+    print("")
+    print("YO DOGG")
+    print(amatorka[RGB(146,146,36)])
+    print(identity[RGB(22,33,44)])
+    print(identity[RGB(255, 25, 25)])
     
 
 def blurthday():
@@ -156,8 +157,8 @@ def blurthday():
     im9 = amatorka.transform(im1)
     pprint(im9)
     imfuckingshowalready(im9)
-    print im1
-    print im2
+    print(im1)
+    print(im2)
 
 
 def old_maid():
@@ -187,22 +188,22 @@ def old_main():
                                 int((bx + by * 8.0) * 255.0 / 63.0 + 0.5)),
                                 dtype=numpy.uint8)
     
-    print "THE OLD: %s, %s, %s" % (
+    print("THE OLD: %s, %s, %s" % (
         im_old_identity.size, im_old_identity.shape,
-        str(im_old_identity.dtype))
-    #print im_old_identity
-    print ""
+        str(im_old_identity.dtype)))
+    #print(im_old_identity)
+    print("")
     
-    print "THE NEW: %s, %s, %s" % (
+    print("THE NEW: %s, %s, %s" % (
         im_identity.size, im_identity.shape,
-        str(im_identity.dtype))
-    #print im_identity
-    print ""
+        str(im_identity.dtype)))
+    #print(im_identity)
+    print("")
     
     
     
-    print "THE END: %s" % bool(im_old_identity.shape == im_identity.shape)
-    #print im_old_identity == im_identity
+    print("THE END: %s" % bool(im_old_identity.shape == im_identity.shape))
+    #print(im_old_identity == im_identity)
     
     #imfuckingshowalready(im_identity)
     #imfuckingshowalready(im_old_identity)

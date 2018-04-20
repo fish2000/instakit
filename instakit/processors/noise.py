@@ -6,6 +6,7 @@ noise.py
 Created by FI$H 2000 on 2014-05-23.
 Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 """
+from __future__ import print_function
 
 from instakit.utils.ndarrays import NDProcessor
 
@@ -72,5 +73,5 @@ if __name__ == '__main__':
         #Noise().process(image_input).show()
         noises[idx]().process(image_input).show()
     
-    print image_paths
+    print(image_paths)
     

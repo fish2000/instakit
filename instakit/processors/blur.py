@@ -6,6 +6,7 @@ blur.py
 Created by FI$H 2000 on 2012-08-23.
 Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 """
+from __future__ import print_function
 from instakit.utils import kernels
 
 from PIL.ImageFilter import UnsharpMask as PILUnsharpMask
@@ -128,5 +129,5 @@ if __name__ == '__main__':
         GaussianBlur(n=3).process(image_input).show()
         SimpleGaussianBlur(radius=3).process(image_input).show()
     
-    print image_paths
+    print(image_paths)
     

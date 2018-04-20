@@ -6,6 +6,7 @@ halftone.py
 Created by FI$H 2000 on 2012-08-23.
 Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 """
+from __future__ import print_function
 
 from PIL import Image
 from PIL import ImageDraw
@@ -111,5 +112,5 @@ if __name__ == '__main__':
         Atkinson(threshold=128.0).process(image_input).show()
         #CMYKDotScreen(sample=2, scale=2).process(image_input).show()
     
-    print image_paths
+    print(image_paths)
     
