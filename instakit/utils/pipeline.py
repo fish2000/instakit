@@ -4,6 +4,11 @@ from collections import defaultdict
 from PIL import Image
 from PIL import ImageMode
 
+try:
+    from functools import reduce
+except ImportError:
+    pass
+
 class Pipe(list):
     """ A linear pipeline of processors to be applied en masse.
         Derived from an ImageKit class:
@@ -149,8 +154,6 @@ class ChannelOverprinter(ChannelFork):
         return clone.process(img)
 
 
-
-
 if __name__ == '__main__':
     from instakit.utils import static
     from instakit.processors.halftone import Atkinson
@@ -158,9 +161,9 @@ if __name__ == '__main__':
     image_paths = map(
         lambda image_file: static.path('img', image_file),
             static.listfiles('img'))
-    image_inputs = map(
+    image_inputs = list(map(
         lambda image_path: Image.open(image_path).convert('RGB'),
-            image_paths)
+            image_paths))
     
     for image_input in image_inputs[:2]:
         #ChannelOverprinter(Atkinson).process(image_input).show()

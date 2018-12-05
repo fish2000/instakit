@@ -68,7 +68,7 @@ def ColorType(name, *args, **kwargs):
                 return int(self.__hex__(), 16)
             
             def __long__(self):
-                return long(self.__hex__(), 16)
+                return numpy.long(self.__hex__(), 16)
             
             def __hash__(self):
                 return self.__long__()

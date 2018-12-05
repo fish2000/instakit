@@ -1,4 +1,9 @@
-from itertools import izip, imap
+
+try:
+    from itertools import izip, imap
+except ImportError:
+    izip = zip
+    imap = map
 
 def is_nan(obj):
     """ Return boolean indicating if obj is considered not a number. """

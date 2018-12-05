@@ -59,9 +59,9 @@ if __name__ == '__main__':
     image_paths = map(
         lambda image_file: static.path('img', image_file),
             static.listfiles('img'))
-    image_inputs = map(
+    image_inputs = list(map(
         lambda image_path: Image.open(image_path).convert('RGB'),
-            image_paths)
+            image_paths))
     
     noises = [
         GaussianNoise, PoissonNoise, GaussianLocalVarianceNoise,

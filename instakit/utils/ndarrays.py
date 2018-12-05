@@ -10,14 +10,14 @@ Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 from __future__ import division
 
 import numpy
-import scipy.misc
+from PIL import Image
 
 class NDProcessor(object):
     
     def process(self, img):
-        return scipy.misc.toimage(
+        return Image.fromarray(
             self.process_ndimage(
-                scipy.misc.fromimage(img)))
+                numpy.asarray(img)))
     
     def process_ndimage(self, ndimage):
         """ Override me! """

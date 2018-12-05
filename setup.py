@@ -26,6 +26,7 @@
 from __future__ import print_function
 import sys
 import os
+import os.path
 
 try:
     from setuptools import setup, Extension
@@ -33,14 +34,21 @@ except ImportError:
     from ez_setup import use_setuptools
     use_setuptools()
     from setuptools import setup, Extension
+from Cython.Build import cythonize
 
 def cython_module(*args, **kwargs):
     include_dirs = kwargs.pop('include_dirs', [])
-    ext_package = ".".join(args)
-    ext_pth = "/".join(args) + ".pyx"
+    ext_package = os.path.extsep.join(args)
+    ext_pth = os.path.sep.join(args) + ".pyx"
     return Extension(ext_package, [ext_pth],
+        language='c',
         include_dirs=include_dirs,
-        extra_compile_args=["-Wno-unused-function"])
+        extra_compile_args=['-Wno-unused-function',
+                            '-Wno-unneeded-internal-declaration',
+                            '-O3',
+                            '-fstrict-aliasing',
+                            '-funroll-loops',
+                            '-mtune=native'])
 
 def cython_ext(name, **kwargs):
     return cython_module('instakit', 'processors', 'ext', name, **kwargs)
@@ -49,9 +57,27 @@ from Cython.Distutils import build_ext
 from distutils.sysconfig import get_python_inc
 
 name = 'instakit'
-version = '0.2.9'
+version = '0.3.5'
 description = 'Image processors and filters.'
 keywords = 'python django imagekit image processing filters'
+
+long_description = """
+Image processors and filters, inspired by Instagram, and ready for use
+with django-imagekit.
+
+Included are filters for Atkinson-dither halftoning,  dot-pitch halftoning
+(with GCR and per-channel pipeline processors), classes for Numpy-based
+image processors, Gaussian kernel functions, processors for applying curves
+to images from Photoshop .acv files, imagekit-ready processors exposing
+Pillow’s many image adjustment algorithms (e.g. noise and blur functions,
+histogram-based adjustments like Brightness/Contrast, and many others),
+and an implementation of the entropy-based smart-crop algorithm that many
+know from the easy-thumbnails Django app.
+
+Experienced users may also make use of the many utilities shipping with
+instakit: LUT maps, color structs, pipeline processing primitives and 
+ink-based separation simulation tools, and other related miscellany.
+"""
 
 classifiers = [
     'Development Status :: 5 - Production/Stable']
@@ -61,7 +87,7 @@ try:
 except ImportError:
     class FakeNumpy(object):
         def get_include(self):
-            return "."
+            return os.path.curdir
     numpy = FakeNumpy()
 
 try:
@@ -94,40 +120,48 @@ except ImportError:
 
 if 'sdist' in sys.argv and 'upload' in sys.argv:
     import subprocess
-    finder = "/usr/bin/find %s \( -name \*.pyc -or -name .DS_Store \) -delete"
+    finder = "/usr/bin/find %s \( -iname \*.pyc -or -name .DS_Store \) -delete"
     theplace = os.getcwd()
-    if theplace not in (".", "/"):
+    if theplace not in (os.path.sep, os.path.curdir):
         print("+ Deleting crapola from %s..." % theplace)
         print("$ %s" % finder % theplace)
         output = subprocess.getoutput(finder % theplace)
         print(output)
 
 include_dirs = [
+    os.path.curdir,
     numpy.get_include(),
     get_python_inc(plat_specific=1)]
 
 setup(
-    name=name, version=version, description=description,
+    name=name,
+    version=version,
+    description=description,
+    long_description=long_description,
     keywords=keywords, platforms=['any'],
     
     author=u"Alexander Bohn", author_email='fish2000@gmail.com',
     
     license='MIT',
-    url='http://github.com/fish2000/%s/' % name,
+    url='http://github.com/fish2000/%s' % name,
     download_url='http://github.com/fish2000/%s/zipball/master' % name,
     
     packages=find_packages(),
-    package_data={'': ['*.*']},
+    package_data={ '' : ['*%s*' % os.path.extsep] },
     include_package_data=True,
     zip_safe=False,
     
     install_requires=[
         'numpy',
         'scipy',
+        'Cython',
         'Pillow'],
     
-    ext_modules=[
+    ext_modules=cythonize([
         cython_ext("halftone", include_dirs=include_dirs)],
+        compiler_directives=dict(language_level=3,
+                                 infer_types=True,
+                                 embedsignature=True)),
     
     cmdclass=dict(build_ext=build_ext),
     include_dirs=include_dirs,
