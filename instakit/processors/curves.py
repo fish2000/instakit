@@ -95,30 +95,30 @@ class CurveSet(object):
                     self.read_one_curve(
                         acv_file, self.channel_name(i)))
     
-    def process(self, img):
-        if img.mode not in ('RGB','1','L'):
-            img.convert('RGB')
-        if img.mode is '1':
-            img.convert('L')
-        if img.mode is 'L':
-            return Image.eval(img, self.curves[0])
+    def process(self, image):
+        if image.mode not in ('RGB', '1', 'L'):
+            image.convert('RGB')
+        if image.mode is '1':
+            image.convert('L')
+        if image.mode is 'L':
+            return Image.eval(image, self.curves[0])
         # has to be RGB at this point
-        img_channels = img.split()
-        img_adjusted_channels = []
-        for i in range(len(img_channels)):
-            img_adjusted_channels.append(
+        image_channels = image.split()
+        image_adjusted_channels = []
+        for i in range(len(image_channels)):
+            image_adjusted_channels.append(
                 Image.eval(
-                    img_channels[i],
+                    image_channels[i],
                     lambda v: self.curves[i+1](v)))
-        return Image.merge('RGB', img_adjusted_channels)
+        return Image.merge('RGB', image_adjusted_channels)
 
 
 if __name__ == '__main__':
     curve_sets = [CurveSet(nm) for nm in CurveSet.names()]
-
-    image_paths = map(
+    
+    image_paths = list(map(
         lambda image_file: static.path('img', image_file),
-            static.listfiles('img'))
+            static.listfiles('img')))
     image_inputs = list(map(
         lambda image_path: Image.open(image_path).convert('RGB'),
             image_paths))

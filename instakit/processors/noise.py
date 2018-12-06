@@ -18,8 +18,8 @@ class Noise(NDProcessor):
     def process_ndimage(self, ndimage):
         from skimage.util import random_noise
         return self.compand(
-            random_noise(ndimage,
-                mode=self.mode))
+               random_noise(ndimage,
+                            mode=type(self).mode))
 
 
 class GaussianNoise(Noise):
@@ -56,9 +56,9 @@ if __name__ == '__main__':
     from PIL import Image
     from instakit.utils import static
     
-    image_paths = map(
+    image_paths = list(map(
         lambda image_file: static.path('img', image_file),
-            static.listfiles('img'))
+            static.listfiles('img')))
     image_inputs = list(map(
         lambda image_path: Image.open(image_path).convert('RGB'),
             image_paths))

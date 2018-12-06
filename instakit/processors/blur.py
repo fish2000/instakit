@@ -12,9 +12,9 @@ from instakit.utils import kernels
 from PIL.ImageFilter import UnsharpMask as PILUnsharpMask
 from PIL.ImageFilter import GaussianBlur as PILGaussianBlur
 
-from PIL.ImageFilter import CONTOUR, DETAIL, EMBOSS
-from PIL.ImageFilter import EDGE_ENHANCE, EDGE_ENHANCE_MORE, FIND_EDGES
-from PIL.ImageFilter import SMOOTH, SMOOTH_MORE, SHARPEN
+from PIL.ImageFilter import (CONTOUR, DETAIL, EMBOSS,
+                             EDGE_ENHANCE, EDGE_ENHANCE_MORE, FIND_EDGES,
+                             SMOOTH, SMOOTH_MORE, SHARPEN)
 
 
 class ImagingCoreFilterMixin(object):
@@ -106,9 +106,9 @@ if __name__ == '__main__':
     from PIL import Image
     from instakit.utils import static
     
-    image_paths = map(
+    image_paths = list(map(
         lambda image_file: static.path('img', image_file),
-            static.listfiles('img'))
+            static.listfiles('img')))
     image_inputs = list(map(
         lambda image_path: Image.open(image_path).convert('RGB'),
             image_paths))

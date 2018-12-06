@@ -14,15 +14,15 @@ class Pipe(list):
         Derived from an ImageKit class:
         imagekit.processors.base.ProcessorPipeline
     """
-    def process(self, img):
+    def process(self, image):
         for p in self:
-            img = p.process(img)
-        return img
+            image = p.process(image)
+        return image
 
 class NOOp(object):
     """ A no-op processor. """
-    def process(self, img):
-        return img
+    def process(self, image):
+        return image
 
 class ChannelFork(defaultdict):
     """ A processor wrapper that, for each image channel:
@@ -77,12 +77,12 @@ class ChannelFork(defaultdict):
             self.channels.mode,
             channels)
     
-    def process(self, img):
-        if img.mode != self.channels.mode:
-            img = img.convert(self.channels.mode)
+    def process(self, image):
+        if image.mode != self.channels.mode:
+            image = image.convert(self.channels.mode)
         
         processed_channels = []
-        for idx, channel in enumerate(img.split()):
+        for idx, channel in enumerate(image.split()):
             processed_channels.append(
                 self[self.channels.bands[idx]].process(channel))
         
@@ -105,10 +105,10 @@ class CMYKInk(object):
             ink_value = self.KEY
         self.ink_value = ink_value
     
-    def process(self, img):
+    def process(self, image):
         from PIL import ImageOps
         return ImageOps.colorize(
-            img.convert('L'),
+            image.convert('L'),
             self.WHITE,
             self.ink_value)
 
@@ -129,7 +129,7 @@ class ChannelOverprinter(ChannelFork):
         from PIL import ImageChops
         return reduce(ImageChops.multiply, channels)
     
-    def process(self, img):
+    def process(self, image):
         # Compile the standard CMYK ink values as a dict of processing ops,
         # keyed with the letter of their channel name (e.g. C, M, Y, and K):
         inks = zip(self.default_mode, # CMYK
@@ -137,10 +137,13 @@ class ChannelOverprinter(ChannelFork):
         
         # Manually two-phase allocate/initialize a ChannelFork “clone” instance
         # to run the ChannelOverprinter CMYK composition processing operations:
-        clone = super(ChannelOverprinter, self).__new__(self.default_factory,
-                                                        mode=self.channels.mode)
-        clone.__init__(self.default_factory,
-                       mode=self.channels.mode)
+        # clone = super(ChannelOverprinter, self).__new__(self.default_factory,
+        #                                                 mode=self.channels.mode)
+        # clone.__init__(self.default_factory,
+        #                mode=self.channels.mode)
+        clone = super(ChannelOverprinter, self).__new__(type(self).__mro__[1],
+                                                             self.default_factory)
+        clone.__init__(self.default_factory)
         
         # Create a pipeline for each of the overprinters’ CMYK channel operations,
         # and install the pipeline in the newly created “clone” ChannelFork:
@@ -151,16 +154,16 @@ class ChannelOverprinter(ChannelFork):
             clone[channel_name] = Pipe([self[channel_name], ink])
         
         # Delegate processing to the “clone” instance:
-        return clone.process(img)
+        return clone.process(image)
 
 
 if __name__ == '__main__':
     from instakit.utils import static
     from instakit.processors.halftone import Atkinson
     
-    image_paths = map(
+    image_paths = list(map(
         lambda image_file: static.path('img', image_file),
-            static.listfiles('img'))
+            static.listfiles('img')))
     image_inputs = list(map(
         lambda image_path: Image.open(image_path).convert('RGB'),
             image_paths))
@@ -171,7 +174,7 @@ if __name__ == '__main__':
         print('Creating ChannelOverprinter and ChannelFork with Atkinson ditherer...')
         overatkins = ChannelOverprinter(Atkinson)
         forkatkins = ChannelFork(Atkinson)
-        '''
+        
         print('Processing image with ChannelForked Atkinson in default (RGB) mode...')
         forkatkins.process(image_input).show()
         forkatkins.mode = 'CMYK'
@@ -180,7 +183,7 @@ if __name__ == '__main__':
         forkatkins.mode = 'RGB'
         print('Processing image with ChannelForked Atkinson in RGB mode...')
         forkatkins.process(image_input).show()
-        '''
+        
         overatkins.mode = 'CMYK'
         print('Processing image with ChannelOverprinter-ized Atkinson in CMYK mode...')
         overatkins.process(image_input).show()

@@ -8,9 +8,7 @@ Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 """
 from __future__ import print_function
 
-from PIL import Image
-from PIL import ImageDraw
-from PIL import ImageStat
+from PIL import Image, ImageDraw, ImageStat
 
 from instakit.utils import pipeline
 from instakit.utils.gcr import gcr
@@ -26,20 +24,20 @@ except ImportError:
         def __init__(self, threshold=128.0):
             self.threshold_matrix = int(threshold)*(0,) + (256-int(threshold))*(255,)
         
-        def process(self, img):
-            img = img.convert('L')
-            for y in range(img.size[1]):
-                for x in range(img.size[0]):
-                    old = img.getpixel((x, y))
+        def process(self, image):
+            image = image.convert('L')
+            for y in range(image.size[1]):
+                for x in range(image.size[0]):
+                    old = image.getpixel((x, y))
                     new = self.threshold_matrix[old]
                     err = (old - new) >> 3 # divide by 8.
-                    img.putpixel((x, y), new)
+                    image.putpixel((x, y), new)
                     for nxy in [(x+1, y), (x+2, y), (x-1, y+1), (x, y+1), (x+1, y+1), (x, y+2)]:
                         try:
-                            img.putpixel(nxy, img.getpixel(nxy) + err)
+                            image.putpixel(nxy, image.getpixel(nxy) + err)
                         except IndexError:
                             pass # it happens, evidently.
-            return img
+            return image
 
 
 class DotScreen(object):
@@ -49,16 +47,16 @@ class DotScreen(object):
         self.scale = scale
         self.angle = angle
     
-    def process(self, img):
-        origsize = img.size
-        img = img.convert('L').rotate(self.angle, expand=1)
-        size = img.size[0]*self.scale, img.size[1]*self.scale
+    def process(self, image):
+        origsize = image.size
+        image = image.convert('L').rotate(self.angle, expand=1)
+        size = image.size[0]*self.scale, image.size[1]*self.scale
         halftone = Image.new('L', size)
         dotscreen = ImageDraw.Draw(halftone)
         
-        for x in range(0, img.size[0], self.sample):
-            for y in range(0, img.size[0], self.sample):
-                cropbox = img.crop(
+        for x in range(0, image.size[0], self.sample):
+            for y in range(0, image.size[0], self.sample):
+                cropbox = image.crop(
                     (x, y, x+self.sample, y+self.sample))
                 stat = ImageStat.Stat(cropbox)
                 diameter = (stat.mean[0] / 255) ** 0.5
@@ -91,18 +89,18 @@ class CMYKDotScreen(object):
             'Y': DotScreen(angle=thetaY, sample=sample, scale=scale),
             'K': DotScreen(angle=thetaK, sample=sample, scale=scale), })
     
-    def process(self, img):
+    def process(self, image):
         return self.overprinter.process(
-            gcr(img, self.gcr))
+            gcr(image, self.gcr))
 
 
 
 if __name__ == '__main__':
     from instakit.utils import static
     
-    image_paths = map(
+    image_paths = list(map(
         lambda image_file: static.path('img', image_file),
-            static.listfiles('img'))
+            static.listfiles('img')))
     image_inputs = list(map(
         lambda image_path: Image.open(image_path).convert('RGB'),
             image_paths))
