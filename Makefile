@@ -5,6 +5,8 @@ distclean: clean-all-pyc clean-cython clean-build-artifacts
 
 dist: cython distclean upload
 
+upload: sdist twine-upload
+
 clean-pyc:
 	find . -name \*.pyc -print -delete
 
@@ -24,7 +26,10 @@ clean-build-artifacts:
 cython:
 	python setup.py build_ext --inplace
 
-upload:
-	python setup.py sdist upload
+sdist:
+	python setup.py sdist
+
+twine-upload:
+	twine upload --repository-url=https://upload.pypi.org/legacy/ dist/*
 
 .PHONY: clean distclean dist cython upload
