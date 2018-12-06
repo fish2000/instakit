@@ -1,4 +1,6 @@
 exclude *.pyc *~ *.so .DS_Store
+include Makefile
+include __version__.py
 include .gitignore
 include README.md
 include LICENSE.md

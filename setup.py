@@ -63,11 +63,14 @@ def cython_utility(name, **kwargs):
 
 # VERSION & METADATA
 __version__ = "<undefined>"
-exec(compile(
-    open(os.path.join(
-         os.path.dirname(__file__),
-        '__version__.py')).read(),
-        '__version__.py', 'exec'))
+try:
+    exec(compile(
+        open(os.path.join(
+             os.path.dirname(__file__),
+            '__version__.py')).read(),
+            '__version__.py', 'exec'))
+except:
+    __version__ = '0.4.2'
 
 from Cython.Distutils import build_ext
 from distutils.sysconfig import get_python_inc
