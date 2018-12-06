@@ -70,7 +70,7 @@ try:
             '__version__.py')).read(),
             '__version__.py', 'exec'))
 except:
-    __version__ = '0.4.3'
+    __version__ = '0.4.4'
 
 from Cython.Distutils import build_ext
 from distutils.sysconfig import get_python_inc

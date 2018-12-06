@@ -39,19 +39,77 @@ class SlowAtkinson(object):
                 new = self.threshold_matrix[old]
                 err = (old - new) >> 3 # divide by 8.
                 image.putpixel((x, y), new)
-                for nxy in [(x+1, y), (x+2, y), (x-1, y+1), (x, y+1), (x+1, y+1), (x, y+2)]:
+                for nxy in [(x+1, y),
+                            (x+2, y),
+                            (x-1, y+1),
+                            (x, y+1),
+                            (x+1, y+1),
+                            (x, y+2)]:
                     try:
-                        image.putpixel(nxy, image.getpixel(nxy) + err)
+                        image.putpixel(nxy, int(
+                        image.getpixel(nxy) + err))
+                    except IndexError:
+                        pass # it happens, evidently.
+        return image
+
+class SlowFloydSteinberg(object):
+    
+    """ A similarly super-slow reference implementation of Floyd-Steinberg.
+        Adapted from an RGB version here: https://github.com/trimailov/qwer
+    """
+    
+    # Precalculate fractional error multipliers:
+    SEVEN_FRAC = 7/16
+    THREE_FRAC = 3/16
+    CINCO_FRAC = 5/16
+    ALONE_FRAC = 1/16
+    
+    def __init__(self, threshold = 128.0):
+        """ Initialize with a threshold value between 0 and 255 """
+        self.threshold_matrix = int(threshold)  * LO_TUP + \
+                           (256-int(threshold)) * HI_TUP
+    
+    def process(self, image):
+        """ The process call returns a monochrome ('L'-mode) image """
+        # N.B. We store local references to the fractional error multipliers
+        # to avoid the Python internal-dict-stuff member-lookup overhead:
+        image = image.convert('L')
+        SEVEN_FRAC = type(self).SEVEN_FRAC
+        THREE_FRAC = type(self).THREE_FRAC
+        CINCO_FRAC = type(self).CINCO_FRAC
+        ALONE_FRAC = type(self).ALONE_FRAC
+        for y in range(image.size[1]):
+            for x in range(image.size[0]):
+                old = image.getpixel((x, y))
+                new = self.threshold_matrix[old]
+                image.putpixel((x, y), new)
+                err = old - new
+                for nxy in [((x+1, y),      SEVEN_FRAC),
+                            ((x-1, y+1),    THREE_FRAC),
+                            ((x, y+1),      CINCO_FRAC),
+                            ((x+1, y+1),    ALONE_FRAC)]:
+                    try:
+                        image.putpixel(nxy[0], int(
+                        image.getpixel(nxy[0]) + err * nxy[1]))
                     except IndexError:
                         pass # it happens, evidently.
         return image
 
 try:
+    # My man, fast Bill Atkinson
     from instakit.processors.ext.halftone import Atkinson as FastAtkinson
 except ImportError:
     Atkinson = SlowAtkinson
 else:
     Atkinson = FastAtkinson
+
+try:
+    # THE FLOYDSTER
+    from instakit.processors.ext.halftone import FloydSteinberg as FastFloydSteinberg
+except ImportError:
+    FloydSteinberg = SlowFloydSteinberg
+else:
+    FloydSteinberg = FastFloydSteinberg
 
 class DotScreen(object):
     
@@ -137,6 +195,7 @@ if __name__ == '__main__':
     for image_input in image_inputs:
         #image_input.show()
         Atkinson(threshold=128.0).process(image_input).show()
-        CMYKDotScreen(sample=2, scale=2).process(image_input).show()
+        FloydSteinberg(threshold=128.0).process(image_input).show()
+        # CMYKDotScreen(sample=2, scale=2).process(image_input).show()
     
     print(image_paths)
