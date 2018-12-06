@@ -53,13 +53,18 @@ cdef void atkinson_dither(int_t[:, :] input_view, int_t w, int_t h) nogil:
 
 cdef class Atkinson:
     
+    cdef:
+        bint threshold_matrix_allocated
+    
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.cdivision(True)
     def __cinit__(self, float32_t threshold = 128.0):
         cdef int_t i
-        for i in range(255):
-            threshold_matrix[i] = <unsigned char>(<int_t>(<float32_t>i / threshold) * 255)
+        if not self.threshold_matrix_allocated:
+            for i in range(255):
+                threshold_matrix[i] = <unsigned char>(<int_t>(<float32_t>i / threshold) * 255)
+            self.threshold_matrix_allocated = True
     
     @cython.boundscheck(False)
     @cython.wraparound(False)

@@ -37,11 +37,16 @@ except ImportError:
 from Cython.Build import cythonize
 
 def cython_module(*args, **kwargs):
-    include_dirs = kwargs.pop('include_dirs', [])
+    sources = []
+    sources.extend(kwargs.pop('sources', []))
+    include_dirs = []
+    include_dirs.extend(kwargs.pop('include_dirs', []))
     ext_package = os.path.extsep.join(args)
     ext_pth = os.path.sep.join(args) + ".pyx"
-    return Extension(ext_package, [ext_pth],
-        language='c',
+    sources.insert(0, ext_pth)
+    language = kwargs.pop('language', 'c')
+    return Extension(ext_package, sources,
+        language=language,
         include_dirs=include_dirs,
         extra_compile_args=['-Wno-unused-function',
                             '-Wno-unneeded-internal-declaration',
@@ -50,14 +55,25 @@ def cython_module(*args, **kwargs):
                             '-funroll-loops',
                             '-mtune=native'])
 
-def cython_ext(name, **kwargs):
+def cython_processor(name, **kwargs):
     return cython_module('instakit', 'processors', 'ext', name, **kwargs)
+
+def cython_utility(name, **kwargs):
+    return cython_module('instakit', 'utils', 'ext', name, **kwargs)
+
+# VERSION & METADATA
+__version__ = "<undefined>"
+exec(compile(
+    open(os.path.join(
+         os.path.dirname(__file__),
+        '__version__.py')).read(),
+        '__version__.py', 'exec'))
 
 from Cython.Distutils import build_ext
 from distutils.sysconfig import get_python_inc
 
 name = 'instakit'
-version = '0.3.6'
+# version = '0.3.6'
 description = 'Image processors and filters.'
 keywords = 'python django imagekit image processing filters'
 
@@ -96,9 +112,8 @@ try:
 except ImportError:
     def is_package(path):
         return (os.path.isdir(path) and \
-            os.path.isfile(
-                os.path.join(
-                    path, '__init__.py')))
+                os.path.isfile(
+                os.path.join(path, '__init__.py')))
     
     def find_packages(path, base=""):
         """ Find all packages in path
@@ -114,11 +129,10 @@ except ImportError:
                     module_name = item
                 packages[module_name] = pth
                 packages.update(
-                    find_packages(
-                        pth, module_name))
+                    find_packages(pth, module_name))
         return packages
 
-if 'sdist' in sys.argv and 'upload' in sys.argv:
+if 'sdist' in sys.argv:
     import subprocess
     finder = "/usr/bin/find %s \( -iname \*.pyc -or -name .DS_Store \) -delete"
     theplace = os.getcwd()
@@ -128,6 +142,15 @@ if 'sdist' in sys.argv and 'upload' in sys.argv:
         output = subprocess.getoutput(finder % theplace)
         print(output)
 
+instakit_base_path = os.path.join(
+                     os.path.abspath(
+                     os.path.dirname(__file__)), 'instakit')
+
+hsluv_source = os.path.join(os.path.relpath(instakit_base_path,
+                      start=os.path.dirname(__file__)), 'utils',
+                                                        'ext',
+                                                        'hsluv.c')
+
 include_dirs = [
     os.path.curdir,
     numpy.get_include(),
@@ -135,7 +158,7 @@ include_dirs = [
 
 setup(
     name=name,
-    version=version,
+    version=__version__,
     description=description,
     long_description=long_description,
     keywords=keywords, platforms=['any'],
@@ -158,10 +181,11 @@ setup(
         'Pillow'],
     
     ext_modules=cythonize([
-        cython_ext("halftone", include_dirs=include_dirs)],
-        compiler_directives=dict(language_level=3,
-                                 infer_types=True,
-                                 embedsignature=True)),
+        cython_processor("halftone", include_dirs=include_dirs),
+        cython_utility("api", sources=[hsluv_source])
+        ], compiler_directives=dict(language_level=3,
+                                    infer_types=True,
+                                    embedsignature=True)),
     
     cmdclass=dict(build_ext=build_ext),
     include_dirs=include_dirs,

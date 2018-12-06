@@ -49,7 +49,7 @@ class ChannelFork(defaultdict):
             default_factory = NOOp
         if not callable(default_factory):
             raise AttributeError(
-                "ChannelFork() requires a callable default_factory.")
+                "ChannelFork() requires a callable default_factory")
         
         self.channels = ImageMode.getmode(
             kwargs.pop('mode', self.default_mode))

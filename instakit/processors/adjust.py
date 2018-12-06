@@ -5,7 +5,6 @@ from PIL.ImageEnhance import Brightness as _Brightness
 from PIL.ImageEnhance import Contrast as _Contrast
 from PIL.ImageEnhance import Sharpness as _Sharpness
 
-
 class Adjustment(object):
     def __init__(self, value=1.0):
         self.value = value

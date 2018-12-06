@@ -4,20 +4,24 @@
 ndarrays.py
 
 Created by FI$H 2000 on 2013-08-23.
-Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
+Copyright © 2012-2019 Objects In Space And Time, LLC. All rights reserved.
+The `bytescale`, `ndarray_fromimage`, and `ndarray_toimage` functions
+were originally published in the `scipy.misc.pilutils` codebase.
+
 """
 
 from __future__ import division
 
 import numpy
 from PIL import Image
+from pprint import pformat
 
 uint8_t = numpy.uint8
 uint32_t = numpy.uint32
 float32_t = numpy.float32
 
 def bytescale(data, cmin=None, cmax=None,
-                    high=255, low=0):
+                    high=255,  low=0):
     """
     Byte scales an array (image).
     
@@ -55,10 +59,12 @@ def bytescale(data, cmin=None, cmax=None,
     
     if cmin is None:
         cmin = data.min()
+    
     if cmax is None:
         cmax = data.max()
     
     cscale = cmax - cmin
+    
     if cscale < 0:
         raise ValueError("`cmax` should be larger than `cmin`.")
     elif cscale == 0:
@@ -90,15 +96,15 @@ def ndarray_fromimage(image, flatten=False, mode=None):
         RGB-image MxNx3 and an RGBA-image MxNx4.
     """
     if not Image.isImageType(image):
-        raise TypeError("Input is not a PIL image.")
+        raise TypeError("Input is not a PIL image (got %s)" % repr(image))
     
     if mode is not None:
         if mode != image.mode:
             image = image.convert(mode)
     elif image.mode == 'P':
         # Mode 'P' means there is an indexed "palette".  If we leave the mode
-        # as 'P', then when we do `a = numpy.array(im)` below, `a` will be a 2-D
-        # containing the indices into the palette, and not a 3-D array
+        # as 'P', then when we do `a = numpy.array(im)` below, `a` will be a 2D
+        # containing the indices into the palette, and not a 3D array
         # containing the RGB or RGBA values.
         if 'transparency' in image.info:
             image = image.convert('RGBA')
@@ -118,12 +124,12 @@ def ndarray_fromimage(image, flatten=False, mode=None):
     out = numpy.array(image)
     return out
 
-_errstr = "Mode is unknown or incompatible with input array shape."
+_errstr = "Mode unknown or incompatible with input array shape"
 
-def ndarray_toimage(arr, high=255, low=0,
-                         cmin=None, cmax=None,
-                         pal=None,
-                         mode=None, channel_axis=None):
+def ndarray_toimage(array, high=255,  low=0,
+                           cmin=None, cmax=None,
+                           pal=None,
+                           mode=None, channel_axis=None):
     """
     Takes a numpy array and returns a PIL image. The mode of the image returned
     depends on the array shape and the `pal` and `mode` keywords.
@@ -147,52 +153,68 @@ def ndarray_toimage(arr, high=255, low=0,
     
     The numpy array must be either 2- or 3-dimensional.
     """
-    data = numpy.asarray(arr)
+    data = numpy.asarray(array)
     if numpy.iscomplexobj(data):
-        raise ValueError("Cannot convert a complex-valued array.")
+        raise ValueError("Cannot convert arrays of complex values")
+    
     shape = list(data.shape)
     valid = len(shape) == 2 or ((len(shape) == 3) and
                                 ((3 in shape) or (4 in shape)))
     if not valid:
-        raise ValueError("'arr' does not have a suitable array shape for "
-                         "any mode.")
+        raise ValueError("input array lacks a suitable shape for any mode")
+    
     if len(shape) == 2:
         shape = (shape[1], shape[0])  # columns show up first
+        
         if mode == 'F':
-            data32 = data.astype(float32_t)
-            image = Image.frombytes(mode, shape, data32.tostring())
-            return image
+            return Image.frombytes(mode,
+                                   shape,
+                                   data.astype(float32_t).tostring())
+        
         if mode in [None, 'L', 'P']:
             bytedata = bytescale(data, high=high,
                                        low=low,
                                        cmin=cmin,
                                        cmax=cmax)
-            image = Image.frombytes('L', shape, bytedata.tostring())
+            image = Image.frombytes('L',
+                                    shape,
+                                    bytedata.tostring())
+            
             if pal is not None:
-                image.putpalette(numpy.asarray(pal, dtype=uint8_t).tostring())
-                # Becomes a mode='P' automatically.
+                image.putpalette(numpy.asarray(pal,
+                                 dtype=uint8_t).tostring()) # Becomes mode='P' automatically
             elif mode == 'P':  # default grayscale
                 pal = (numpy.arange(0, 256, 1, dtype=uint8_t)[:, numpy.newaxis] *
-                       numpy.ones((3,), dtype=uint8_t)[numpy.newaxis, :])
-                image.putpalette(numpy.asarray(pal, dtype=uint8_t).tostring())
+                       numpy.ones((3,),        dtype=uint8_t)[numpy.newaxis, :])
+                image.putpalette(numpy.asarray(pal,
+                                 dtype=uint8_t).tostring())
+            
             return image
+        
         if mode == '1':  # high input gives threshold for 1
             bytedata = (data > high)
-            image = Image.frombytes('1', shape, bytedata.tostring())
-            return image
+            return Image.frombytes(mode,
+                                   shape,
+                                   bytedata.tostring())
+        
         if cmin is None:
             cmin = numpy.amin(numpy.ravel(data))
+        
         if cmax is None:
             cmax = numpy.amax(numpy.ravel(data))
+        
         data = (data * 1.0 - cmin) * (high - low) / (cmax - cmin) + low
+        
         if mode == 'I':
-            data32 = data.astype(uint32_t)
-            image = Image.frombytes(mode, shape, data32.tostring())
+            image = Image.frombytes(mode,
+                                    shape,
+                                    data.astype(uint32_t).tostring())
         else:
             raise ValueError(_errstr)
+        
         return image
     
-    # if here then 3-d array with a 3 or a 4 in the shape length.
+    # if here then 3D array with a 3 or a 4 in the shape length.
     # Check for 3 in datacube shape --- 'RGB' or 'YCbCr'
     if channel_axis is None:
         if (3 in shape):
@@ -202,13 +224,14 @@ def ndarray_toimage(arr, high=255, low=0,
             if len(ca):
                 ca = ca[0]
             else:
-                raise ValueError("Could not find channel dimension.")
+                raise ValueError(
+                    "Could not find a channel dimension (shape = %s)" % pformat(shape))
     else:
         ca = channel_axis
     
     numch = shape[ca]
     if numch not in [3, 4]:
-        raise ValueError("Channel axis dimension is not valid.")
+        raise ValueError("Channel dimension invalid (#channels = %s)" % numch)
     
     bytedata = bytescale(data, high=high,
                                low=low,
@@ -236,14 +259,19 @@ def ndarray_toimage(arr, high=255, low=0,
     
     if mode in ['RGB', 'YCbCr']:
         if numch != 3:
-            raise ValueError("Invalid array shape for mode.")
+            raise ValueError("Invalid shape for mode “%s”: %s" % (
+                              mode, pformat(shape)))
     if mode in ['RGBA', 'CMYK']:
         if numch != 4:
-            raise ValueError("Invalid array shape for mode.")
+            raise ValueError("Invalid shape for mode “%s”: %s" % (
+                              mode, pformat(shape)))
     
-    # Here we know data and mode is correct
-    image = Image.frombytes(mode, shape, strdata)
+    # Here we know both `strdata` and `mode` are correct:
+    image = Image.frombytes(mode,
+                            shape,
+                            strdata)
     return image
+
 
 class NDProcessor(object):
     
