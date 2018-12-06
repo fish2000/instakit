@@ -18,11 +18,20 @@ HI_TUP = (255,)
 
 class SlowAtkinson(object):
     
+    """ It’s not a joke, this processor is slow as fuck;
+        if at all possible, use the cythonized version instead
+        (q.v. instakit.processors.ext.Atkinson) and never ever
+        use this one if at all possible – unless, like, you’re
+        being paid by the hour or somesuch. Up to you dogg.
+    """
+    
     def __init__(self, threshold = 128.0):
+        """ Initialize with a threshold value between 0 and 255 """
         self.threshold_matrix = int(threshold)  * LO_TUP + \
                            (256-int(threshold)) * HI_TUP
     
     def process(self, image):
+        """ The process call returns a monochrome ('L'-mode) image """
         image = image.convert('L')
         for y in range(image.size[1]):
             for x in range(image.size[0]):
@@ -46,6 +55,19 @@ else:
 
 class DotScreen(object):
     
+    """ This processor creates a monochrome dot-screen halftone pattern
+        from an image. While this may be useful on its own, it is far
+        more useful when used across all channels of a CMYK image in
+        a ChannelFork or ChannelOverprinter processor operation (q.v.
+        `instakit.utils.pipeline.ChannelFork` et al. supra.) serially
+        with either a gray-component replacement (GCR) or an under-color
+        replacement (UCR) function.
+        
+        Regarding the latter two operations, instakit only has a basic
+        GCR implementation currently, at the time of writing – q.v. the
+        `instakit.utils.gcr` module. 
+    """
+    
     def __init__(self, sample=1, scale=2, angle=0):
         self.sample = sample
         self.scale = scale
@@ -54,34 +76,39 @@ class DotScreen(object):
     def process(self, image):
         origsize = image.size
         image = image.convert('L').rotate(self.angle, expand=1)
-        size = image.size[0]*self.scale, image.size[1]*self.scale
+        size = image.size[0] * self.scale, image.size[1] * self.scale
         halftone = Image.new('L', size)
         dotscreen = ImageDraw.Draw(halftone)
         
         for x in range(0, image.size[0], self.sample):
             for y in range(0, image.size[0], self.sample):
-                cropbox = image.crop((x,             y,
-                                      x+self.sample, y+self.sample))
+                cropbox = image.crop((x,               y,
+                                      x + self.sample, y + self.sample))
                 stat = ImageStat.Stat(cropbox)
                 diameter = (stat.mean[0] / 255) ** 0.5
-                edge = 0.5 * (1-diameter)
-                xpos, ypos = (x+edge)*self.scale, (y+edge)*self.scale
+                edge = 0.5 * (1 - diameter)
+                xpos, ypos = (x+edge) * self.scale, (y+edge) * self.scale
                 boxedge = self.sample * diameter * self.scale
-                dotscreen.ellipse((xpos,         ypos,
-                                   xpos+boxedge, ypos+boxedge),
+                dotscreen.ellipse((xpos,           ypos,
+                                   xpos + boxedge, ypos + boxedge),
                                    fill=255)
         
         halftone = halftone.rotate(-self.angle, expand=1)
         halfwidth, halfheight = halftone.size
-        xx = (halfwidth - origsize[0]*self.scale) / 2
-        yy = (halfheight - origsize[1]*self.scale) / 2
-        return halftone.crop((xx, yy, xx+origsize[0]*self.scale,
-                                      yy+origsize[1]*self.scale))
+        xx = (halfwidth - origsize[0] * self.scale) / 2
+        yy = (halfheight - origsize[1] * self.scale) / 2
+        return halftone.crop((xx, yy, xx+origsize[0] * self.scale,
+                                      yy+origsize[1] * self.scale))
 
 class CMYKDotScreen(object):
     
-    def __init__(self,
-        gcr=20, sample=10, scale=10,
+    """ Create a full-color CMYK dot-screen halftone, with gray-component
+        replacement (GCR), individual rotation angles for each channel’s
+        dot-screen, and resampling value controls.
+    """
+    
+    def __init__(self,       gcr=20,
+                  sample=10, scale=10,
         thetaC=0, thetaM=15, thetaY=30, thetaK=45):
         
         self.gcr = max(min(100, gcr), 0)

@@ -70,13 +70,12 @@ try:
             '__version__.py')).read(),
             '__version__.py', 'exec'))
 except:
-    __version__ = '0.4.2'
+    __version__ = '0.4.3'
 
 from Cython.Distutils import build_ext
 from distutils.sysconfig import get_python_inc
 
 name = 'instakit'
-# version = '0.3.6'
 description = 'Image processors and filters.'
 keywords = 'python django imagekit image processing filters'
 
@@ -178,10 +177,11 @@ setup(
     zip_safe=False,
     
     install_requires=[
+        'Cython',
+        'Pillow',
         'numpy',
         'scipy',
-        'Cython',
-        'Pillow'],
+        'scikit-image'],
     
     ext_modules=cythonize([
         cython_processor("halftone", include_dirs=include_dirs),
@@ -192,7 +192,6 @@ setup(
     
     cmdclass=dict(build_ext=build_ext),
     include_dirs=include_dirs,
-    
     classifiers=classifiers+[
         'License :: OSI Approved :: MIT License',
         'Operating System :: MacOS',
