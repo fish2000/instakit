@@ -70,9 +70,9 @@ def qualified_import(qualified):
         e.g. 'instakit.processors.halftone.FloydSteinberg'
     """
     if QUALIFIER not in qualified:
-        raise ValueError(f"qualified_import() needs a qualified name (got {qualified})")
+        raise ValueError("qualified_import() needs a qualified name (got %s)" % qualified)
     head = qualified.split(QUALIFIER)[-1]
-    tail = qualified.replace(f'{QUALIFIER}{head}', '')
+    tail = qualified.replace("%s%s" % (QUALIFIER, head), '')
     module = importlib.import_module(tail)
     cls = getattr(module, head)
     return cls
@@ -84,7 +84,7 @@ def qualified_name(cls):
     mod_name = getattr(cls, '__module__')
     cls_name = getattr(cls, '__qualname__',
                getattr(cls, '__name__'))
-    return f'{mod_name}{QUALIFIER}{cls_name}'
+    return "%s%s%s" % (mod_name, QUALIFIER, cls_name)
 
 def default_arguments(cls):
     """ Get a dictionary of the keyword arguments with provided defaults,
@@ -103,14 +103,14 @@ def add_argparser(subparsers, cls):
         definition supra.)
     """
     qualname = qualified_name(cls)
-    cls_help = getattr(cls, '__doc__', f"help for {qualname}")
+    cls_help = getattr(cls, '__doc__', "help for %s" % qualname)
     parser = subparsers.add_parser(qualname, help=cls_help)
     for argument_name, argument_value in default_arguments(cls):
         argument_type = type(argument_value)
         add_argument_args = dict(type=argument_type,
                                  default=argument_value,
-                                 help=f'help for argument {argument_name}')
+                                 help='help for argument %s' % argument_name)
         if argument_type is bool:
             add_argument_args.update({ 'action' : 'store_true' })
-        parser.add_argument(f'--{argument_name}', **add_argument_args)
+        parser.add_argument(f'--%s' % argument_name, **add_argument_args)
     return parser

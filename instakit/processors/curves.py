@@ -173,8 +173,8 @@ class CurveSet(object):
         address = id(self)
         label = self.is_builtin and '[builtin]' or self.name
         interp = self.interpolation_mode or InterpolateMode.LAGRANGE
-        parenthetical = f"{label}, {self.count}, {interp}"
-        return f"{cls_name}({parenthetical}) @ <{address}>"
+        parenthetical = "%s, %d, %s" % (label, self.count, interp)
+        return "%s(%s) @ <%s>" % (cls_name, parenthetical, address)
 
 
 if __name__ == '__main__':

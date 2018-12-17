@@ -1269,7 +1269,7 @@ typedef npy_cdouble __pyx_t_5numpy_complex_t;
 
 /* "instakit/processors/ext/halftone.pyx":91
  * 
- * 
+ * @cython.freelist(4)
  * cdef class Atkinson:             # <<<<<<<<<<<<<<
  * 
  *     """ Fast cythonized Atkinson-dither halftone image processor """
@@ -1281,7 +1281,7 @@ struct __pyx_obj_8instakit_10processors_3ext_8halftone_Atkinson {
 
 /* "instakit/processors/ext/halftone.pyx":117
  * 
- * 
+ * @cython.freelist(4)
  * cdef class FloydSteinberg:             # <<<<<<<<<<<<<<
  * 
  *     """ Fast cythonized Floyd-Steinberg-dither halftone image processor """
@@ -3206,7 +3206,7 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_floyd_steinberg_dither
  *             if (y + 1 < h) and (x + 1 < w):
  *                 input_view[y+1, x+1] = floyd_steinberg_add_error(input_view[y+1, x+1], err, 1)             # <<<<<<<<<<<<<<
  * 
- * 
+ * @cython.freelist(4)
  */
         __pyx_t_25 = (__pyx_v_y + 1);
         __pyx_t_26 = (__pyx_v_x + 1);
@@ -3561,7 +3561,7 @@ static PyObject *__pyx_pf_8instakit_10processors_3ext_8halftone_8Atkinson_2proce
  *         output_array = numpy.asarray(input_view.base)
  *         return ndarray_toimage(output_array)             # <<<<<<<<<<<<<<
  * 
- * 
+ * @cython.freelist(4)
  */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_ndarray_toimage); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 114, __pyx_L1_error)
@@ -19279,14 +19279,23 @@ static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *__
   return __pyx_r;
 }
 
+static struct __pyx_obj_8instakit_10processors_3ext_8halftone_Atkinson *__pyx_freelist_8instakit_10processors_3ext_8halftone_Atkinson[4];
+static int __pyx_freecount_8instakit_10processors_3ext_8halftone_Atkinson = 0;
+
 static PyObject *__pyx_tp_new_8instakit_10processors_3ext_8halftone_Atkinson(PyTypeObject *t, PyObject *a, PyObject *k) {
   PyObject *o;
-  if (likely((t->tp_flags & Py_TPFLAGS_IS_ABSTRACT) == 0)) {
-    o = (*t->tp_alloc)(t, 0);
+  if (CYTHON_COMPILING_IN_CPYTHON && likely((__pyx_freecount_8instakit_10processors_3ext_8halftone_Atkinson > 0) & (t->tp_basicsize == sizeof(struct __pyx_obj_8instakit_10processors_3ext_8halftone_Atkinson)) & ((t->tp_flags & (Py_TPFLAGS_IS_ABSTRACT | Py_TPFLAGS_HEAPTYPE)) == 0))) {
+    o = (PyObject*)__pyx_freelist_8instakit_10processors_3ext_8halftone_Atkinson[--__pyx_freecount_8instakit_10processors_3ext_8halftone_Atkinson];
+    memset(o, 0, sizeof(struct __pyx_obj_8instakit_10processors_3ext_8halftone_Atkinson));
+    (void) PyObject_INIT(o, t);
   } else {
-    o = (PyObject *) PyBaseObject_Type.tp_new(t, __pyx_empty_tuple, 0);
+    if (likely((t->tp_flags & Py_TPFLAGS_IS_ABSTRACT) == 0)) {
+      o = (*t->tp_alloc)(t, 0);
+    } else {
+      o = (PyObject *) PyBaseObject_Type.tp_new(t, __pyx_empty_tuple, 0);
+    }
+    if (unlikely(!o)) return 0;
   }
-  if (unlikely(!o)) return 0;
   if (unlikely(__pyx_pw_8instakit_10processors_3ext_8halftone_8Atkinson_1__cinit__(o, a, k) < 0)) goto bad;
   return o;
   bad:
@@ -19300,7 +19309,11 @@ static void __pyx_tp_dealloc_8instakit_10processors_3ext_8halftone_Atkinson(PyOb
     if (PyObject_CallFinalizerFromDealloc(o)) return;
   }
   #endif
-  (*Py_TYPE(o)->tp_free)(o);
+  if (CYTHON_COMPILING_IN_CPYTHON && ((__pyx_freecount_8instakit_10processors_3ext_8halftone_Atkinson < 4) & (Py_TYPE(o)->tp_basicsize == sizeof(struct __pyx_obj_8instakit_10processors_3ext_8halftone_Atkinson)) & ((Py_TYPE(o)->tp_flags & (Py_TPFLAGS_IS_ABSTRACT | Py_TPFLAGS_HEAPTYPE)) == 0))) {
+    __pyx_freelist_8instakit_10processors_3ext_8halftone_Atkinson[__pyx_freecount_8instakit_10processors_3ext_8halftone_Atkinson++] = ((struct __pyx_obj_8instakit_10processors_3ext_8halftone_Atkinson *)o);
+  } else {
+    (*Py_TYPE(o)->tp_free)(o);
+  }
 }
 
 static PyMethodDef __pyx_methods_8instakit_10processors_3ext_8halftone_Atkinson[] = {
@@ -19368,14 +19381,23 @@ static PyTypeObject __pyx_type_8instakit_10processors_3ext_8halftone_Atkinson = 
   #endif
 };
 
+static struct __pyx_obj_8instakit_10processors_3ext_8halftone_FloydSteinberg *__pyx_freelist_8instakit_10processors_3ext_8halftone_FloydSteinberg[4];
+static int __pyx_freecount_8instakit_10processors_3ext_8halftone_FloydSteinberg = 0;
+
 static PyObject *__pyx_tp_new_8instakit_10processors_3ext_8halftone_FloydSteinberg(PyTypeObject *t, PyObject *a, PyObject *k) {
   PyObject *o;
-  if (likely((t->tp_flags & Py_TPFLAGS_IS_ABSTRACT) == 0)) {
-    o = (*t->tp_alloc)(t, 0);
+  if (CYTHON_COMPILING_IN_CPYTHON && likely((__pyx_freecount_8instakit_10processors_3ext_8halftone_FloydSteinberg > 0) & (t->tp_basicsize == sizeof(struct __pyx_obj_8instakit_10processors_3ext_8halftone_FloydSteinberg)) & ((t->tp_flags & (Py_TPFLAGS_IS_ABSTRACT | Py_TPFLAGS_HEAPTYPE)) == 0))) {
+    o = (PyObject*)__pyx_freelist_8instakit_10processors_3ext_8halftone_FloydSteinberg[--__pyx_freecount_8instakit_10processors_3ext_8halftone_FloydSteinberg];
+    memset(o, 0, sizeof(struct __pyx_obj_8instakit_10processors_3ext_8halftone_FloydSteinberg));
+    (void) PyObject_INIT(o, t);
   } else {
-    o = (PyObject *) PyBaseObject_Type.tp_new(t, __pyx_empty_tuple, 0);
+    if (likely((t->tp_flags & Py_TPFLAGS_IS_ABSTRACT) == 0)) {
+      o = (*t->tp_alloc)(t, 0);
+    } else {
+      o = (PyObject *) PyBaseObject_Type.tp_new(t, __pyx_empty_tuple, 0);
+    }
+    if (unlikely(!o)) return 0;
   }
-  if (unlikely(!o)) return 0;
   if (unlikely(__pyx_pw_8instakit_10processors_3ext_8halftone_14FloydSteinberg_1__cinit__(o, a, k) < 0)) goto bad;
   return o;
   bad:
@@ -19389,7 +19411,11 @@ static void __pyx_tp_dealloc_8instakit_10processors_3ext_8halftone_FloydSteinber
     if (PyObject_CallFinalizerFromDealloc(o)) return;
   }
   #endif
-  (*Py_TYPE(o)->tp_free)(o);
+  if (CYTHON_COMPILING_IN_CPYTHON && ((__pyx_freecount_8instakit_10processors_3ext_8halftone_FloydSteinberg < 4) & (Py_TYPE(o)->tp_basicsize == sizeof(struct __pyx_obj_8instakit_10processors_3ext_8halftone_FloydSteinberg)) & ((Py_TYPE(o)->tp_flags & (Py_TPFLAGS_IS_ABSTRACT | Py_TPFLAGS_HEAPTYPE)) == 0))) {
+    __pyx_freelist_8instakit_10processors_3ext_8halftone_FloydSteinberg[__pyx_freecount_8instakit_10processors_3ext_8halftone_FloydSteinberg++] = ((struct __pyx_obj_8instakit_10processors_3ext_8halftone_FloydSteinberg *)o);
+  } else {
+    (*Py_TYPE(o)->tp_free)(o);
+  }
 }
 
 static PyMethodDef __pyx_methods_8instakit_10processors_3ext_8halftone_FloydSteinberg[] = {

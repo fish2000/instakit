@@ -87,7 +87,7 @@ cdef void floyd_steinberg_dither(int_t[:, :] input_view, int_t w, int_t h) nogil
             if (y + 1 < h) and (x + 1 < w):
                 input_view[y+1, x+1] = floyd_steinberg_add_error(input_view[y+1, x+1], err, 1)
 
-
+@cython.freelist(4)
 cdef class Atkinson:
     
     """ Fast cythonized Atkinson-dither halftone image processor """
@@ -113,7 +113,7 @@ cdef class Atkinson:
         output_array = numpy.asarray(input_view.base)
         return ndarray_toimage(output_array)
 
-
+@cython.freelist(4)
 cdef class FloydSteinberg:
     
     """ Fast cythonized Floyd-Steinberg-dither halftone image processor """
