@@ -12,9 +12,11 @@ cimport cython
 from instakit.utils.ndarrays import ndarray_fromimage, ndarray_toimage
 
 INT = numpy.int
+UINT8 = numpy.uint8
 FLOAT32 = numpy.float32
 
 ctypedef numpy.int_t int_t
+ctypedef numpy.uint8_t uint8_t
 ctypedef numpy.float32_t float32_t
 
 cdef bint threshold_matrix_allocated = False
@@ -22,15 +24,16 @@ cdef bint threshold_matrix_allocated = False
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-cdef void atkinson_dither(int_t[:, :] input_view, int_t w, int_t h) nogil:
+cdef void atkinson_dither(uint8_t[:, :] input_view, int_t w, int_t h) nogil:
     
-    cdef int_t y, x, err, oldpx, newpx
+    cdef int_t y, x, err
+    cdef uint8_t oldpx, newpx
     
     for y in range(h):
         for x in range(w):
             oldpx = input_view[y, x]
-            newpx = <int_t>threshold_matrix[oldpx]
-            err = (oldpx - newpx) >> 3
+            newpx = <uint8_t>threshold_matrix[oldpx]
+            err = (<int_t>oldpx - <int_t>newpx) >> 3
             
             input_view[y, x] = newpx
             
@@ -55,37 +58,61 @@ cdef void atkinson_dither(int_t[:, :] input_view, int_t w, int_t h) nogil:
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-cdef inline int_t floyd_steinberg_add_error(int_t base,
-                                            int_t err,
-                                            int_t frac) nogil:
-    cdef int_t something = base + err * frac / 16
-    return (err < 0) and max(something, 0) or min(something, 255)
+cdef inline uint8_t floyd_steinberg_add_error_SEVEN(uint8_t base,
+                                                      int_t err) nogil:
+    cdef int_t something = <int_t>base + err * 7 / 16
+    return <uint8_t>max(min(255, something), 0)
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-cdef void floyd_steinberg_dither(int_t[:, :] input_view, int_t w, int_t h) nogil:
+cdef inline uint8_t floyd_steinberg_add_error_THREE(uint8_t base,
+                                                      int_t err) nogil:
+    cdef int_t something = <int_t>base + err * 3 / 16
+    return <uint8_t>max(min(255, something), 0)
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+@cython.cdivision(True)
+cdef inline uint8_t floyd_steinberg_add_error_CINCO(uint8_t base,
+                                                      int_t err) nogil:
+    cdef int_t something = <int_t>base + err * 5 / 16
+    return <uint8_t>max(min(255, something), 0)
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+@cython.cdivision(True)
+cdef inline uint8_t floyd_steinberg_add_error_ALONE(uint8_t base,
+                                                      int_t err) nogil:
+    cdef int_t something = <int_t>base + err * 1 / 16
+    return <uint8_t>max(min(255, something), 0)
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+@cython.cdivision(True)
+cdef void floyd_steinberg_dither(uint8_t[:, :] input_view, int_t w, int_t h) nogil:
     
-    cdef int_t y, x, err, oldpx, newpx
+    cdef int_t y, x, err
+    cdef uint8_t oldpx, newpx
     
     for y in range(h):
         for x in range(w):
             oldpx = input_view[y, x]
-            newpx = <int_t>threshold_matrix[oldpx]
+            newpx = <uint8_t>threshold_matrix[oldpx]
             input_view[y, x] = newpx
-            err = oldpx - newpx
+            err = <int_t>oldpx - <int_t>newpx
             
             if (x + 1 < w):
-                input_view[y, x+1] = floyd_steinberg_add_error(input_view[y, x+1], err, 7)
+                input_view[y, x+1] = floyd_steinberg_add_error_SEVEN(input_view[y, x+1], err)
             
             if (y + 1 < h) and (x > 0):
-                input_view[y+1, x-1] = floyd_steinberg_add_error(input_view[y+1, x-1], err, 3)
+                input_view[y+1, x-1] = floyd_steinberg_add_error_THREE(input_view[y+1, x-1], err)
             
             if (y + 1 < h):
-                input_view[y+1, x] = floyd_steinberg_add_error(input_view[y+1, x], err, 5)
+                input_view[y+1, x] = floyd_steinberg_add_error_CINCO(input_view[y+1, x], err)
             
             if (y + 1 < h) and (x + 1 < w):
-                input_view[y+1, x+1] = floyd_steinberg_add_error(input_view[y+1, x+1], err, 1)
+                input_view[y+1, x+1] = floyd_steinberg_add_error_ALONE(input_view[y+1, x+1], err)
 
 @cython.freelist(4)
 cdef class Atkinson:
@@ -97,18 +124,18 @@ cdef class Atkinson:
     @cython.cdivision(True)
     def __cinit__(self, float32_t threshold = 128.0):
         global threshold_matrix_allocated
-        cdef int_t i
+        cdef uint8_t idx
         if not threshold_matrix_allocated:
-            for i in range(255):
-                threshold_matrix[i] = <unsigned char>(<int_t>(<float32_t>i / threshold) * 255)
+            for idx in range(255):
+                threshold_matrix[idx] = <unsigned char>(<uint8_t>(<float32_t>idx / threshold) * 255)
             threshold_matrix_allocated = True
     
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.cdivision(True)
     def process(self, image not None):
-        input_array = ndarray_fromimage(image.convert('L')).astype(INT)
-        cdef int_t[:, :] input_view = input_array
+        input_array = ndarray_fromimage(image.convert('L')).astype(UINT8)
+        cdef uint8_t[:, :] input_view = input_array
         atkinson_dither(input_view, image.size[0], image.size[1])
         output_array = numpy.asarray(input_view.base)
         return ndarray_toimage(output_array)
@@ -123,18 +150,18 @@ cdef class FloydSteinberg:
     @cython.cdivision(True)
     def __cinit__(self, float32_t threshold = 128.0):
         global threshold_matrix_allocated
-        cdef int_t i
+        cdef uint8_t idx
         if not threshold_matrix_allocated:
-            for i in range(255):
-                threshold_matrix[i] = <unsigned char>(<int_t>(<float32_t>i / threshold) * 255)
+            for idx in range(255):
+                threshold_matrix[idx] = <unsigned char>(<uint8_t>(<float32_t>idx / threshold) * 255)
             threshold_matrix_allocated = True
     
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.cdivision(True)
     def process(self, image not None):
-        input_array = ndarray_fromimage(image.convert('L')).astype(INT)
-        cdef int_t[:, :] input_view = input_array
+        input_array = ndarray_fromimage(image.convert('L')).astype(UINT8)
+        cdef uint8_t[:, :] input_view = input_array
         floyd_steinberg_dither(input_view, image.size[0], image.size[1])
         output_array = numpy.asarray(input_view.base)
         return ndarray_toimage(output_array)
