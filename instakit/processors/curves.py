@@ -87,23 +87,24 @@ class SingleCurve(list):
 
 class CurveSet(object):
     
+    acv = 'acv'
+    dotacv = '.' + acv
     channels = ('composite', 'red', 'green', 'blue')
     valid_modes = ('RGB', '1', 'L')
     
     @classmethod
     def builtin(cls, name):
-        print("Reading curves from builtin %s" % name)
-        acv_path = static.path('acv', "%s.acv" % name)
+        print("Reading curves [builtin]: %s%s" % (name, cls.dotacv))
+        acv_path = static.path(cls.acv, "%s%s" % (name, cls.dotacv))
         out = cls(acv_path)
-        # out.name = name
         out._is_builtin = True
         return out
     
     @classmethod
     def instakit_names(cls):
-        return [curve_file.rstrip('.acv') \
-            for curve_file in static.listfiles('acv') \
-            if curve_file.lower().endswith('.acv')]
+        return [curve_file.rstrip(cls.dotacv) \
+            for curve_file in static.listfiles(cls.acv) \
+            if curve_file.lower().endswith(cls.dotacv)]
     
     @classmethod
     def instakit_curve_sets(cls):
@@ -141,7 +142,6 @@ class CurveSet(object):
         return curve.interpolate(interpolation_mode)
     
     def read_acv(self, acv_path, interpolation_mode):
-        # print("Reading curves from %s" % acv_path)
         with open(acv_path, "rb") as acv_file:
             _, self.count = unpack("!hh", acv_file.read(4))
             for idx in range(self.count):
