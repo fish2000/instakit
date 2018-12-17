@@ -131,7 +131,8 @@ class CurveSet(object):
     def is_builtin(self):
         return self._is_builtin
     
-    def read_one_curve(self, acv_file, name, interpolation_mode):
+    @staticmethod
+    def read_one_curve(acv_file, name, interpolation_mode):
         curve = SingleCurve(name)
         points_in_curve, = unpack("!h", acv_file.read(2))
         for _ in range(points_in_curve):
