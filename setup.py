@@ -35,6 +35,7 @@ except ImportError:
     use_setuptools()
     from setuptools import setup, Extension
 from Cython.Build import cythonize
+from distutils.sysconfig import get_python_inc
 
 def cython_module(*args, **kwargs):
     sources = []
@@ -72,8 +73,8 @@ try:
 except:
     __version__ = '0.4.4'
 
-from Cython.Distutils import build_ext
-from distutils.sysconfig import get_python_inc
+# from Cython.Distutils import build_ext
+
 
 name = 'instakit'
 description = 'Image processors and filters.'
@@ -190,7 +191,7 @@ setup(
                                     infer_types=True,
                                     embedsignature=True)),
     
-    cmdclass=dict(build_ext=build_ext),
+    # cmdclass=dict(build_ext=build_ext),
     include_dirs=include_dirs,
     classifiers=classifiers+[
         'License :: OSI Approved :: MIT License',

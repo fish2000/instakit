@@ -1,15 +1,15 @@
 
 from __future__ import division
 
+cdef extern from "halftone.h" nogil:
+    unsigned char atkinson_add_error(int b, int e)
+    unsigned char* threshold_matrix
+
 import numpy
 cimport numpy
 cimport cython
 
 from instakit.utils.ndarrays import ndarray_fromimage, ndarray_toimage
-
-cdef extern from "halftone.h" nogil:
-    unsigned char atkinson_add_error(int b, int e)
-    unsigned char* threshold_matrix
 
 INT = numpy.int
 FLOAT32 = numpy.float32
@@ -78,7 +78,7 @@ cdef void floyd_steinberg_dither(int_t[:, :] input_view, int_t w, int_t h) nogil
             if (x + 1 < w):
                 input_view[y, x+1] = floyd_steinberg_add_error(input_view[y, x+1], err, 7)
             
-            if (y + 1 < h) and (x - 1 > 0):
+            if (y + 1 < h) and (x > 0):
                 input_view[y+1, x-1] = floyd_steinberg_add_error(input_view[y+1, x-1], err, 3)
             
             if (y + 1 < h):

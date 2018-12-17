@@ -1,8 +1,7 @@
 from __future__ import print_function
 
 from collections import defaultdict
-from PIL import Image
-from PIL import ImageMode
+from PIL import Image, ImageMode, ImageChops
 
 try:
     from functools import reduce
@@ -51,8 +50,8 @@ class ChannelFork(defaultdict):
             raise AttributeError(
                 "ChannelFork() requires a callable default_factory")
         
-        self.channels = ImageMode.getmode(
-            kwargs.pop('mode', self.default_mode))
+        self.channels = ImageMode.getmode(kwargs.pop('mode',
+                                          self.default_mode))
         
         super(ChannelFork, self).__init__(default_factory, *args, **kwargs)
     
@@ -73,9 +72,8 @@ class ChannelFork(defaultdict):
         self.channels = ImageMode.getmode(mode_string)
     
     def compose(self, *channels):
-        return Image.merge(
-            self.channels.mode,
-            channels)
+        return Image.merge(self.channels.mode,
+                                channels)
     
     def process(self, image):
         if image.mode != self.channels.mode:
@@ -107,10 +105,9 @@ class CMYKInk(object):
     
     def process(self, image):
         from PIL import ImageOps
-        return ImageOps.colorize(
-            image.convert('L'),
-            self.WHITE,
-            self.ink_value)
+        return ImageOps.colorize(image.convert('L'),
+                                 self.WHITE,
+                                 self.ink_value)
 
 
 class ChannelOverprinter(ChannelFork):
@@ -126,7 +123,6 @@ class ChannelOverprinter(ChannelFork):
                     self.default_mode) # CMYK
     
     def compose(self, *channels):
-        from PIL import ImageChops
         return reduce(ImageChops.multiply, channels)
     
     def process(self, image):

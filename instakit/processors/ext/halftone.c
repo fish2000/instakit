@@ -641,11 +641,11 @@ static CYTHON_INLINE float __PYX_NAN() {
 #define __PYX_HAVE__instakit__processors__ext__halftone
 #define __PYX_HAVE_API__instakit__processors__ext__halftone
 /* Early includes */
+#include "halftone.h"
 #include <string.h>
 #include <stdio.h>
 #include "numpy/arrayobject.h"
 #include "numpy/ufuncobject.h"
-#include "halftone.h"
 #include "pythread.h"
 #include <stdlib.h>
 #include "pystate.h"
@@ -3094,7 +3094,7 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_floyd_steinberg_dither
  *             if (x + 1 < w):
  *                 input_view[y, x+1] = floyd_steinberg_add_error(input_view[y, x+1], err, 7)             # <<<<<<<<<<<<<<
  * 
- *             if (y + 1 < h) and (x - 1 > 0):
+ *             if (y + 1 < h) and (x > 0):
  */
         __pyx_t_12 = __pyx_v_y;
         __pyx_t_13 = (__pyx_v_x + 1);
@@ -3114,7 +3114,7 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_floyd_steinberg_dither
       /* "instakit/processors/ext/halftone.pyx":81
  *                 input_view[y, x+1] = floyd_steinberg_add_error(input_view[y, x+1], err, 7)
  * 
- *             if (y + 1 < h) and (x - 1 > 0):             # <<<<<<<<<<<<<<
+ *             if (y + 1 < h) and (x > 0):             # <<<<<<<<<<<<<<
  *                 input_view[y+1, x-1] = floyd_steinberg_add_error(input_view[y+1, x-1], err, 3)
  * 
  */
@@ -3124,14 +3124,14 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_floyd_steinberg_dither
         __pyx_t_11 = __pyx_t_16;
         goto __pyx_L9_bool_binop_done;
       }
-      __pyx_t_16 = (((__pyx_v_x - 1) > 0) != 0);
+      __pyx_t_16 = ((__pyx_v_x > 0) != 0);
       __pyx_t_11 = __pyx_t_16;
       __pyx_L9_bool_binop_done:;
       if (__pyx_t_11) {
 
         /* "instakit/processors/ext/halftone.pyx":82
  * 
- *             if (y + 1 < h) and (x - 1 > 0):
+ *             if (y + 1 < h) and (x > 0):
  *                 input_view[y+1, x-1] = floyd_steinberg_add_error(input_view[y+1, x-1], err, 3)             # <<<<<<<<<<<<<<
  * 
  *             if (y + 1 < h):
@@ -3145,7 +3145,7 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_floyd_steinberg_dither
         /* "instakit/processors/ext/halftone.pyx":81
  *                 input_view[y, x+1] = floyd_steinberg_add_error(input_view[y, x+1], err, 7)
  * 
- *             if (y + 1 < h) and (x - 1 > 0):             # <<<<<<<<<<<<<<
+ *             if (y + 1 < h) and (x > 0):             # <<<<<<<<<<<<<<
  *                 input_view[y+1, x-1] = floyd_steinberg_add_error(input_view[y+1, x-1], err, 3)
  * 
  */
@@ -21098,26 +21098,26 @@ if (!__Pyx_RefNanny) {
   if (__Pyx_patch_abc() < 0) __PYX_ERR(0, 2, __pyx_L1_error)
   #endif
 
-  /* "instakit/processors/ext/halftone.pyx":4
- * from __future__ import division
+  /* "instakit/processors/ext/halftone.pyx":8
+ *     unsigned char* threshold_matrix
  * 
  * import numpy             # <<<<<<<<<<<<<<
  * cimport numpy
  * cimport cython
  */
-  __pyx_t_1 = __Pyx_Import(__pyx_n_s_numpy, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 4, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_Import(__pyx_n_s_numpy, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 8, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_numpy, __pyx_t_1) < 0) __PYX_ERR(0, 4, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_numpy, __pyx_t_1) < 0) __PYX_ERR(0, 8, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "instakit/processors/ext/halftone.pyx":8
+  /* "instakit/processors/ext/halftone.pyx":12
  * cimport cython
  * 
  * from instakit.utils.ndarrays import ndarray_fromimage, ndarray_toimage             # <<<<<<<<<<<<<<
  * 
- * cdef extern from "halftone.h" nogil:
+ * INT = numpy.int
  */
-  __pyx_t_1 = PyList_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 8, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_INCREF(__pyx_n_s_ndarray_fromimage);
   __Pyx_GIVEREF(__pyx_n_s_ndarray_fromimage);
@@ -21125,21 +21125,21 @@ if (!__Pyx_RefNanny) {
   __Pyx_INCREF(__pyx_n_s_ndarray_toimage);
   __Pyx_GIVEREF(__pyx_n_s_ndarray_toimage);
   PyList_SET_ITEM(__pyx_t_1, 1, __pyx_n_s_ndarray_toimage);
-  __pyx_t_2 = __Pyx_Import(__pyx_n_s_instakit_utils_ndarrays, __pyx_t_1, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 8, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_Import(__pyx_n_s_instakit_utils_ndarrays, __pyx_t_1, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_ndarray_fromimage); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 8, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_ndarray_fromimage); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_ndarray_fromimage, __pyx_t_1) < 0) __PYX_ERR(0, 8, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_ndarray_fromimage, __pyx_t_1) < 0) __PYX_ERR(0, 12, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_ndarray_toimage); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 8, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_ndarray_toimage); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_ndarray_toimage, __pyx_t_1) < 0) __PYX_ERR(0, 8, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_ndarray_toimage, __pyx_t_1) < 0) __PYX_ERR(0, 12, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "instakit/processors/ext/halftone.pyx":14
- *     unsigned char* threshold_matrix
+ * from instakit.utils.ndarrays import ndarray_fromimage, ndarray_toimage
  * 
  * INT = numpy.int             # <<<<<<<<<<<<<<
  * FLOAT32 = numpy.float32
@@ -21181,7 +21181,7 @@ if (!__Pyx_RefNanny) {
  * 
  * from __future__ import division             # <<<<<<<<<<<<<<
  * 
- * import numpy
+ * cdef extern from "halftone.h" nogil:
  */
   __pyx_t_2 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 2, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
