@@ -71,10 +71,7 @@ try:
             '__version__.py')).read(),
             '__version__.py', 'exec'))
 except:
-    __version__ = '0.4.4'
-
-# from Cython.Distutils import build_ext
-
+    __version__ = '0.4.5'
 
 name = 'instakit'
 description = 'Image processors and filters.'
@@ -191,7 +188,6 @@ setup(
                                     infer_types=True,
                                     embedsignature=True)),
     
-    # cmdclass=dict(build_ext=build_ext),
     include_dirs=include_dirs,
     classifiers=classifiers+[
         'License :: OSI Approved :: MIT License',
