@@ -112,5 +112,5 @@ def add_argparser(subparsers, cls):
                                  help='help for argument %s' % argument_name)
         if argument_type is bool:
             add_argument_args.update({ 'action' : 'store_true' })
-        parser.add_argument(f'--%s' % argument_name, **add_argument_args)
+        parser.add_argument('--%s' % argument_name, **add_argument_args)
     return parser
