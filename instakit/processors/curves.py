@@ -154,10 +154,12 @@ class CurveSet(object):
         mode = image.mode
         if mode not in type(self).valid_modes:
             image = image.convert('RGB')
-        if mode == '1':
-            image = image.convert('L')
-        if mode == 'L':
-            return Image.eval(image, self.curves[0])
+        elif mode == '1':
+            return Image.eval(image.convert('L'),
+                              self.curves[0])
+        elif mode == 'L':
+            return Image.eval(image,
+                              self.curves[0])
         # has to be RGB at this point -- but we'll use the
         # mode of the operand image for future-proofiness:
         adjusted_channels = []
@@ -165,7 +167,7 @@ class CurveSet(object):
             adjusted_channels.append(
                 Image.eval(channel,
                            lambda v: self.curves[idx+1](v)))
-        return Image.merge(mode, adjusted_channels)
+        return Image.merge('RGB', adjusted_channels)
     
     def __repr__(self):
         cls_name = getattr(type(self), '__qualname__',
