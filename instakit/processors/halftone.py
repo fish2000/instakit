@@ -111,6 +111,35 @@ except ImportError:
 else:
     FloydSteinberg = FastFloydSteinberg
 
+class CMYKAtkinson(object):
+    
+    """ Create a full-color CMYK Atkinson-dithered halftone, with gray-component
+        replacement (GCR) at a specified percentage level
+    """
+    
+    def __init__(self, gcr=20):
+        self.gcr = max(min(100, gcr), 0)
+        self.overprinter = pipeline.ChannelFork(Atkinson, mode='CMYK')
+    
+    def process(self, image):
+        return self.overprinter.process(
+            gcr(image, self.gcr))
+
+class CMYKFloydsterBill(object):
+    
+    """ Create a full-color CMYK Atkinson-dithered halftone, with gray-component
+        replacement (GCR) and OH SHIT SON WHAT IS THAT ON THE CYAN CHANNEL DOGG
+    """
+    
+    def __init__(self, gcr=20):
+        self.gcr = max(min(100, gcr), 0)
+        self.overprinter = pipeline.ChannelFork(Atkinson, mode='CMYK')
+        self.overprinter.update({ 'C' : SlowFloydSteinberg() })
+    
+    def process(self, image):
+        return self.overprinter.process(
+            gcr(image, self.gcr))
+
 class DotScreen(object):
     
     """ This processor creates a monochrome dot-screen halftone pattern
@@ -138,8 +167,8 @@ class DotScreen(object):
         halftone = Image.new('L', size)
         dotscreen = ImageDraw.Draw(halftone)
         
-        for x in range(0, image.size[0], self.sample):
-            for y in range(0, image.size[0], self.sample):
+        for y in range(0, image.size[1], self.sample):
+            for x in range(0, image.size[0], self.sample):
                 cropbox = image.crop((x,               y,
                                       x + self.sample, y + self.sample))
                 stat = ImageStat.Stat(cropbox)
@@ -193,9 +222,13 @@ if __name__ == '__main__':
             image_paths))
     
     for image_input in image_inputs:
-        #image_input.show()
-        Atkinson(threshold=128.0).process(image_input).show()
-        FloydSteinberg(threshold=128.0).process(image_input).show()
+        # image_input.show()
+        
+        # Atkinson(threshold=128.0).process(image_input).show()
+        # FloydSteinberg(threshold=128.0).process(image_input).show()
+        
+        # CMYKAtkinson().process(image_input).show()
+        CMYKFloydsterBill().process(image_input).show()
         # CMYKDotScreen(sample=2, scale=2).process(image_input).show()
     
     print(image_paths)

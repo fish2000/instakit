@@ -114,3 +114,34 @@ def add_argparser(subparsers, cls):
             add_argument_args.update({ 'action' : 'store_true' })
         parser.add_argument('--%s' % argument_name, **add_argument_args)
     return parser
+
+
+def test():
+    # Test “qualified_import()”:
+    class_name = 'instakit.processors.halftone.SlowFloydSteinberg'
+    ImportedFloydSteinberg = qualified_import(class_name)
+    assert ImportedFloydSteinberg.__name__ == 'SlowFloydSteinberg'
+    assert ImportedFloydSteinberg.__qualname__ == 'SlowFloydSteinberg'
+    assert ImportedFloydSteinberg.__module__ == 'instakit.processors.halftone'
+    
+    class_name = 'instakit.processors.halftone.Atkinson'
+    ImportedAtkinson = qualified_import(class_name)
+    assert ImportedAtkinson.__name__ == 'Atkinson'
+    assert ImportedAtkinson.__qualname__ == 'Atkinson'
+    assert ImportedAtkinson.__module__ == 'instakit.processors.ext.halftone'
+    
+    # Test “qualified_name()”:
+    class_name = qualified_name(Parameter)
+    assert class_name == '__main__.Parameter'
+    
+    
+    
+    # Test “default_arguments()”:
+    
+    # Test “add_argparser()”:
+    
+    
+
+
+if __name__ == '__main__':
+    test()
