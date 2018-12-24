@@ -155,11 +155,8 @@ class CurveSet(object):
         mode = imode(image)
         if mode not in type(self).valid_modes:
             image = Mode.RGB.process(image)
-        elif mode is Mode.MONO:
+        elif mode is not Mode.RGB:
             return Image.eval(Mode.L.process(image),
-                              self.curves[0])
-        elif mode is Mode.L:
-            return Image.eval(image,
                               self.curves[0])
         # has to be RGB at this point -- but we'll use the
         # mode of the operand image for future-proofiness:
