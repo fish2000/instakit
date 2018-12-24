@@ -1,5 +1,5 @@
 
-from instakit.utils.mode import imode, Mode
+from instakit.utils.mode import Mode
 
 RGB = Mode.RGB.value
 CMYK = Mode.CMYK.value
@@ -78,7 +78,7 @@ if __name__ == '__main__':
     for image_input in image_inputs:
         gcred = gcr(image_input)
         assert gcred.mode == CMYK.mode == cmyk
-        assert imode(gcred) is Mode.CMYK
+        assert Mode.of(gcred) is Mode.CMYK
         gcred.show()
     
     print(image_paths)
