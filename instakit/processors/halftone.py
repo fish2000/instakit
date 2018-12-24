@@ -95,11 +95,16 @@ class SlowFloydSteinberg(object):
                         pass # it happens, evidently.
         return image
 
+class Problematic(object):
+    def __init__(self):
+        raise TypeError("Fast-math version couldn't be imported")
+
 try:
     # My man, fast Bill Atkinson
     from instakit.processors.ext.halftone import Atkinson as FastAtkinson
 except ImportError:
     Atkinson = SlowAtkinson
+    FastAtkinson = Problematic
 else:
     Atkinson = FastAtkinson
 
@@ -108,6 +113,7 @@ try:
     from instakit.processors.ext.halftone import FloydSteinberg as FastFloydSteinberg
 except ImportError:
     FloydSteinberg = SlowFloydSteinberg
+    FastFloydSteinberg = Problematic
 else:
     FloydSteinberg = FastFloydSteinberg
 
