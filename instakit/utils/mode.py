@@ -28,13 +28,13 @@ class ModeAncestor(Enum):
                               count,
                               last_values):
         return ImageMode.getmode(
-            image_mode_strings[count])
+               image_mode_strings[count])
     
     @classmethod
     def _missing_(cls, value):
         try:
-            return ImageMode.getmode(
-                image_mode_strings[value])
+            return cls(ImageMode.getmode(
+                       image_mode_strings[value]))
         except (IndexError, TypeError):
             pass
         return super(ModeAncestor, cls)._missing_(value)
@@ -45,6 +45,8 @@ class ModeAncestor(Enum):
 
 
 class Mode(ModeAncestor):
+    
+    """ An enumeration class wrapping ImageMode.ModeDescriptor. """
     
     # N.B. this'll have to be manually updated,
     # whenever PIL.ImageMode gets a change pushed.
@@ -68,9 +70,9 @@ class Mode(ModeAncestor):
     La      = auto()
     
     PA      = auto()
-    I16     = auto()
-    I16L    = auto()
-    I16B    = auto()
+    I16     = auto() # formerly ‘I;16’
+    I16L    = auto() # formerly ‘I;16L’
+    I16B    = auto() # formerly ‘I;16B’
     
     @classmethod
     def of(cls, image):
@@ -130,4 +132,5 @@ if __name__ == '__main__':
     print(list(Mode))
     print([str(Mode.for_string(str(m))) for m in list(Mode)])
     print([(m.basemode, m.basetype) for m in list(Mode)])
-    print(Mode(10))
+    # print(Mode(10))
+    assert Mode(10) == Mode.LAB
