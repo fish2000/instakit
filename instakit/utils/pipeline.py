@@ -1,7 +1,9 @@
+
 from __future__ import print_function
 
 from collections import defaultdict
-from PIL import Image, ImageMode, ImageChops
+from PIL import Image, ImageMode, ImageOps, ImageChops
+from enum import Enum, unique
 
 try:
     from functools import reduce
@@ -86,29 +88,53 @@ class ChannelFork(defaultdict):
         
         return self.compose(*processed_channels)
 
-class CMYKInk(object):
-    """ Renders an input L-mode image,
-        by simulating a CMYK primary ink color.
-    """
+ink_values = (
+    (255, 255, 255),    # White
+    (0,   250, 250),    # Cyan
+    (250, 0,   250),    # Magenta
+    (250, 250, 0),      # Yellow
+    (0,   0,   0),      # Key (blacK)
+    (255, 0,   0),      # Red
+    (0,   255, 0),      # Green
+    (0,   0,   255),    # Blue
+)
+
+class Ink(Enum):
     
-    WHITE =     (255,   255,    255)
-    CYAN =      (0,     250,    250)
-    MAGENTA =   (250,   0,      250)
-    YELLOW =    (250,   250,    0)
-    KEY =       (0,     0,      0)
-    CMYK =      (CYAN, MAGENTA, YELLOW, KEY)
-    
-    def __init__(self, ink_value=None):
-        if ink_value is None:
-            ink_value = self.KEY
-        self.ink_value = ink_value
+    def rgb(self):
+        return ink_values[self.value]
     
     def process(self, image):
-        from PIL import ImageOps
+        InkType = type(self)
         return ImageOps.colorize(image.convert('L'),
-                                 self.WHITE,
-                                 self.ink_value)
+                                 InkType(0).rgb(),
+                                 InkType(self.value).rgb())
 
+@unique
+class CMYKInk(Ink):
+    
+    WHITE = 0
+    CYAN = 1
+    MAGENTA = 2
+    YELLOW = 3
+    KEY = 4
+    
+    @classmethod
+    def CMYK(cls):
+        return (cls.CYAN, cls.MAGENTA, cls.YELLOW, cls.KEY)
+
+@unique
+class RGBInk(Ink):
+    
+    WHITE = 0
+    RED = 5
+    GREEN = 6
+    BLUE = 7
+    KEY = 4
+    
+    @classmethod
+    def RGB(cls):
+        return (cls.RED, cls.GREEN, cls.BLUE)
 
 class ChannelOverprinter(ChannelFork):
     """ A ChannelFork subclass that rebuilds its output image using
@@ -129,7 +155,7 @@ class ChannelOverprinter(ChannelFork):
         # Compile the standard CMYK ink values as a dict of processing ops,
         # keyed with the letter of their channel name (e.g. C, M, Y, and K):
         inks = zip(self.default_mode, # CMYK
-                  [CMYKInk(ink_label) for ink_label in CMYKInk.CMYK])
+                  [CMYKInk(ink_label) for ink_label in CMYKInk.CMYK()])
         
         # Manually two-phase allocate/initialize a ChannelFork “clone” instance
         # to run the ChannelOverprinter CMYK composition processing operations:
