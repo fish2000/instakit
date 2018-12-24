@@ -122,6 +122,10 @@ class CMYKInk(Ink):
     @classmethod
     def CMYK(cls):
         return (cls.CYAN, cls.MAGENTA, cls.YELLOW, cls.KEY)
+    
+    @classmethod
+    def CMY(cls):
+        return (cls.CYAN, cls.MAGENTA, cls.YELLOW)
 
 @unique
 class RGBInk(Ink):
@@ -135,6 +139,10 @@ class RGBInk(Ink):
     @classmethod
     def RGB(cls):
         return (cls.RED, cls.GREEN, cls.BLUE)
+    
+    @classmethod
+    def BGR(cls):
+        return (cls.BLUE, cls.GREEN, cls.RED)
 
 class ChannelOverprinter(ChannelFork):
     """ A ChannelFork subclass that rebuilds its output image using
