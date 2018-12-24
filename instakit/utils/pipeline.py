@@ -2,13 +2,15 @@
 from __future__ import print_function
 
 from collections import defaultdict
-from PIL import Image, ImageMode, ImageOps, ImageChops
+from PIL import Image, ImageOps, ImageChops
 from enum import Enum, unique
 
 try:
     from functools import reduce
 except ImportError:
     pass
+
+from instakit.utils.mode import Mode
 
 class Pipe(list):
     """ A linear pipeline of processors to be applied en masse.
@@ -52,8 +54,9 @@ class ChannelFork(defaultdict):
             raise AttributeError(
                 "ChannelFork() requires a callable default_factory")
         
-        self.channels = ImageMode.getmode(kwargs.pop('mode',
-                                          self.default_mode))
+        self.channels = Mode.for_string(
+                        kwargs.pop('mode', self.default_mode))
+        # self.channels = ImageMode.getmode()
         
         super(ChannelFork, self).__init__(default_factory, *args, **kwargs)
     
@@ -64,22 +67,26 @@ class ChannelFork(defaultdict):
     
     @property
     def mode(self):
-        return self.channels.mode
+        return self.channels.value.mode
     
     @mode.setter
     def mode(self, mode_string):
         self._set_mode(mode_string)
     
     def _set_mode(self, mode_string):
-        self.channels = ImageMode.getmode(mode_string)
+        # self.channels = ImageMode.getmode(mode_string)
+        self.channels = Mode.for_string(mode_string)
     
     def compose(self, *channels):
-        return Image.merge(self.channels.mode,
-                                channels)
+        return self.channels.merge(*channels)
+        # return Image.merge(self.channels.mode,
+        #                         channels)
     
     def process(self, image):
-        if image.mode != self.channels.mode:
-            image = image.convert(self.channels.mode)
+        if not self.channels.check(image):
+            image = self.channels.process(image)
+        # if image.mode != self.channels.mode:
+        #     image = image.convert(self.channels.mode)
         
         processed_channels = []
         for idx, channel in enumerate(image.split()):
@@ -106,7 +113,7 @@ class Ink(Enum):
     
     def process(self, image):
         InkType = type(self)
-        return ImageOps.colorize(image.convert('L'),
+        return ImageOps.colorize(Mode.L.process(image),
                                  InkType(0).rgb(),
                                  InkType(self.value).rgb())
 
@@ -195,7 +202,7 @@ if __name__ == '__main__':
         lambda image_file: static.path('img', image_file),
             static.listfiles('img')))
     image_inputs = list(map(
-        lambda image_path: Image.open(image_path).convert('RGB'),
+        lambda image_path: Mode.RGB.process(Image.open(image_path)),
             image_paths))
     
     for image_input in image_inputs[:2]:

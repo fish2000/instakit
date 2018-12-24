@@ -1,8 +1,9 @@
 
-from PIL import Image, ImageMode
+from PIL import Image
+from instakit.utils.mode import imode, Mode
 
-RGB = ImageMode.getmode('RGB')
-CMYK = ImageMode.getmode('CMYK')
+RGB = Mode.RGB.value
+CMYK = Mode.CMYK.value
 cmyk = CMYK.mode
 
 def gcr(image, percentage=20, revert_mode=False):
@@ -24,8 +25,8 @@ def gcr(image, percentage=20, revert_mode=False):
     
     percent = percentage / 100
     
-    original_mode = ImageMode.getmode(image.mode)
-    cmyk_channels = original_mode == CMYK and image.split() or image.convert(cmyk).split()
+    original_mode = Mode.of(image)
+    cmyk_channels = Mode.CMYK.process(image).split() # no-op for images already in CMYK mode
     
     cmyk_image = []
     for channel in cmyk_channels:
@@ -41,10 +42,10 @@ def gcr(image, percentage=20, revert_mode=False):
             cmyk_image[2][x, y] -= gray
             cmyk_image[3][x, y] = gray
     
-    out = Image.merge(cmyk, cmyk_channels)
+    out = Mode.CMYK.merge(*cmyk_channels)
     
     if revert_mode:
-        return out.convert(original_mode.mode)
+        return original_mode.process(out)
     return out
 
 
@@ -72,12 +73,13 @@ if __name__ == '__main__':
         lambda image_file: static.path('img', image_file),
             static.listfiles('img')))
     image_inputs = list(map(
-        lambda image_path: Image.open(image_path).convert(RGB.mode),
+        lambda image_path: Mode.RGB.process(Image.open(image_path)),
             image_paths))
     
     for image_input in image_inputs:
         gcred = gcr(image_input)
         assert gcred.mode == CMYK.mode == cmyk
+        assert imode(gcred) is Mode.CMYK
         gcred.show()
     
     print(image_paths)

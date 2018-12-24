@@ -12,6 +12,7 @@ from PIL import Image, ImageDraw, ImageStat
 
 from instakit.utils import pipeline
 from instakit.utils.gcr import gcr
+from instakit.utils.mode import Mode
 
 LO_TUP = (0,)
 HI_TUP = (255,)
@@ -32,7 +33,7 @@ class SlowAtkinson(object):
     
     def process(self, image):
         """ The process call returns a monochrome ('L'-mode) image """
-        image = image.convert('L')
+        image = Mode.L.process(image)
         for y in range(image.size[1]):
             for x in range(image.size[0]):
                 old = image.getpixel((x, y))
@@ -73,7 +74,7 @@ class SlowFloydSteinberg(object):
         """ The process call returns a monochrome ('L'-mode) image """
         # N.B. We store local references to the fractional error multipliers
         # to avoid the Python internal-dict-stuff member-lookup overhead:
-        image = image.convert('L')
+        image = Mode.L.process(image)
         SEVEN_FRAC = type(self).SEVEN_FRAC
         THREE_FRAC = type(self).THREE_FRAC
         CINCO_FRAC = type(self).CINCO_FRAC
@@ -168,7 +169,7 @@ class DotScreen(object):
     
     def process(self, image):
         origsize = image.size
-        image = image.convert('L').rotate(self.angle, expand=1)
+        image = Mode.L.process(image).rotate(self.angle, expand=1)
         size = image.size[0] * self.scale, image.size[1] * self.scale
         halftone = Image.new('L', size)
         dotscreen = ImageDraw.Draw(halftone)
@@ -224,7 +225,7 @@ if __name__ == '__main__':
         lambda image_file: static.path('img', image_file),
             static.listfiles('img')))
     image_inputs = list(map(
-        lambda image_path: Image.open(image_path).convert('RGB'),
+        lambda image_path: Mode.RGB.process(Image.open(image_path)),
             image_paths))
     
     for image_input in image_inputs:

@@ -23,6 +23,7 @@ from scipy import interpolate
 from struct import unpack
 
 from instakit.utils import static
+from instakit.utils.mode import imode, Mode
 
 interpolate_mode_strings = ('linear',
                             'nearest',
@@ -90,7 +91,7 @@ class CurveSet(object):
     acv = 'acv'
     dotacv = '.' + acv
     channels = ('composite', 'red', 'green', 'blue')
-    valid_modes = ('RGB', '1', 'L')
+    valid_modes = ( Mode.RGB, Mode.MONO, Mode.L )
     
     @classmethod
     def builtin(cls, name):
@@ -151,13 +152,13 @@ class CurveSet(object):
                                         interpolation_mode))
     
     def process(self, image):
-        mode = image.mode
+        mode = imode(image)
         if mode not in type(self).valid_modes:
-            image = image.convert('RGB')
-        elif mode == '1':
-            return Image.eval(image.convert('L'),
+            image = Mode.RGB.process(image)
+        elif mode is Mode.MONO:
+            return Image.eval(Mode.L.process(image),
                               self.curves[0])
-        elif mode == 'L':
+        elif mode is Mode.L:
             return Image.eval(image,
                               self.curves[0])
         # has to be RGB at this point -- but we'll use the
@@ -167,7 +168,7 @@ class CurveSet(object):
             adjusted_channels.append(
                 Image.eval(channel,
                            lambda v: self.curves[idx+1](v)))
-        return Image.merge('RGB', adjusted_channels)
+        return Mode.RGB.merge(*adjusted_channels)
     
     def __repr__(self):
         cls_name = getattr(type(self), '__qualname__',
@@ -186,7 +187,7 @@ if __name__ == '__main__':
         lambda image_file: static.path('img', image_file),
             static.listfiles('img')))
     image_inputs = list(map(
-        lambda image_path: Image.open(image_path).convert('RGB'),
+        lambda image_path: Mode.RGB.process(Image.open(image_path)),
             image_paths))
     
     for image_input in image_inputs[:1]:
