@@ -86,6 +86,18 @@ class Mode(ModeAncestor):
     def __bytes__(self):
         return bytes(self.to_string(), encoding="UTF-8")
     
+    @property
+    def bands(self):
+        return self.value.bands
+    
+    @property
+    def basemode(self):
+        return type(self).for_string(self.value.basemode)
+    
+    @property
+    def basetype(self):
+        return type(self).for_string(self.value.basetype)
+    
     def check(self, image):
         return imode(image) is self.value
     
@@ -108,3 +120,4 @@ class Mode(ModeAncestor):
 if __name__ == '__main__':
     print(list(Mode))
     print([str(Mode.for_string(str(m))) for m in list(Mode)])
+    print([(m.basemode, m.basetype) for m in list(Mode)])
