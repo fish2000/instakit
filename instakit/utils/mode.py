@@ -120,6 +120,9 @@ class Mode(ModeAncestor):
             return image
         return image.convert(self.to_string())
     
+    def new(self, size, color=0):
+        return Image.new(self.to_string(), size, color=color)
+    
     def open(self, fileish):
         return self.process(Image.open(fileish))
     

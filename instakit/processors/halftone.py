@@ -8,7 +8,7 @@ Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 """
 from __future__ import print_function
 
-from PIL import Image, ImageDraw, ImageStat
+from PIL import ImageDraw, ImageStat
 
 from instakit.utils import pipeline
 from instakit.utils.gcr import gcr
@@ -171,7 +171,7 @@ class DotScreen(object):
         origsize = image.size
         image = Mode.L.process(image).rotate(self.angle, expand=1)
         size = image.size[0] * self.scale, image.size[1] * self.scale
-        halftone = Image.new('L', size)
+        halftone = Mode.L.new(size)
         dotscreen = ImageDraw.Draw(halftone)
         
         for y in range(0, image.size[1], self.sample):
