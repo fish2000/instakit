@@ -17,7 +17,7 @@ def gcr(image, percentage=20, revert_mode=False):
     # from http://stackoverflow.com/questions/10572274/halftone-images-in-python
     
     if percentage is None:
-        return revert_mode and image or image.convert(cmyk)
+        return revert_mode and image or Mode.CMYK.process(image)
     
     if percentage > 100 or percentage < 1:
         raise ValueError("Do you not know how percents work??!")
