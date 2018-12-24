@@ -66,7 +66,7 @@ class ChannelFork(defaultdict):
     
     @property
     def mode(self):
-        return self.channels.value.mode
+        return self.channels.to_string()
     
     @mode.setter
     def mode(self, mode_string):
@@ -85,7 +85,7 @@ class ChannelFork(defaultdict):
         processed_channels = []
         for idx, channel in enumerate(image.split()):
             processed_channels.append(
-                self[self.channels.value.bands[idx]].process(channel))
+                self[self.channels.bands[idx]].process(channel))
         
         return self.compose(*processed_channels)
 
