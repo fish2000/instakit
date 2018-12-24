@@ -16,6 +16,8 @@ import numpy
 from PIL import Image
 from pprint import pformat
 
+from instakit.utils.mode import Mode
+
 uint8_t = numpy.uint8
 uint32_t = numpy.uint32
 float32_t = numpy.float32
@@ -99,27 +101,28 @@ def ndarray_fromimage(image, flatten=False, mode=None):
         raise TypeError("Input is not a PIL image (got %s)" % repr(image))
     
     if mode is not None:
-        if mode != image.mode:
-            image = image.convert(mode)
-    elif image.mode == 'P':
+        if not Mode.is_mode(mode):
+            mode = Mode.for_string(mode)
+        image = mode.process(image)
+    elif Mode.of(image) is Mode.P:
         # Mode 'P' means there is an indexed "palette".  If we leave the mode
         # as 'P', then when we do `a = numpy.array(im)` below, `a` will be a 2D
         # containing the indices into the palette, and not a 3D array
         # containing the RGB or RGBA values.
         if 'transparency' in image.info:
-            image = image.convert('RGBA')
+            image = Mode.RGBA.process(image)
         else:
-            image = image.convert('RGB')
+            image = Mode.RGB.process(image)
     
     if flatten:
-        image = image.convert('F')
-    elif image.mode == '1':
+        image = Mode.F.process(image)
+    elif Mode.of(image) is Mode.MONO:
         # Workaround for crash in PIL. When im is 1-bit, the call numpy.array(im)
         # can cause a seg. fault, or generate garbage. See
         # https://github.com/scipy/scipy/issues/2138 and
         # https://github.com/python-pillow/Pillow/issues/350.
         # This converts im from a 1-bit image to an 8-bit image.
-        image = image.convert('L')
+        image = Mode.L.process(image)
     
     out = numpy.array(image)
     return out
@@ -163,27 +166,27 @@ def ndarray_toimage(array, high=255,  low=0,
     if not valid:
         raise ValueError("input array lacks a suitable shape for any mode")
     
+    if mode is not None:
+        if not Mode.is_mode(mode):
+            mode = Mode.for_string(mode)
+    
     if len(shape) == 2:
         shape = (shape[1], shape[0])  # columns show up first
         
-        if mode == 'F':
-            return Image.frombytes(mode,
-                                   shape,
-                                   data.astype(float32_t).tostring())
+        if mode is Mode.F:
+            return mode.frombytes(shape, data.astype(float32_t).tostring())
         
-        if mode in [None, 'L', 'P']:
+        if mode in [ None, Mode.L, Mode.P ]:
             bytedata = bytescale(data, high=high,
                                        low=low,
                                        cmin=cmin,
                                        cmax=cmax)
-            image = Image.frombytes('L',
-                                    shape,
-                                    bytedata.tostring())
+            image = Mode.L.frombytes(shape, bytedata.tostring())
             
             if pal is not None:
                 image.putpalette(numpy.asarray(pal,
                                  dtype=uint8_t).tostring()) # Becomes mode='P' automatically
-            elif mode == 'P':  # default grayscale
+            elif mode is Mode.P:  # default grayscale
                 pal = (numpy.arange(0, 256, 1, dtype=uint8_t)[:, numpy.newaxis] *
                        numpy.ones((3,),        dtype=uint8_t)[numpy.newaxis, :])
                 image.putpalette(numpy.asarray(pal,
@@ -191,11 +194,9 @@ def ndarray_toimage(array, high=255,  low=0,
             
             return image
         
-        if mode == '1':  # high input gives threshold for 1
+        if mode is Mode.MONO:  # high input gives threshold for 1
             bytedata = (data > high)
-            return Image.frombytes(mode,
-                                   shape,
-                                   bytedata.tostring())
+            return Mode.MONO.frombytes(shape, bytedata.tostring())
         
         if cmin is None:
             cmin = numpy.amin(numpy.ravel(data))
@@ -205,10 +206,8 @@ def ndarray_toimage(array, high=255,  low=0,
         
         data = (data * 1.0 - cmin) * (high - low) / (cmax - cmin) + low
         
-        if mode == 'I':
-            image = Image.frombytes(mode,
-                                    shape,
-                                    data.astype(uint32_t).tostring())
+        if mode is Mode.I:
+            image = Mode.I.frombytes(shape, data.astype(uint32_t).tostring())
         else:
             raise ValueError(_errstr)
         
@@ -250,26 +249,24 @@ def ndarray_toimage(array, high=255,  low=0,
     
     if mode is None:
         if numch == 3:
-            mode = 'RGB'
+            mode = Mode.RGB
         else:
-            mode = 'RGBA'
+            mode = Mode.RGBA
     
-    if mode not in ['RGB', 'RGBA', 'YCbCr', 'CMYK']:
+    if mode not in [ Mode.RGB, Mode.RGBA, Mode.YCbCr, Mode.CMYK ]:
         raise ValueError(_errstr)
     
-    if mode in ['RGB', 'YCbCr']:
+    if mode in [ Mode.RGB, Mode.YCbCr ]:
         if numch != 3:
             raise ValueError("Invalid shape for mode “%s”: %s" % (
                               mode, pformat(shape)))
-    if mode in ['RGBA', 'CMYK']:
+    if mode in [ Mode.RGBA, Mode.CMYK ]:
         if numch != 4:
             raise ValueError("Invalid shape for mode “%s”: %s" % (
                               mode, pformat(shape)))
     
     # Here we know both `strdata` and `mode` are correct:
-    image = Image.frombytes(mode,
-                            shape,
-                            strdata)
+    image = mode.frombytes(shape, strdata)
     return image
 
 

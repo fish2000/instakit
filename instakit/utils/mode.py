@@ -29,6 +29,10 @@ class ModeAncestor(Enum):
                               last_values):
         return ImageMode.getmode(
             image_mode_strings[count])
+    
+    @classmethod
+    def is_mode(cls, instance):
+        return type(instance) in cls.__mro__
 
 
 class Mode(ModeAncestor):
@@ -95,6 +99,11 @@ class Mode(ModeAncestor):
     
     def open(self, fileish):
         return self.process(Image.open(fileish))
+    
+    def frombytes(self, size, data, decoder_name='raw', *args):
+        return Image.frombytes(self.to_string(),
+                               size, data, decoder_name,
+                              *args)
 
 if __name__ == '__main__':
     print(list(Mode))
