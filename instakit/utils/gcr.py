@@ -48,6 +48,23 @@ def gcr(image, percentage=20, revert_mode=False):
     return out
 
 
+class BasicGCR(object):
+    
+    __doc__ = gcr.__doc__
+    
+    def __init__(self, percentage=20, revert_mode=False):
+        if percentage is None:
+            raise ValueError("Do you not know how percents work??!")
+        if percentage > 100 or percentage < 1:
+            raise ValueError("Do you not know how percents work??!")
+        self.percentage = percentage
+        self.revert_mode = revert_mode
+    
+    def process(self, image):
+        return gcr(image, percentage=self.percentage,
+                          revert_mode=self.revert_mode)
+
+
 if __name__ == '__main__':
     from instakit.utils import static
     
