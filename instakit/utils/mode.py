@@ -31,6 +31,15 @@ class ModeAncestor(Enum):
             image_mode_strings[count])
     
     @classmethod
+    def _missing_(cls, value):
+        try:
+            return ImageMode.getmode(
+                image_mode_strings[value])
+        except:
+            pass
+        return super(ModeAncestor, cls)._missing_(value)
+    
+    @classmethod
     def is_mode(cls, instance):
         return type(instance) in cls.__mro__
 
@@ -75,7 +84,7 @@ class Mode(ModeAncestor):
         for mode in cls:
             if mode.to_string() == string:
                 return mode
-        raise ValueError("with_string(): unknown mode %s" % string)
+        raise ValueError("for_string(): unknown mode %s" % string)
     
     def to_string(self):
         return str(self.value)
@@ -121,3 +130,4 @@ if __name__ == '__main__':
     print(list(Mode))
     print([str(Mode.for_string(str(m))) for m in list(Mode)])
     print([(m.basemode, m.basetype) for m in list(Mode)])
+    print(Mode(10))
