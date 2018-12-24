@@ -56,7 +56,6 @@ class ChannelFork(defaultdict):
         
         self.channels = Mode.for_string(
                         kwargs.pop('mode', self.default_mode))
-        # self.channels = ImageMode.getmode()
         
         super(ChannelFork, self).__init__(default_factory, *args, **kwargs)
     
@@ -74,24 +73,19 @@ class ChannelFork(defaultdict):
         self._set_mode(mode_string)
     
     def _set_mode(self, mode_string):
-        # self.channels = ImageMode.getmode(mode_string)
         self.channels = Mode.for_string(mode_string)
     
     def compose(self, *channels):
         return self.channels.merge(*channels)
-        # return Image.merge(self.channels.mode,
-        #                         channels)
     
     def process(self, image):
         if not self.channels.check(image):
             image = self.channels.process(image)
-        # if image.mode != self.channels.mode:
-        #     image = image.convert(self.channels.mode)
         
         processed_channels = []
         for idx, channel in enumerate(image.split()):
             processed_channels.append(
-                self[self.channels.bands[idx]].process(channel))
+                self[self.channels.value.bands[idx]].process(channel))
         
         return self.compose(*processed_channels)
 
