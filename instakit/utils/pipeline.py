@@ -2,7 +2,7 @@
 from __future__ import print_function
 
 from collections import defaultdict
-from PIL import Image, ImageOps, ImageChops
+from PIL import ImageOps, ImageChops
 from enum import Enum, unique
 
 try:
@@ -196,7 +196,7 @@ if __name__ == '__main__':
         lambda image_file: static.path('img', image_file),
             static.listfiles('img')))
     image_inputs = list(map(
-        lambda image_path: Mode.RGB.process(Image.open(image_path)),
+        lambda image_path: Mode.RGB.open(image_path),
             image_paths))
     
     for image_input in image_inputs[:2]:

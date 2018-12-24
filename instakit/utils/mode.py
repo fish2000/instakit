@@ -92,6 +92,9 @@ class Mode(ModeAncestor):
         if self.check(image):
             return image
         return image.convert(self.to_string())
+    
+    def open(self, fileish):
+        return self.process(Image.open(fileish))
 
 if __name__ == '__main__':
     print(list(Mode))
