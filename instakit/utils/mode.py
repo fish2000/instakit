@@ -35,7 +35,7 @@ class ModeAncestor(Enum):
         try:
             return ImageMode.getmode(
                 image_mode_strings[value])
-        except:
+        except (IndexError, TypeError):
             pass
         return super(ModeAncestor, cls)._missing_(value)
     
