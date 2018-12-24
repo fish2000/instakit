@@ -40,7 +40,7 @@ class Mode(ModeAncestor):
     # N.B. this'll have to be manually updated,
     # whenever PIL.ImageMode gets a change pushed.
     
-    MONO    = auto()
+    MONO    = auto() # formerly ‘1’
     L       = auto()
     I       = auto()
     F       = auto()

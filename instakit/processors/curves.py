@@ -23,7 +23,7 @@ from scipy import interpolate
 from struct import unpack
 
 from instakit.utils import static
-from instakit.utils.mode import imode, Mode
+from instakit.utils.mode import Mode
 
 interpolate_mode_strings = ('linear',
                             'nearest',
@@ -152,7 +152,7 @@ class CurveSet(object):
                                         interpolation_mode))
     
     def process(self, image):
-        mode = imode(image)
+        mode = Mode.of(image)
         if mode not in type(self).valid_modes:
             image = Mode.RGB.process(image)
         elif mode is not Mode.RGB:
