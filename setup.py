@@ -23,7 +23,7 @@
 #    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
 #    SOFTWARE.
 #
-from __future__ import print_function, unicode_literals
+from __future__ import print_function
 import sys
 import os
 import os.path
@@ -77,12 +77,12 @@ try:
             '__version__.py')).read(),
             '__version__.py', 'exec'))
 except:
-    __version__ = '0.5.8'
+    __version__ = '0.5.10'
 
 name = 'instakit'
 
 keywords = '''
-django imagekit instakit image processing filters halftone dithering curves
+instakit django imagekit image processing filters halftone dithering curves
 Cython Photoshop PIL Pillow NumPy SciPy scikit-image acv photo adjustments
 '''.strip()
 
@@ -91,7 +91,10 @@ description = '''
 Image processors and filters, based on PIL/Pillow, SciPy and scikit-image
 '''.strip()
 
-long_description = u"""
+long_description = """
+Instakit: All That’s Missing Is Several Billion From Zuckerberg
+===============================================================
+
 Image processors and filters, inspired by Instagram, built on top of the
 PIL/Pillow, SciPy and scikit-image packages, accelerated with Cython, and
 ready to use with PILKit and the django-imagekit framework.
@@ -125,7 +128,21 @@ if python_version < 3.4:
     install_requires.append('enum34>=1.1.0')
 
 classifiers = [
-    'Development Status :: 5 - Production/Stable']
+    'Development Status :: 5 - Production/Stable',
+    'License :: OSI Approved :: MIT License',
+    'Operating System :: MacOS',
+    'Operating System :: Microsoft :: Windows',
+    'Operating System :: OS Independent',
+    'Operating System :: POSIX',
+    'Operating System :: Unix',
+    'Programming Language :: Python :: 2.6',
+    'Programming Language :: Python :: 2.7',
+    'Programming Language :: Python :: 3.3',
+    'Programming Language :: Python :: 3.4',
+    'Programming Language :: Python :: 3.5',
+    'Programming Language :: Python :: 3.6',
+    'Programming Language :: Python :: 3.7',
+]
 
 try:
     import numpy
@@ -188,23 +205,25 @@ include_dirs = [
     get_python_inc(plat_specific=1)]
 
 setup(
-    author=u"Alexander Böhn",
-    author_email='fish2000@gmail.com',
-    license='MIT',
-    platforms=['any'],
-    
     name=name,
-    keywords=keywords,
+    version=__version__,
+    author="Alexander Böhn",
+    author_email='fish2000@gmail.com',
+    
     description=description,
     long_description=long_description,
-    version=__version__,
+    long_description_content_type="text/markdown",
     
-    url='http://github.com/fish2000/%s' % name,
-    download_url='http://github.com/fish2000/%s/zipball/master' % name,
+    keywords=keywords,
+    url='https://github.com/fish2000/instakit',
+    download_url='https://github.com/fish2000/instakit/zipball/master',
+    classifiers=classifiers,
+    license='MIT', platforms=['any'],
     
     packages=find_packages(),
-    package_data={ '' : ['*%s*' % os.path.extsep] },
+    package_data={ '' : ['*.*'] },
     include_package_data=True, zip_safe=False,
+    
     install_requires=install_requires,
     include_dirs=include_dirs,
     
@@ -215,19 +234,4 @@ setup(
                                     infer_types=True,
                                     embedsignature=True)),
     
-    classifiers=classifiers+[
-        'License :: OSI Approved :: MIT License',
-        'Operating System :: MacOS',
-        'Operating System :: Microsoft :: Windows',
-        'Operating System :: OS Independent',
-        'Operating System :: POSIX',
-        'Operating System :: Unix',
-        'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-    ],
 )
