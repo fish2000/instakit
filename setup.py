@@ -28,6 +28,7 @@ import sys
 import os
 import os.path
 
+# HOST PYTHON VERSION
 python_version = float("%s%s%s" % (sys.version_info.major,
                                    os.extsep,
                                    sys.version_info.minor))
@@ -41,6 +42,7 @@ except ImportError:
 from Cython.Build import cythonize
 from distutils.sysconfig import get_python_inc
 
+# CYTHON & C-API EXTENSION MODULES
 def cython_module(*args, **kwargs):
     sources = []
     sources.extend(kwargs.pop('sources', []))
@@ -66,7 +68,7 @@ def cython_processor(name, **kwargs):
 def cython_utility(name, **kwargs):
     return cython_module('instakit', 'utils', 'ext', name, **kwargs)
 
-# VERSION & METADATA
+# PROJECT VERSION & METADATA
 __version__ = "<undefined>"
 try:
     exec(compile(
@@ -79,16 +81,15 @@ except:
 
 name = 'instakit'
 
-description = u'''
-Image processors and filters – based on PIL/Pillow, SciPy and scikit-image,
-compatible with PILKit and the django-imagekit framework, with optionally
-Cython-accelerated codepaths
-'''
-
-keywords = u'''
+keywords = '''
 django imagekit instakit image processing filters halftone dithering curves
 Cython Photoshop PIL Pillow NumPy SciPy scikit-image acv photo adjustments
-'''
+'''.strip()
+
+# PROJECT DESCRIPTION
+description = '''
+Image processors and filters, based on PIL/Pillow, SciPy and scikit-image
+'''.strip()
 
 long_description = u"""
 Image processors and filters, inspired by Instagram, built on top of the
@@ -112,12 +113,13 @@ PIL’s rougher edges – like (say) image modes and compositing – plus other
 related miscellany for the enterprising programmer.
 """
 
+# REQUIRED DEPENDENCIES
 install_requires = [
-        'Cython>=0.29.0',
-        'Pillow>=3.0.0',
-        'numpy>=1.7.0',
-        'scipy>=1.1.0',
-        'scikit-image>=0.10.0']
+    'Cython>=0.29.0',
+    'Pillow>=3.0.0',
+    'numpy>=1.7.0',
+    'scipy>=1.1.0',
+    'scikit-image>=0.10.0']
 
 if python_version < 3.4:
     install_requires.append('enum34>=1.1.0')
@@ -133,6 +135,7 @@ except ImportError:
             return os.path.curdir
     numpy = FakeNumpy()
 
+# SETUPTOOLS: FIND SUBORDINATE PACKAGES
 try:
     from setuptools import find_packages
 
@@ -159,6 +162,7 @@ except ImportError:
                     find_packages(pth, module_name))
         return packages
 
+# SETUPTOOLS: CLEAN BUILD ARTIFACTS
 if 'sdist' in sys.argv:
     import subprocess
     finder = "/usr/bin/find %s \( -iname \*.pyc -or -name .DS_Store \) -delete"
