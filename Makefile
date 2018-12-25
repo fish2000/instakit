@@ -32,4 +32,11 @@ sdist:
 twine-upload:
 	twine upload --repository-url=https://upload.pypi.org/legacy/ dist/*
 
+bump:
+	bumpversion --verbose patch
+
+bigbump:
+	bumpversion --verbose minor
+
+
 .PHONY: clean distclean dist cython upload
