@@ -12,12 +12,11 @@ from __future__ import print_function
 from instakit.utils.mode import Mode
 
 def pixel_count(image):
-    image = Mode.L.process(image)
-    return image.size[0] * image.size[1]
+    width, height = Mode.L.process(image).size
+    return width * height
 
 def pixel_sum(image):
-    image = Mode.L.process(image)
-    histogram = image.histogram()
+    histogram = Mode.L.process(image).histogram()
     out = 0.0
     for idx in range(256):
         out += idx * histogram[idx]
