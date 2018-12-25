@@ -66,9 +66,9 @@ class RGBTable(defaultdict):
         where = numpy.where(
             self.identity[:,:] == hash(color))
         print("WHERE:")
-        print(len(zip(*where)))
+        print(len(tuple(zip(*where))))
         try:
-            return zip(*where)[0]
+            return tuple(zip(*where))[0]
         except IndexError:
             return []
     
@@ -121,7 +121,7 @@ def main():
     print(int(RGB(55,66,77)))
     print(numpy.any(identity.identity[:,:] == int(RGB(11,44,99))))
     print(numpy.max(identity.identity))
-    print(RGB(111, 222, 11).dtype_composite)
+    print(RGB(111, 222, 11).composite)
     
     print("")
     print(identity[RGB(146,146,36)])
