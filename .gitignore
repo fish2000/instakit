@@ -18,3 +18,5 @@ build/
 dist/
 sdist/
 
+tmtags
+tmtagsHistory
