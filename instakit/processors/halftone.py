@@ -187,9 +187,9 @@ class DotScreen(object):
                                    fill=255)
         
         halftone = halftone.rotate(-self.angle, expand=1)
-        halfwidth, halfheight = halftone.size
-        xx = (halfwidth - orig_width * self.scale) / 2
-        yy = (halfheight - orig_height * self.scale) / 2
+        half_width, half_height = halftone.size
+        xx = (half_width - orig_width * self.scale) / 2
+        yy = (half_height - orig_height * self.scale) / 2
         return halftone.crop((xx, yy, xx + orig_width * self.scale,
                                       yy + orig_height * self.scale))
 

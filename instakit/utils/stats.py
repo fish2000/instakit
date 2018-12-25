@@ -18,8 +18,8 @@ def pixel_count(image):
 def pixel_sum(image):
     histogram = Mode.L.process(image).histogram()
     out = 0.0
-    for idx in range(256):
-        out += idx * histogram[idx]
+    for idx, val in enumerate(histogram):
+        out += idx * val
     return out
 
 def pixel_mean(image):
