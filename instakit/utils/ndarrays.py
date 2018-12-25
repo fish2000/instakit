@@ -9,7 +9,6 @@ The `bytescale`, `ndarray_fromimage`, and `ndarray_toimage` functions
 were originally published in the `scipy.misc.pilutils` codebase.
 
 """
-
 from __future__ import division
 
 import numpy
