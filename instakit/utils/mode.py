@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+ #!/usr/bin/env python
 # encoding: utf-8
 
 from __future__ import print_function
@@ -8,6 +8,42 @@ from enum import Enum, auto
 
 def imode(image):
     return ImageMode.getmode(image.mode)
+
+def split_abbreviations(s):
+    """ Split a string into a tuple of its unique constituents,
+        based on its internal capitalization -- to wit:
+        
+        >>> split_abbreviations('RGB')
+        ('R', 'G', 'B')
+        >>> split_abbreviations('CMYK')
+        ('C', 'M', 'Y', 'K')
+        >>> split_abbreviations('YCbCr')
+        ('Y', 'Cb', 'Cr')
+        >>> split_abbreviations('sRGB')
+        ('R', 'G', 'B')
+        >>> split_abbreviations('XYZZ')
+        ('X', 'Y', 'Z')
+        
+        If you still find this function inscrutable,
+        have a look here: https://gist.github.com/4027079
+    """
+    abbreviations = []
+    current_token = ''
+    for char in s:
+        if current_token is '':
+            current_token += char
+        elif char.islower():
+            current_token += char
+        else:
+            if not current_token.islower():
+                if current_token not in abbreviations:
+                    abbreviations.append(current_token)
+            current_token = ''
+            current_token += char
+    if current_token is not '':
+        if current_token not in abbreviations:
+            abbreviations.append(current_token)
+    return tuple(abbreviations)
 
 ImageMode.getmode('RGB') # one call must be made to getmode()
                          # to properly initialize ImageMode._modes:
@@ -131,7 +167,15 @@ class Mode(ModeAncestor):
                                size, data, decoder_name,
                               *args)
 
+
 if __name__ == '__main__':
+    
+    assert split_abbreviations('RGB') == ('R', 'G', 'B')
+    assert split_abbreviations('CMYK') == ('C', 'M', 'Y', 'K')
+    assert split_abbreviations('YCbCr') == ('Y', 'Cb', 'Cr')
+    assert split_abbreviations('sRGB') == ('R', 'G', 'B')
+    assert split_abbreviations('XYZ') == ('X', 'Y', 'Z')
+    
     print(list(Mode))
     print([str(Mode.for_string(str(m))) for m in list(Mode)])
     print([(m.basemode, m.basetype) for m in list(Mode)])
