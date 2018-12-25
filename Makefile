@@ -5,7 +5,9 @@ distclean: clean-all-pyc clean-cython clean-build-artifacts
 
 dist: cython distclean upload
 
-upload: sdist twine-upload
+upload: bump sdist twine-upload
+
+bigupload: bigbump sdist twine-upload
 
 clean-pyc:
 	find . -name \*.pyc -print -delete
