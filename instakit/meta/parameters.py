@@ -86,15 +86,35 @@ def qualified_name(cls):
                getattr(cls, '__name__'))
     return "%s%s%s" % (mod_name, QUALIFIER, cls_name)
 
+class Nothing(object):
+    """ Placeholder singleton, signifying nothing """
+    def __new__(cls):
+        return Nothing
+
+def check_parameter_default(param_default):
+    """ Filter result values coming from inspect.signature(…) """
+    if param_default == inspect._empty:
+        return Nothing
+    return param_default
+
 def default_arguments(cls):
     """ Get a dictionary of the keyword arguments with provided defaults,
         as furnished by a given classes’ “__init__” function.
     """
-    argspec = inspect.getargspec(cls)
-    if len(argspec.args) == 1 or argspec.defaults is None:
-        return dict()
-    # The first thing in argspec.args is “self”:
-    return dict(zip(argspec.args[1:], argspec.defaults))
+    try:
+        signature = inspect.signature(cls)
+    except (ValueError, TypeError) as exc:
+        qn = qualified_name(cls).replace('ext.', '')
+        NonCythonCls = qualified_import(qn)
+        if qualified_name(NonCythonCls) != qualified_name(cls):
+            return default_arguments(NonCythonCls)
+        else:
+            raise exc
+    if len(signature.parameters) < 1:
+        return {}
+    return { parameter.name : check_parameter_default(parameter.default) \
+                                for parameter \
+                                in signature.parameters.values() }
 
 def add_argparser(subparsers, cls):
     """ Add a subparser -- an instance of “argparse.ArgumentParser” --
@@ -117,26 +137,77 @@ def add_argparser(subparsers, cls):
 
 
 def test():
+    
     # Test “qualified_import()”:
+    print("Testing “qualified_import()”…")
+    
     class_name = 'instakit.processors.halftone.SlowFloydSteinberg'
     ImportedFloydSteinberg = qualified_import(class_name)
     assert ImportedFloydSteinberg.__name__ == 'SlowFloydSteinberg'
     assert ImportedFloydSteinberg.__qualname__ == 'SlowFloydSteinberg'
     assert ImportedFloydSteinberg.__module__ == 'instakit.processors.halftone'
     
-    class_name = 'instakit.processors.halftone.Atkinson'
+    class_name = 'instakit.processors.halftone.Atkinson' # TWIST!!
     ImportedAtkinson = qualified_import(class_name)
     assert ImportedAtkinson.__name__ == 'Atkinson'
     assert ImportedAtkinson.__qualname__ == 'Atkinson'
     assert ImportedAtkinson.__module__ == 'instakit.processors.ext.halftone'
     
+    print("Success!")
+    print()
+    
     # Test “qualified_name()”:
+    print("Testing “qualified_name()”…")
+    
     class_name = qualified_name(Parameter)
     assert class_name == '__main__.Parameter'
     
+    class_name = qualified_name(ImportedFloydSteinberg)
+    assert class_name == 'instakit.processors.halftone.SlowFloydSteinberg'
     
+    class_name = qualified_name(ImportedAtkinson)
+    assert class_name == 'instakit.processors.ext.halftone.Atkinson'
+    
+    print("Success!")
+    print()
     
     # Test “default_arguments()”:
+    print("Testing “default_arguments()”…")
+    
+    default_args = default_arguments(ImportedFloydSteinberg)
+    assert default_args == dict(threshold=128.0)
+    
+    slow_atkinson = 'instakit.processors.halftone.SlowAtkinson'
+    default_args = default_arguments(qualified_import(slow_atkinson))
+    assert default_args == dict(threshold=128.0)
+    
+    noise = 'instakit.processors.noise.GaussianNoise'
+    default_args = default_arguments(qualified_import(noise))
+    assert default_args == dict()
+    
+    contrast = 'instakit.processors.adjust.Contrast'
+    default_args = default_arguments(qualified_import(contrast))
+    assert default_args == dict(value=1.0)
+    
+    unsharp_mask = 'instakit.processors.blur.UnsharpMask'
+    default_args = default_arguments(qualified_import(unsharp_mask))
+    assert default_args == dict(radius=2,
+                                percent=150,
+                                threshold=3)
+    
+    curveset = 'instakit.processors.curves.CurveSet'
+    default_args = default_arguments(qualified_import(curveset))
+    assert default_args == dict(path=Nothing,
+                                interpolation_mode=None)
+    
+    print("Success!")
+    print()
+    
+    # print(default_args)
+    # assert default_args == dict(value=1.0)
+    
+    
+    
     
     # Test “add_argparser()”:
     
