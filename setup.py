@@ -77,25 +77,20 @@ try:
             '__version__.py')).read(),
             '__version__.py', 'exec'))
 except:
-    __version__ = '0.5.10'
+    __version__ = '0.5.11'
 
 name = 'instakit'
 
-keywords = '''
-instakit django imagekit image processing filters halftone dithering curves
-Cython Photoshop PIL Pillow NumPy SciPy scikit-image acv photo adjustments
-'''.strip()
+keywords = '''instakit django imagekit image processing halftone dithering
+Cython Photoshop PIL Pillow NumPy SciPy scikit-image acv curves'''
 
 # PROJECT DESCRIPTION
-description = '''
-Image processors and filters, based on PIL/Pillow, SciPy and scikit-image
-'''.strip()
+description = 'Image processing tools based on PIL/Pillow and scikit-image'
 
-long_description = """
-Instakit: All That’s Missing Is Several Billion From Zuckerberg
-===============================================================
+long_description = """Instakit: Filters and Tools; BYO Facebook Buyout
+======================================================================
 
-Image processors and filters, inspired by Instagram, built on top of the
+Image processors and filters - inspired by Instagram, built on top of the
 PIL/Pillow, SciPy and scikit-image packages, accelerated with Cython, and
 ready to use with PILKit and the django-imagekit framework.
 
@@ -104,17 +99,16 @@ halftoning (with GCR and per-channel pipeline processors), classes exposing
 image-processing pipeline data as NumPy ND-arrays, Gaussian kernel functions,
 processors for applying channel-based LUT curves to images from Photoshop
 .acv files, imagekit-ready processors furnishing streamlined access to a wide
-schmörgasbörd of Pillow’s many image adjustment algorithms (e.g. noise, blur,
+schmorgasbord of Pillow's many image adjustment algorithms (e.g. noise, blur,
 and sharpen functions, histogram-based operations like Brightness/Contrast,
 among others), an implementation of the entropy-based smart-crop algorithm
-many will recognize from the easy-thumbnails Django app – and much more.
+many will recognize from the easy-thumbnails Django app - and much more.
 
 Experienced users may also make use of the many utilities shipping with
 instakit: LUT maps, color structs, pipeline processing primitives and 
 ink-based separation simulation tools, Enums and wrapper APIs to simplify
-PIL’s rougher edges – like (say) image modes and compositing – plus other
-related miscellany for the enterprising programmer.
-"""
+PIL's rougher edges – like (say) image modes and compositing - plus other
+related miscellany for the enterprising programmer. """
 
 # REQUIRED DEPENDENCIES
 install_requires = [
