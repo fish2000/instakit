@@ -5,14 +5,15 @@ curves.py
 
 Adapted from this:
 
-    http://www.weemoapps.com/creating-retro-and-analog-image-filters-in-mobile-apps
+    https://gist.github.com/fish2000/5641c3697fa4407fcfd59099575d6938
 
 And also this:
 
-    https://github.com/WeemoApps/filteriser/blob/master/extractCurvesFromACVFile.py
+    https://github.com/vbalnt/filterizer/blob/master/extractCurvesFromACVFile.py
 
 Created by FI$H 2000 on 2012-08-23.
-Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
+Copyright (c) 2012-2019 Objects In Space And Time, LLC. All rights reserved.
+
 """
 from __future__ import print_function
 
