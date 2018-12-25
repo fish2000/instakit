@@ -1,6 +1,6 @@
-cython>=0.29.0
+Cython>=0.29.0
 enum34; python_version < '3.4'
 Pillow>=3.0.0
 numpy>=1.7.0
-scipy>=1.0.0
+scipy>=1.1.0
 scikit-image>=0.10.0
