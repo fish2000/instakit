@@ -77,7 +77,7 @@ try:
             '__version__.py')).read(),
             '__version__.py', 'exec'))
 except:
-    __version__ = '0.5.11'
+    __version__ = '0.5.12'
 
 name = 'instakit'
 
@@ -102,8 +102,9 @@ processors for applying channel-based LUT curves to images from Photoshop
 schmorgasbord of Pillow's many image adjustment algorithms (e.g. noise, blur,
 and sharpen functions, histogram-based operations like Brightness/Contrast,
 among others), an implementation of the entropy-based smart-crop algorithm
-many will recognize from the easy-thumbnails Django app - and much more.
+many will recognize from the easy-thumbnails Django app - and much more."""
 
+long_description_etc = """
 Experienced users may also make use of the many utilities shipping with
 instakit: LUT maps, color structs, pipeline processing primitives and 
 ink-based separation simulation tools, Enums and wrapper APIs to simplify
