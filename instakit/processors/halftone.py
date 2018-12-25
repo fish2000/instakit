@@ -178,10 +178,9 @@ class DotScreen(object):
             for x in range(0, image.size[0], self.sample):
                 cropbox = image.crop((x,               y,
                                       x + self.sample, y + self.sample))
-                mean = stats.pixel_mean(cropbox)
-                diameter = (mean / 255) ** 0.5
+                diameter = (stats.pixel_mean(cropbox) / 255) ** 0.5
                 edge = 0.5 * (1 - diameter)
-                xpos, ypos = (x+edge) * self.scale, (y+edge) * self.scale
+                xpos, ypos = (x + edge) * self.scale, (y + edge) * self.scale
                 boxedge = self.sample * diameter * self.scale
                 dotscreen.ellipse((xpos,           ypos,
                                    xpos + boxedge, ypos + boxedge),
@@ -191,8 +190,8 @@ class DotScreen(object):
         halfwidth, halfheight = halftone.size
         xx = (halfwidth - origsize[0] * self.scale) / 2
         yy = (halfheight - origsize[1] * self.scale) / 2
-        return halftone.crop((xx, yy, xx+origsize[0] * self.scale,
-                                      yy+origsize[1] * self.scale))
+        return halftone.crop((xx, yy, xx + origsize[0] * self.scale,
+                                      yy + origsize[1] * self.scale))
 
 class CMYKDotScreen(object):
     
@@ -235,7 +234,7 @@ if __name__ == '__main__':
         # FloydSteinberg(threshold=128.0).process(image_input).show()
         
         # CMYKAtkinson().process(image_input).show()
-        CMYKFloydsterBill().process(image_input).show()
-        CMYKDotScreen(sample=2, scale=2).process(image_input).show()
+        # CMYKFloydsterBill().process(image_input).show()
+        CMYKDotScreen(sample=10, scale=4).process(image_input).show()
     
     print(image_paths)
