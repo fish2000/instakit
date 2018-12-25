@@ -77,18 +77,31 @@ try:
             '__version__.py')).read(),
             '__version__.py', 'exec'))
 except:
-    __version__ = '0.5.12'
+    __version__ = '0.5.14'
 
 name = 'instakit'
 
-keywords = '''instakit django imagekit image processing halftone dithering
-Cython Photoshop PIL Pillow NumPy SciPy scikit-image acv curves'''
+keywords = " ".join(('instakit',
+                     'django',
+                     'imagekit',
+                     'image processing',
+                     'halftone',
+                     'dithering',
+                     'Cython',
+                     'Photoshop',
+                     'PIL',
+                     'Pillow',
+                     'NumPy',
+                     'SciPy',
+                     'scikit-image',
+                     'acv',
+                     'curves'))
 
 # PROJECT DESCRIPTION
 description = 'Image processing tools based on PIL/Pillow and scikit-image'
 
-long_description = """Instakit: Filters and Tools; BYO Facebook Buyout
-======================================================================
+longer_description = """Instakit: Filters and Tools; BYO Facebook Buyout
+========================================================================
 
 Image processors and filters - inspired by Instagram, built on top of the
 PIL/Pillow, SciPy and scikit-image packages, accelerated with Cython, and
@@ -206,7 +219,7 @@ setup(
     author_email='fish2000@gmail.com',
     
     description=description,
-    long_description=long_description,
+    long_description=longer_description,
     long_description_content_type="text/markdown",
     
     keywords=keywords,
