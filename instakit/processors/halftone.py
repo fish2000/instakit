@@ -8,9 +8,9 @@ Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 """
 from __future__ import print_function
 
-from PIL import ImageDraw, ImageStat
+from PIL import ImageDraw
 
-from instakit.utils import pipeline
+from instakit.utils import pipeline, stats
 from instakit.utils.gcr import gcr
 from instakit.utils.mode import Mode
 
@@ -178,8 +178,8 @@ class DotScreen(object):
             for x in range(0, image.size[0], self.sample):
                 cropbox = image.crop((x,               y,
                                       x + self.sample, y + self.sample))
-                stat = ImageStat.Stat(cropbox)
-                diameter = (stat.mean[0] / 255) ** 0.5
+                mean = stats.pixel_mean(cropbox)
+                diameter = (mean / 255) ** 0.5
                 edge = 0.5 * (1 - diameter)
                 xpos, ypos = (x+edge) * self.scale, (y+edge) * self.scale
                 boxedge = self.sample * diameter * self.scale
@@ -236,6 +236,6 @@ if __name__ == '__main__':
         
         # CMYKAtkinson().process(image_input).show()
         CMYKFloydsterBill().process(image_input).show()
-        # CMYKDotScreen(sample=2, scale=2).process(image_input).show()
+        CMYKDotScreen(sample=2, scale=2).process(image_input).show()
     
     print(image_paths)
