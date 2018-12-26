@@ -1,4 +1,4 @@
-Copyright © 2012-2015 Alexander Böhn <fish2000@gmail.com>
+Copyright © 2012-2019 Alexander Böhn <fish2000@gmail.com>
 
 Permission is hereby granted by Alexander Böhn (the "Guy"),
 free of charge, to any person obtaining a copy of this software
