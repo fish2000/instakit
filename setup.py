@@ -77,7 +77,7 @@ try:
             '__version__.py')).read(),
             '__version__.py', 'exec'))
 except:
-    __version__ = '0.5.15'
+    __version__ = '0.5.16'
 
 name = 'instakit'
 
