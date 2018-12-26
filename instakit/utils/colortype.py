@@ -8,23 +8,8 @@ Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 """
 
 import numpy
-#from os.path import join
 from collections import namedtuple, defaultdict
-
-#from PIL import Image
-from math import floor
 from instakit.utils.mode import split_abbreviations
-
-#fract = lambda x: x * floor(x)
-#mix = lambda vX, vY, n: vX * (1.0-n) + (vY*n)
-
-#@vectorize
-def fract(x):
-    return x * floor(x)
-
-#@vectorize
-def mix(vX, vY, n):
-    return vX * (1.0-n) + (vY*n)
 
 color_types = defaultdict(dict)
 
