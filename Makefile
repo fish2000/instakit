@@ -41,4 +41,4 @@ bigbump:
 	bumpversion --verbose minor
 
 
-.PHONY: clean distclean dist cython upload
+.PHONY: bigbump bump clean distclean dist cython upload
