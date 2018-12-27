@@ -1,4 +1,4 @@
- #!/usr/bin/env python
+#!/usr/bin/env python
 # encoding: utf-8
 
 from __future__ import print_function
@@ -6,12 +6,13 @@ from __future__ import print_function
 import contextlib
 import numpy
 import os
-import types
 
 from PIL import Image, ImageMode
 from enum import Enum, auto, unique
 
-junkdrawer = types.SimpleNamespace()
+from instakit.utils import misc
+
+junkdrawer = misc.SimpleNamespace()
 junkdrawer.imode = lambda image: ImageMode.getmode(image.mode)
 
 def split_abbreviations(s):
@@ -293,6 +294,7 @@ def test():
     • I;16 (I16)	 ∞    L/L : <u2 » uint16
     • I;16L (I16L)	 ∞    L/L : <u2 » uint16
     • I;16B (I16B)	 ∞    L/L : >u2 » >u2
+    
     """
     
     print("«TESTING: split_abbreviations()»")
