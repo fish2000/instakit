@@ -23,7 +23,10 @@
 #    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
 #    SOFTWARE.
 #
+
 from __future__ import print_function
+from io import open
+
 import sys
 import os
 import os.path
@@ -123,6 +126,11 @@ instakit: LUT maps, color structs, pipeline processing primitives and
 ink-based separation simulation tools, Enums and wrapper APIs to simplify
 PIL's rougher edges – like (say) image modes and compositing - plus other
 related miscellany for the enterprising programmer. """
+
+# LICENSE
+license = open(os.path.join(
+               os.path.dirname(__file__),
+               'LICENSE.txt')).read()
 
 # REQUIRED DEPENDENCIES
 install_requires = [
@@ -226,11 +234,12 @@ setup(
     url='https://github.com/fish2000/instakit',
     download_url='https://github.com/fish2000/instakit/zipball/master',
     classifiers=classifiers,
-    license='MIT', platforms=['any'],
+    license=license, platforms=['any'],
     
     packages=find_packages(),
     package_data={ '' : ['*.*'] },
-    include_package_data=True, zip_safe=False,
+    include_package_data=True,
+    zip_safe=False,
     
     install_requires=install_requires,
     include_dirs=include_dirs,

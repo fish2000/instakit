@@ -13,8 +13,8 @@ to do so, subject to the following conditions:
    included in all copies or substantial portions of the Software.
 
 *  Users of the Software (the "User(s)") who enjoy the use of the
-   Software who recognize the Guy in person without mentioning
-   the fact of their enjoyment shall, henceforth and hithertoforthwith,
+   Software who recognize the Guy in person without mentioning the
+   fact of their enjoyment shall, henceforth and hithertoforthwith,
    waive any soveriegn right to contest reputational damages related
    to the Guy anecdotally describing how the User(s) were totally
    weird that one time, potentially.
