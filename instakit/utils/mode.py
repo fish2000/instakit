@@ -4,12 +4,15 @@
 from __future__ import print_function
 
 import contextlib
-import numpy, os
+import numpy
+import os
+import types
+
 from PIL import Image, ImageMode
 from enum import Enum, auto, unique
 
-def imode(image):
-    return ImageMode.getmode(image.mode)
+junkdrawer = types.SimpleNamespace()
+junkdrawer.imode = lambda image: ImageMode.getmode(image.mode)
 
 def split_abbreviations(s):
     """ Split a string into a tuple of its unique constituents,
@@ -51,11 +54,11 @@ def split_abbreviations(s):
 ImageMode.getmode('RGB') # one call must be made to getmode()
                          # to properly initialize ImageMode._modes:
 
-modes = ImageMode._modes
-modeconv = Image._MODE_CONV
+junkdrawer.modes = ImageMode._modes
+junkdrawer.types = Image._MODE_CONV
 
-image_mode_strings = tuple(modes.keys())
-dtypes_for_modes = { key : val[0] for key, val in modeconv.items() }
+image_mode_strings = tuple(junkdrawer.modes.keys())
+dtypes_for_modes = { k : v[0] for k, v in junkdrawer.types.items() }
 
 
 class ModeAncestor(Enum):
@@ -234,7 +237,7 @@ class Mode(ModeAncestor):
                         or "%s (%s)" % (self, self.name)
     
     def check(self, image):
-        return imode(image) is self.value
+        return junkdrawer.imode(image) is self.value
     
     def merge(self, *channels):
         return Image.merge(self.to_string(), channels)
