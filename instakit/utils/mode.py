@@ -3,9 +3,8 @@
 
 from __future__ import print_function
 
-import collections
 import contextlib
-import numpy
+import numpy, os
 from PIL import Image, ImageMode
 from enum import Enum, auto, unique
 
@@ -87,27 +86,52 @@ class ModeAncestor(Enum):
     def is_mode(cls, instance):
         return type(instance) in cls.__mro__
 
-# mgrname = 'ModeManager'
-mgrfields = ('initial_image', 'image', 'original_mode', 'mode')
-ModeManager = collections.namedtuple('ModeManager', mgrfields)
 
-class ModeContext(ModeManager, contextlib.AbstractContextManager):
+class ModeContext(contextlib.AbstractContextManager):
     
-    def __new__(cls, image, mode):
-        return super(ModeContext, cls).__new__(cls, image, None, Mode.of(image), mode)
+    """ An ad-hoc mutable named-tuple-ish context-manager class,
+        for keeping track of an image while temporarily converting
+        it to a specified mode within the managed context block.
+        
+        Loosely based on the following Code Review posting:
+        • https://codereview.stackexchange.com/q/173045/6293
+    """
+    
+    __slots__ = ('initial_image',
+                         'image',
+                 'original_mode',
+                          'mode')
     
     def __init__(self, image, mode):
         assert Image.isImageType(image)
         assert Mode.is_mode(mode)
-        # ModeManager.__init__(image, None, Mode.of(image), mode)
-        # contextlib.AbstractContextManager.__init__()
+        label = getattr(image, 'filename', None) \
+            and os.path.basename(getattr(image, 'filename', None)) \
+            or str(image)
+        print("ModeContext.__init__: configured with image: %s" % label)
+        self.initial_image = image
+        self.image = None
+        self.original_mode = Mode.of(image)
+        self.mode = mode
+    
+    def __repr__(self):
+        return type(self).__name__ + repr(tuple(self))
+    
+    def __iter__(self):
+        for name in self.__slots__:
+            yield getattr(self, name)
+    
+    def __getitem__(self, idx):
+        return getattr(self, self.__slots__[idx])
+    
+    def __len__(self):
+        return len(self.__slots__)
     
     def __enter__(self):
         initial_image = getattr(self, 'initial_image', None)
         mode = getattr(self, 'mode', None)
         if initial_image is not None and mode is not None:
-            print("ModeContext.__enter__: converting %s to %s" % (Mode.of(initial_image).to_string(),
-                                                                                    mode.to_string()))
+            print("ModeContext.__enter__: converting %s to %s" % (Mode.of(initial_image), mode))
             image = mode.process(initial_image)
             setattr(self, 'image', image)
         return self
@@ -115,7 +139,6 @@ class ModeContext(ModeManager, contextlib.AbstractContextManager):
     def __exit__(self, exc_type=None, exc_val=None, exc_tb=None):
         image = getattr(self, 'image', None)
         original_mode = getattr(self, 'original_mode', None)
-        # mode = getattr(self, 'mode', None)
         if image is not None and original_mode is not None:
             print("ModeContext.__exit__: converting %s to %s" % (Mode.of(image), original_mode))
             initial_image = original_mode.process(image)
@@ -177,6 +200,9 @@ class Mode(ModeAncestor):
     def __bytes__(self):
         return bytes(self.to_string(), encoding="UTF-8")
     
+    def __call__(self, image):
+        return ModeContext(image, self)
+    
     def dtype_code(self):
         return dtypes_for_modes.get(self.to_string(), None) or \
                                     self.basetype.dtype_code()
@@ -228,20 +254,23 @@ class Mode(ModeAncestor):
         return Image.frombytes(self.to_string(),
                                size, data, decoder_name,
                               *args)
-    
-    # def __call__(self, image):
-    #     initial_mode = type(self).of(image)
-    #     setattr(self, 'managed_image', image)
-    #     setattr(self, 'managed_image_mode', initial_mode)
-    #     print("__call__: stored image with mode: %s" % initial_mode.to_string())
-    #     return self
-    
-    def __call__(self, image):
-        return ModeContext(image, self)
 
 
-if __name__ == '__main__':
-    from instakit.utils import static
+def test():
+    
+    print("«KNOWN IMAGE MODES»")
+    print()
+    
+    for m in Mode:
+        print("• %10s\t ∞%5s/%s : %s » %s" % (m.label,
+                                              m.basemode,
+                                              m.basetype,
+                                              m.dtype_code(),
+                                              m.dtype))
+    
+    print()
+    
+    print("«TESTING: split_abbreviations()»")
     
     assert split_abbreviations('RGB') == ('R', 'G', 'B')
     assert split_abbreviations('CMYK') == ('C', 'M', 'Y', 'K')
@@ -249,22 +278,18 @@ if __name__ == '__main__':
     assert split_abbreviations('sRGB') == ('R', 'G', 'B')
     assert split_abbreviations('XYZ') == ('X', 'Y', 'Z')
     
-    print(list(Mode))
-    print()
+    print("«SUCCESS»")
     
-    # print([str(Mode.for_string(str(m))) for m in list(Mode)])
-    # print([(m.basemode, m.basetype) for m in list(Mode)])
+    # print(list(Mode))
     # print()
     
-    # print([ for m in list(Mode)])
-    for m in Mode:
-        print("• %10s\t ∞%5s/%s : %s » %s" % (m.label, m.basemode, m.basetype, m.dtype_code(), m.dtype))
-    
-    print()
-    print()
-    
-    # print(Mode(10))
     assert Mode(10) == Mode.LAB
+    
+    print()
+    
+    print("«TESTING: CONTEXT-MANAGED IMAGE MODES»")
+    print()
+    from instakit.utils import static
     
     image_paths = list(map(
         lambda image_file: static.path('img', image_file),
@@ -274,8 +299,14 @@ if __name__ == '__main__':
             image_paths))
     
     for image in image_inputs:
-        with Mode.L(image) as grayscale_image:
-            assert Mode.of(grayscale_image) is Mode.L
-            print(grayscale_image)
-            grayscale_image = Mode.MONO.process(grayscale_image)
+        with Mode.L(image) as grayscale:
+            assert Mode.of(grayscale.image) is Mode.L
+            print(grayscale.image)
+            grayscale.image = Mode.MONO.process(grayscale.image)
         print()
+    
+    print("«SUCCESS»")
+    print()
+
+if __name__ == '__main__':
+    test()
