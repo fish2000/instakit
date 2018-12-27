@@ -273,6 +273,28 @@ def test():
     
     print()
     
+    """
+    •   1 (MONO)	 ∞    L/L : |b1 » bool
+    •          L	 ∞    L/L : |u1 » uint8
+    •          I	 ∞    L/I : <i4 » int32
+    •          F	 ∞    L/F : <f4 » float32
+    •          P	 ∞  RGB/L : |u1 » uint8
+    •        RGB	 ∞  RGB/L : |u1 » uint8
+    •       RGBX	 ∞  RGB/L : |u1 » uint8
+    •       RGBA	 ∞  RGB/L : |u1 » uint8
+    •       CMYK	 ∞  RGB/L : |u1 » uint8
+    •      YCbCr	 ∞  RGB/L : |u1 » uint8
+    •        LAB	 ∞  RGB/L : |u1 » uint8
+    •        HSV	 ∞  RGB/L : |u1 » uint8
+    •       RGBa	 ∞  RGB/L : |u1 » uint8
+    •         LA	 ∞    L/L : |u1 » uint8
+    •         La	 ∞    L/L : |u1 » uint8
+    •         PA	 ∞  RGB/L : |u1 » uint8
+    • I;16 (I16)	 ∞    L/L : <u2 » uint16
+    • I;16L (I16L)	 ∞    L/L : <u2 » uint16
+    • I;16B (I16B)	 ∞    L/L : >u2 » >u2
+    """
+    
     print("«TESTING: split_abbreviations()»")
     
     assert split_abbreviations('RGB') == ('R', 'G', 'B')
