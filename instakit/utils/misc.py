@@ -5,6 +5,10 @@ from __future__ import print_function
 
 class SimpleNamespace(object):
     
+    """ Implementation courtesy this SO answer:
+        • https://stackoverflow.com/a/37161391/298171
+    """
+    
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
     
