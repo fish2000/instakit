@@ -31,9 +31,10 @@ class NoiseMode(Enum):
     def __str__(self):
         return self.to_string()
     
-    def process_nd(self, ndimage):
+    def process_nd(self, ndimage, **kwargs):
         return random_noise(ndimage,
-                            mode=self.to_string())
+                            mode=self.to_string(),
+                          **kwargs)
 
 
 class Noise(NDProcessor):
