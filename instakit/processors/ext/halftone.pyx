@@ -1,3 +1,7 @@
+#cython: cdivision=True
+#cython: boundscheck=False
+#cython: nonecheck=False
+#cython: wraparound=False
 
 from __future__ import division
 
@@ -21,9 +25,6 @@ ctypedef numpy.float32_t float32_t
 
 cdef bint threshold_matrix_allocated = False
 
-@cython.boundscheck(False)
-@cython.wraparound(False)
-@cython.cdivision(True)
 cdef void atkinson_dither(uint8_t[:, :] input_view, int_t w, int_t h) nogil:
     
     cdef int_t y, x, err
@@ -55,41 +56,26 @@ cdef void atkinson_dither(uint8_t[:, :] input_view, int_t w, int_t h) nogil:
             if x + 2 < w:
                 input_view[y, x+2] = atkinson_add_error(input_view[y, x+2], err)
 
-@cython.boundscheck(False)
-@cython.wraparound(False)
-@cython.cdivision(True)
 cdef inline uint8_t floyd_steinberg_add_error_SEVEN(uint8_t base,
                                                       int_t err) nogil:
     cdef int_t something = <int_t>base + err * 7 / 16
     return <uint8_t>max(min(255, something), 0)
 
-@cython.boundscheck(False)
-@cython.wraparound(False)
-@cython.cdivision(True)
 cdef inline uint8_t floyd_steinberg_add_error_THREE(uint8_t base,
                                                       int_t err) nogil:
     cdef int_t something = <int_t>base + err * 3 / 16
     return <uint8_t>max(min(255, something), 0)
 
-@cython.boundscheck(False)
-@cython.wraparound(False)
-@cython.cdivision(True)
 cdef inline uint8_t floyd_steinberg_add_error_CINCO(uint8_t base,
                                                       int_t err) nogil:
     cdef int_t something = <int_t>base + err * 5 / 16
     return <uint8_t>max(min(255, something), 0)
 
-@cython.boundscheck(False)
-@cython.wraparound(False)
-@cython.cdivision(True)
 cdef inline uint8_t floyd_steinberg_add_error_ALONE(uint8_t base,
                                                       int_t err) nogil:
     cdef int_t something = <int_t>base + err * 1 / 16
     return <uint8_t>max(min(255, something), 0)
 
-@cython.boundscheck(False)
-@cython.wraparound(False)
-@cython.cdivision(True)
 cdef void floyd_steinberg_dither(uint8_t[:, :] input_view, int_t w, int_t h) nogil:
     
     cdef int_t y, x, err
@@ -119,9 +105,6 @@ cdef class Atkinson:
     
     """ Fast cythonized Atkinson-dither halftone image processor """
     
-    @cython.boundscheck(False)
-    @cython.wraparound(False)
-    @cython.cdivision(True)
     def __cinit__(self, float32_t threshold = 128.0):
         global threshold_matrix_allocated
         cdef uint8_t idx
@@ -130,9 +113,6 @@ cdef class Atkinson:
                 threshold_matrix[idx] = <unsigned char>(<uint8_t>(<float32_t>idx / threshold) * 255)
             threshold_matrix_allocated = True
     
-    @cython.boundscheck(False)
-    @cython.wraparound(False)
-    @cython.cdivision(True)
     def process(self, image not None):
         input_array = ndarrays.fromimage(image.convert('L')).astype(UINT8)
         cdef uint8_t[:, :] input_view = input_array
@@ -145,9 +125,6 @@ cdef class FloydSteinberg:
     
     """ Fast cythonized Floyd-Steinberg-dither halftone image processor """
     
-    @cython.boundscheck(False)
-    @cython.wraparound(False)
-    @cython.cdivision(True)
     def __cinit__(self, float32_t threshold = 128.0):
         global threshold_matrix_allocated
         cdef uint8_t idx
@@ -156,9 +133,6 @@ cdef class FloydSteinberg:
                 threshold_matrix[idx] = <unsigned char>(<uint8_t>(<float32_t>idx / threshold) * 255)
             threshold_matrix_allocated = True
     
-    @cython.boundscheck(False)
-    @cython.wraparound(False)
-    @cython.cdivision(True)
     def process(self, image not None):
         input_array = ndarrays.fromimage(image.convert('L')).astype(UINT8)
         cdef uint8_t[:, :] input_view = input_array
