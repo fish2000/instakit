@@ -4,7 +4,6 @@
 
 cimport cython
 from cython.operator cimport address
-from cython cimport view
 
 from instakit.utils.ext cimport funcs
 
