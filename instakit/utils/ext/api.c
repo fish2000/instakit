@@ -2004,9 +2004,9 @@ static PyObject *__pyx_tuple__24;
 static PyObject *__pyx_codeobj__25;
 /* Late includes */
 
-/* "instakit/utils/ext/api.pyx":10
- * @cython.boundscheck(False)
- * @cython.wraparound(False)
+/* "instakit/utils/ext/api.pyx":11
+ * from instakit.utils.ext cimport funcs
+ * 
  * cpdef double[:] hsluv_to_rgb(double[:] hsl_triple) nogil:             # <<<<<<<<<<<<<<
  *     cdef double[:] rgb_triple = hsl_triple
  *     funcs.hsluv2rgb(        hsl_triple[0],          hsl_triple[1],          hsl_triple[2],
@@ -2023,8 +2023,8 @@ static __Pyx_memviewslice __pyx_f_8instakit_5utils_3ext_3api_hsluv_to_rgb(__Pyx_
   Py_ssize_t __pyx_t_5;
   Py_ssize_t __pyx_t_6;
 
-  /* "instakit/utils/ext/api.pyx":11
- * @cython.wraparound(False)
+  /* "instakit/utils/ext/api.pyx":12
+ * 
  * cpdef double[:] hsluv_to_rgb(double[:] hsl_triple) nogil:
  *     cdef double[:] rgb_triple = hsl_triple             # <<<<<<<<<<<<<<
  *     funcs.hsluv2rgb(        hsl_triple[0],          hsl_triple[1],          hsl_triple[2],
@@ -2033,7 +2033,7 @@ static __Pyx_memviewslice __pyx_f_8instakit_5utils_3ext_3api_hsluv_to_rgb(__Pyx_
   __PYX_INC_MEMVIEW(&__pyx_v_hsl_triple, 1);
   __pyx_v_rgb_triple = __pyx_v_hsl_triple;
 
-  /* "instakit/utils/ext/api.pyx":12
+  /* "instakit/utils/ext/api.pyx":13
  * cpdef double[:] hsluv_to_rgb(double[:] hsl_triple) nogil:
  *     cdef double[:] rgb_triple = hsl_triple
  *     funcs.hsluv2rgb(        hsl_triple[0],          hsl_triple[1],          hsl_triple[2],             # <<<<<<<<<<<<<<
@@ -2044,7 +2044,7 @@ static __Pyx_memviewslice __pyx_f_8instakit_5utils_3ext_3api_hsluv_to_rgb(__Pyx_
   __pyx_t_2 = 1;
   __pyx_t_3 = 2;
 
-  /* "instakit/utils/ext/api.pyx":13
+  /* "instakit/utils/ext/api.pyx":14
  *     cdef double[:] rgb_triple = hsl_triple
  *     funcs.hsluv2rgb(        hsl_triple[0],          hsl_triple[1],          hsl_triple[2],
  *                     address(rgb_triple[0]), address(rgb_triple[1]), address(rgb_triple[2]))             # <<<<<<<<<<<<<<
@@ -2055,7 +2055,7 @@ static __Pyx_memviewslice __pyx_f_8instakit_5utils_3ext_3api_hsluv_to_rgb(__Pyx_
   __pyx_t_5 = 1;
   __pyx_t_6 = 2;
 
-  /* "instakit/utils/ext/api.pyx":12
+  /* "instakit/utils/ext/api.pyx":13
  * cpdef double[:] hsluv_to_rgb(double[:] hsl_triple) nogil:
  *     cdef double[:] rgb_triple = hsl_triple
  *     funcs.hsluv2rgb(        hsl_triple[0],          hsl_triple[1],          hsl_triple[2],             # <<<<<<<<<<<<<<
@@ -2064,20 +2064,20 @@ static __Pyx_memviewslice __pyx_f_8instakit_5utils_3ext_3api_hsluv_to_rgb(__Pyx_
  */
   hsluv2rgb((*((double *) ( /* dim=0 */ (__pyx_v_hsl_triple.data + __pyx_t_1 * __pyx_v_hsl_triple.strides[0]) ))), (*((double *) ( /* dim=0 */ (__pyx_v_hsl_triple.data + __pyx_t_2 * __pyx_v_hsl_triple.strides[0]) ))), (*((double *) ( /* dim=0 */ (__pyx_v_hsl_triple.data + __pyx_t_3 * __pyx_v_hsl_triple.strides[0]) ))), (&(*((double *) ( /* dim=0 */ (__pyx_v_rgb_triple.data + __pyx_t_4 * __pyx_v_rgb_triple.strides[0]) )))), (&(*((double *) ( /* dim=0 */ (__pyx_v_rgb_triple.data + __pyx_t_5 * __pyx_v_rgb_triple.strides[0]) )))), (&(*((double *) ( /* dim=0 */ (__pyx_v_rgb_triple.data + __pyx_t_6 * __pyx_v_rgb_triple.strides[0]) )))));
 
-  /* "instakit/utils/ext/api.pyx":14
+  /* "instakit/utils/ext/api.pyx":15
  *     funcs.hsluv2rgb(        hsl_triple[0],          hsl_triple[1],          hsl_triple[2],
  *                     address(rgb_triple[0]), address(rgb_triple[1]), address(rgb_triple[2]))
  *     return rgb_triple             # <<<<<<<<<<<<<<
  * 
- * @cython.boundscheck(False)
+ * cpdef double[:] rgb_to_hsluv(double[:] rgb_triple) nogil:
  */
   __PYX_INC_MEMVIEW(&__pyx_v_rgb_triple, 1);
   __pyx_r = __pyx_v_rgb_triple;
   goto __pyx_L0;
 
-  /* "instakit/utils/ext/api.pyx":10
- * @cython.boundscheck(False)
- * @cython.wraparound(False)
+  /* "instakit/utils/ext/api.pyx":11
+ * from instakit.utils.ext cimport funcs
+ * 
  * cpdef double[:] hsluv_to_rgb(double[:] hsl_triple) nogil:             # <<<<<<<<<<<<<<
  *     cdef double[:] rgb_triple = hsl_triple
  *     funcs.hsluv2rgb(        hsl_triple[0],          hsl_triple[1],          hsl_triple[2],
@@ -2101,7 +2101,7 @@ static PyObject *__pyx_pw_8instakit_5utils_3ext_3api_1hsluv_to_rgb(PyObject *__p
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("hsluv_to_rgb (wrapper)", 0);
   assert(__pyx_arg_hsl_triple); {
-    __pyx_v_hsl_triple = __Pyx_PyObject_to_MemoryviewSlice_ds_double(__pyx_arg_hsl_triple, PyBUF_WRITABLE); if (unlikely(!__pyx_v_hsl_triple.memview)) __PYX_ERR(0, 10, __pyx_L3_error)
+    __pyx_v_hsl_triple = __Pyx_PyObject_to_MemoryviewSlice_ds_double(__pyx_arg_hsl_triple, PyBUF_WRITABLE); if (unlikely(!__pyx_v_hsl_triple.memview)) __PYX_ERR(0, 11, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -2123,9 +2123,9 @@ static PyObject *__pyx_pf_8instakit_5utils_3ext_3api_hsluv_to_rgb(CYTHON_UNUSED 
   PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("hsluv_to_rgb", 0);
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_hsl_triple.memview)) { __Pyx_RaiseUnboundLocalError("hsl_triple"); __PYX_ERR(0, 10, __pyx_L1_error) }
-  __pyx_t_1 = __pyx_f_8instakit_5utils_3ext_3api_hsluv_to_rgb(__pyx_v_hsl_triple, 0); if (unlikely(!__pyx_t_1.memview)) __PYX_ERR(0, 10, __pyx_L1_error)
-  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_t_1, 1, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 10, __pyx_L1_error)
+  if (unlikely(!__pyx_v_hsl_triple.memview)) { __Pyx_RaiseUnboundLocalError("hsl_triple"); __PYX_ERR(0, 11, __pyx_L1_error) }
+  __pyx_t_1 = __pyx_f_8instakit_5utils_3ext_3api_hsluv_to_rgb(__pyx_v_hsl_triple, 0); if (unlikely(!__pyx_t_1.memview)) __PYX_ERR(0, 11, __pyx_L1_error)
+  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_t_1, 1, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 11, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
   __pyx_t_1.memview = NULL;
@@ -2147,9 +2147,9 @@ static PyObject *__pyx_pf_8instakit_5utils_3ext_3api_hsluv_to_rgb(CYTHON_UNUSED 
   return __pyx_r;
 }
 
-/* "instakit/utils/ext/api.pyx":18
- * @cython.boundscheck(False)
- * @cython.wraparound(False)
+/* "instakit/utils/ext/api.pyx":17
+ *     return rgb_triple
+ * 
  * cpdef double[:] rgb_to_hsluv(double[:] rgb_triple) nogil:             # <<<<<<<<<<<<<<
  *     cdef double[:] hsl_triple = rgb_triple
  *     funcs.rgb2hsluv(        rgb_triple[0],          rgb_triple[1],          rgb_triple[2],
@@ -2166,8 +2166,8 @@ static __Pyx_memviewslice __pyx_f_8instakit_5utils_3ext_3api_rgb_to_hsluv(__Pyx_
   Py_ssize_t __pyx_t_5;
   Py_ssize_t __pyx_t_6;
 
-  /* "instakit/utils/ext/api.pyx":19
- * @cython.wraparound(False)
+  /* "instakit/utils/ext/api.pyx":18
+ * 
  * cpdef double[:] rgb_to_hsluv(double[:] rgb_triple) nogil:
  *     cdef double[:] hsl_triple = rgb_triple             # <<<<<<<<<<<<<<
  *     funcs.rgb2hsluv(        rgb_triple[0],          rgb_triple[1],          rgb_triple[2],
@@ -2176,7 +2176,7 @@ static __Pyx_memviewslice __pyx_f_8instakit_5utils_3ext_3api_rgb_to_hsluv(__Pyx_
   __PYX_INC_MEMVIEW(&__pyx_v_rgb_triple, 1);
   __pyx_v_hsl_triple = __pyx_v_rgb_triple;
 
-  /* "instakit/utils/ext/api.pyx":20
+  /* "instakit/utils/ext/api.pyx":19
  * cpdef double[:] rgb_to_hsluv(double[:] rgb_triple) nogil:
  *     cdef double[:] hsl_triple = rgb_triple
  *     funcs.rgb2hsluv(        rgb_triple[0],          rgb_triple[1],          rgb_triple[2],             # <<<<<<<<<<<<<<
@@ -2187,7 +2187,7 @@ static __Pyx_memviewslice __pyx_f_8instakit_5utils_3ext_3api_rgb_to_hsluv(__Pyx_
   __pyx_t_2 = 1;
   __pyx_t_3 = 2;
 
-  /* "instakit/utils/ext/api.pyx":21
+  /* "instakit/utils/ext/api.pyx":20
  *     cdef double[:] hsl_triple = rgb_triple
  *     funcs.rgb2hsluv(        rgb_triple[0],          rgb_triple[1],          rgb_triple[2],
  *                     address(hsl_triple[0]), address(hsl_triple[1]), address(hsl_triple[2]))             # <<<<<<<<<<<<<<
@@ -2198,7 +2198,7 @@ static __Pyx_memviewslice __pyx_f_8instakit_5utils_3ext_3api_rgb_to_hsluv(__Pyx_
   __pyx_t_5 = 1;
   __pyx_t_6 = 2;
 
-  /* "instakit/utils/ext/api.pyx":20
+  /* "instakit/utils/ext/api.pyx":19
  * cpdef double[:] rgb_to_hsluv(double[:] rgb_triple) nogil:
  *     cdef double[:] hsl_triple = rgb_triple
  *     funcs.rgb2hsluv(        rgb_triple[0],          rgb_triple[1],          rgb_triple[2],             # <<<<<<<<<<<<<<
@@ -2207,20 +2207,20 @@ static __Pyx_memviewslice __pyx_f_8instakit_5utils_3ext_3api_rgb_to_hsluv(__Pyx_
  */
   rgb2hsluv((*((double *) ( /* dim=0 */ (__pyx_v_rgb_triple.data + __pyx_t_1 * __pyx_v_rgb_triple.strides[0]) ))), (*((double *) ( /* dim=0 */ (__pyx_v_rgb_triple.data + __pyx_t_2 * __pyx_v_rgb_triple.strides[0]) ))), (*((double *) ( /* dim=0 */ (__pyx_v_rgb_triple.data + __pyx_t_3 * __pyx_v_rgb_triple.strides[0]) ))), (&(*((double *) ( /* dim=0 */ (__pyx_v_hsl_triple.data + __pyx_t_4 * __pyx_v_hsl_triple.strides[0]) )))), (&(*((double *) ( /* dim=0 */ (__pyx_v_hsl_triple.data + __pyx_t_5 * __pyx_v_hsl_triple.strides[0]) )))), (&(*((double *) ( /* dim=0 */ (__pyx_v_hsl_triple.data + __pyx_t_6 * __pyx_v_hsl_triple.strides[0]) )))));
 
-  /* "instakit/utils/ext/api.pyx":22
+  /* "instakit/utils/ext/api.pyx":21
  *     funcs.rgb2hsluv(        rgb_triple[0],          rgb_triple[1],          rgb_triple[2],
  *                     address(hsl_triple[0]), address(hsl_triple[1]), address(hsl_triple[2]))
  *     return hsl_triple             # <<<<<<<<<<<<<<
  * 
- * @cython.boundscheck(False)
+ * cpdef double[:] hpluv_to_rgb(double[:] hpl_triple) nogil:
  */
   __PYX_INC_MEMVIEW(&__pyx_v_hsl_triple, 1);
   __pyx_r = __pyx_v_hsl_triple;
   goto __pyx_L0;
 
-  /* "instakit/utils/ext/api.pyx":18
- * @cython.boundscheck(False)
- * @cython.wraparound(False)
+  /* "instakit/utils/ext/api.pyx":17
+ *     return rgb_triple
+ * 
  * cpdef double[:] rgb_to_hsluv(double[:] rgb_triple) nogil:             # <<<<<<<<<<<<<<
  *     cdef double[:] hsl_triple = rgb_triple
  *     funcs.rgb2hsluv(        rgb_triple[0],          rgb_triple[1],          rgb_triple[2],
@@ -2244,7 +2244,7 @@ static PyObject *__pyx_pw_8instakit_5utils_3ext_3api_3rgb_to_hsluv(PyObject *__p
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("rgb_to_hsluv (wrapper)", 0);
   assert(__pyx_arg_rgb_triple); {
-    __pyx_v_rgb_triple = __Pyx_PyObject_to_MemoryviewSlice_ds_double(__pyx_arg_rgb_triple, PyBUF_WRITABLE); if (unlikely(!__pyx_v_rgb_triple.memview)) __PYX_ERR(0, 18, __pyx_L3_error)
+    __pyx_v_rgb_triple = __Pyx_PyObject_to_MemoryviewSlice_ds_double(__pyx_arg_rgb_triple, PyBUF_WRITABLE); if (unlikely(!__pyx_v_rgb_triple.memview)) __PYX_ERR(0, 17, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -2266,9 +2266,9 @@ static PyObject *__pyx_pf_8instakit_5utils_3ext_3api_2rgb_to_hsluv(CYTHON_UNUSED
   PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("rgb_to_hsluv", 0);
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_rgb_triple.memview)) { __Pyx_RaiseUnboundLocalError("rgb_triple"); __PYX_ERR(0, 18, __pyx_L1_error) }
-  __pyx_t_1 = __pyx_f_8instakit_5utils_3ext_3api_rgb_to_hsluv(__pyx_v_rgb_triple, 0); if (unlikely(!__pyx_t_1.memview)) __PYX_ERR(0, 18, __pyx_L1_error)
-  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_t_1, 1, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 18, __pyx_L1_error)
+  if (unlikely(!__pyx_v_rgb_triple.memview)) { __Pyx_RaiseUnboundLocalError("rgb_triple"); __PYX_ERR(0, 17, __pyx_L1_error) }
+  __pyx_t_1 = __pyx_f_8instakit_5utils_3ext_3api_rgb_to_hsluv(__pyx_v_rgb_triple, 0); if (unlikely(!__pyx_t_1.memview)) __PYX_ERR(0, 17, __pyx_L1_error)
+  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_t_1, 1, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 17, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
   __pyx_t_1.memview = NULL;
@@ -2290,9 +2290,9 @@ static PyObject *__pyx_pf_8instakit_5utils_3ext_3api_2rgb_to_hsluv(CYTHON_UNUSED
   return __pyx_r;
 }
 
-/* "instakit/utils/ext/api.pyx":26
- * @cython.boundscheck(False)
- * @cython.wraparound(False)
+/* "instakit/utils/ext/api.pyx":23
+ *     return hsl_triple
+ * 
  * cpdef double[:] hpluv_to_rgb(double[:] hpl_triple) nogil:             # <<<<<<<<<<<<<<
  *     cdef double[:] rgb_triple = hpl_triple
  *     funcs.hpluv2rgb(        hpl_triple[0],          hpl_triple[1],          hpl_triple[2],
@@ -2309,8 +2309,8 @@ static __Pyx_memviewslice __pyx_f_8instakit_5utils_3ext_3api_hpluv_to_rgb(__Pyx_
   Py_ssize_t __pyx_t_5;
   Py_ssize_t __pyx_t_6;
 
-  /* "instakit/utils/ext/api.pyx":27
- * @cython.wraparound(False)
+  /* "instakit/utils/ext/api.pyx":24
+ * 
  * cpdef double[:] hpluv_to_rgb(double[:] hpl_triple) nogil:
  *     cdef double[:] rgb_triple = hpl_triple             # <<<<<<<<<<<<<<
  *     funcs.hpluv2rgb(        hpl_triple[0],          hpl_triple[1],          hpl_triple[2],
@@ -2319,7 +2319,7 @@ static __Pyx_memviewslice __pyx_f_8instakit_5utils_3ext_3api_hpluv_to_rgb(__Pyx_
   __PYX_INC_MEMVIEW(&__pyx_v_hpl_triple, 1);
   __pyx_v_rgb_triple = __pyx_v_hpl_triple;
 
-  /* "instakit/utils/ext/api.pyx":28
+  /* "instakit/utils/ext/api.pyx":25
  * cpdef double[:] hpluv_to_rgb(double[:] hpl_triple) nogil:
  *     cdef double[:] rgb_triple = hpl_triple
  *     funcs.hpluv2rgb(        hpl_triple[0],          hpl_triple[1],          hpl_triple[2],             # <<<<<<<<<<<<<<
@@ -2330,7 +2330,7 @@ static __Pyx_memviewslice __pyx_f_8instakit_5utils_3ext_3api_hpluv_to_rgb(__Pyx_
   __pyx_t_2 = 1;
   __pyx_t_3 = 2;
 
-  /* "instakit/utils/ext/api.pyx":29
+  /* "instakit/utils/ext/api.pyx":26
  *     cdef double[:] rgb_triple = hpl_triple
  *     funcs.hpluv2rgb(        hpl_triple[0],          hpl_triple[1],          hpl_triple[2],
  *                     address(rgb_triple[0]), address(rgb_triple[1]), address(rgb_triple[2]))             # <<<<<<<<<<<<<<
@@ -2341,7 +2341,7 @@ static __Pyx_memviewslice __pyx_f_8instakit_5utils_3ext_3api_hpluv_to_rgb(__Pyx_
   __pyx_t_5 = 1;
   __pyx_t_6 = 2;
 
-  /* "instakit/utils/ext/api.pyx":28
+  /* "instakit/utils/ext/api.pyx":25
  * cpdef double[:] hpluv_to_rgb(double[:] hpl_triple) nogil:
  *     cdef double[:] rgb_triple = hpl_triple
  *     funcs.hpluv2rgb(        hpl_triple[0],          hpl_triple[1],          hpl_triple[2],             # <<<<<<<<<<<<<<
@@ -2350,20 +2350,20 @@ static __Pyx_memviewslice __pyx_f_8instakit_5utils_3ext_3api_hpluv_to_rgb(__Pyx_
  */
   hpluv2rgb((*((double *) ( /* dim=0 */ (__pyx_v_hpl_triple.data + __pyx_t_1 * __pyx_v_hpl_triple.strides[0]) ))), (*((double *) ( /* dim=0 */ (__pyx_v_hpl_triple.data + __pyx_t_2 * __pyx_v_hpl_triple.strides[0]) ))), (*((double *) ( /* dim=0 */ (__pyx_v_hpl_triple.data + __pyx_t_3 * __pyx_v_hpl_triple.strides[0]) ))), (&(*((double *) ( /* dim=0 */ (__pyx_v_rgb_triple.data + __pyx_t_4 * __pyx_v_rgb_triple.strides[0]) )))), (&(*((double *) ( /* dim=0 */ (__pyx_v_rgb_triple.data + __pyx_t_5 * __pyx_v_rgb_triple.strides[0]) )))), (&(*((double *) ( /* dim=0 */ (__pyx_v_rgb_triple.data + __pyx_t_6 * __pyx_v_rgb_triple.strides[0]) )))));
 
-  /* "instakit/utils/ext/api.pyx":30
+  /* "instakit/utils/ext/api.pyx":27
  *     funcs.hpluv2rgb(        hpl_triple[0],          hpl_triple[1],          hpl_triple[2],
  *                     address(rgb_triple[0]), address(rgb_triple[1]), address(rgb_triple[2]))
  *     return rgb_triple             # <<<<<<<<<<<<<<
  * 
- * @cython.boundscheck(False)
+ * cpdef double[:] rgb_to_hpluv(double[:] rgb_triple) nogil:
  */
   __PYX_INC_MEMVIEW(&__pyx_v_rgb_triple, 1);
   __pyx_r = __pyx_v_rgb_triple;
   goto __pyx_L0;
 
-  /* "instakit/utils/ext/api.pyx":26
- * @cython.boundscheck(False)
- * @cython.wraparound(False)
+  /* "instakit/utils/ext/api.pyx":23
+ *     return hsl_triple
+ * 
  * cpdef double[:] hpluv_to_rgb(double[:] hpl_triple) nogil:             # <<<<<<<<<<<<<<
  *     cdef double[:] rgb_triple = hpl_triple
  *     funcs.hpluv2rgb(        hpl_triple[0],          hpl_triple[1],          hpl_triple[2],
@@ -2387,7 +2387,7 @@ static PyObject *__pyx_pw_8instakit_5utils_3ext_3api_5hpluv_to_rgb(PyObject *__p
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("hpluv_to_rgb (wrapper)", 0);
   assert(__pyx_arg_hpl_triple); {
-    __pyx_v_hpl_triple = __Pyx_PyObject_to_MemoryviewSlice_ds_double(__pyx_arg_hpl_triple, PyBUF_WRITABLE); if (unlikely(!__pyx_v_hpl_triple.memview)) __PYX_ERR(0, 26, __pyx_L3_error)
+    __pyx_v_hpl_triple = __Pyx_PyObject_to_MemoryviewSlice_ds_double(__pyx_arg_hpl_triple, PyBUF_WRITABLE); if (unlikely(!__pyx_v_hpl_triple.memview)) __PYX_ERR(0, 23, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -2409,9 +2409,9 @@ static PyObject *__pyx_pf_8instakit_5utils_3ext_3api_4hpluv_to_rgb(CYTHON_UNUSED
   PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("hpluv_to_rgb", 0);
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_hpl_triple.memview)) { __Pyx_RaiseUnboundLocalError("hpl_triple"); __PYX_ERR(0, 26, __pyx_L1_error) }
-  __pyx_t_1 = __pyx_f_8instakit_5utils_3ext_3api_hpluv_to_rgb(__pyx_v_hpl_triple, 0); if (unlikely(!__pyx_t_1.memview)) __PYX_ERR(0, 26, __pyx_L1_error)
-  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_t_1, 1, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 26, __pyx_L1_error)
+  if (unlikely(!__pyx_v_hpl_triple.memview)) { __Pyx_RaiseUnboundLocalError("hpl_triple"); __PYX_ERR(0, 23, __pyx_L1_error) }
+  __pyx_t_1 = __pyx_f_8instakit_5utils_3ext_3api_hpluv_to_rgb(__pyx_v_hpl_triple, 0); if (unlikely(!__pyx_t_1.memview)) __PYX_ERR(0, 23, __pyx_L1_error)
+  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_t_1, 1, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 23, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
   __pyx_t_1.memview = NULL;
@@ -2433,9 +2433,9 @@ static PyObject *__pyx_pf_8instakit_5utils_3ext_3api_4hpluv_to_rgb(CYTHON_UNUSED
   return __pyx_r;
 }
 
-/* "instakit/utils/ext/api.pyx":34
- * @cython.boundscheck(False)
- * @cython.wraparound(False)
+/* "instakit/utils/ext/api.pyx":29
+ *     return rgb_triple
+ * 
  * cpdef double[:] rgb_to_hpluv(double[:] rgb_triple) nogil:             # <<<<<<<<<<<<<<
  *     cdef double[:] hpl_triple = rgb_triple
  *     funcs.rgb2hpluv(        rgb_triple[0],          rgb_triple[1],          rgb_triple[2],
@@ -2452,8 +2452,8 @@ static __Pyx_memviewslice __pyx_f_8instakit_5utils_3ext_3api_rgb_to_hpluv(__Pyx_
   Py_ssize_t __pyx_t_5;
   Py_ssize_t __pyx_t_6;
 
-  /* "instakit/utils/ext/api.pyx":35
- * @cython.wraparound(False)
+  /* "instakit/utils/ext/api.pyx":30
+ * 
  * cpdef double[:] rgb_to_hpluv(double[:] rgb_triple) nogil:
  *     cdef double[:] hpl_triple = rgb_triple             # <<<<<<<<<<<<<<
  *     funcs.rgb2hpluv(        rgb_triple[0],          rgb_triple[1],          rgb_triple[2],
@@ -2462,7 +2462,7 @@ static __Pyx_memviewslice __pyx_f_8instakit_5utils_3ext_3api_rgb_to_hpluv(__Pyx_
   __PYX_INC_MEMVIEW(&__pyx_v_rgb_triple, 1);
   __pyx_v_hpl_triple = __pyx_v_rgb_triple;
 
-  /* "instakit/utils/ext/api.pyx":36
+  /* "instakit/utils/ext/api.pyx":31
  * cpdef double[:] rgb_to_hpluv(double[:] rgb_triple) nogil:
  *     cdef double[:] hpl_triple = rgb_triple
  *     funcs.rgb2hpluv(        rgb_triple[0],          rgb_triple[1],          rgb_triple[2],             # <<<<<<<<<<<<<<
@@ -2473,7 +2473,7 @@ static __Pyx_memviewslice __pyx_f_8instakit_5utils_3ext_3api_rgb_to_hpluv(__Pyx_
   __pyx_t_2 = 1;
   __pyx_t_3 = 2;
 
-  /* "instakit/utils/ext/api.pyx":37
+  /* "instakit/utils/ext/api.pyx":32
  *     cdef double[:] hpl_triple = rgb_triple
  *     funcs.rgb2hpluv(        rgb_triple[0],          rgb_triple[1],          rgb_triple[2],
  *                     address(hpl_triple[0]), address(hpl_triple[1]), address(hpl_triple[2]))             # <<<<<<<<<<<<<<
@@ -2483,7 +2483,7 @@ static __Pyx_memviewslice __pyx_f_8instakit_5utils_3ext_3api_rgb_to_hpluv(__Pyx_
   __pyx_t_5 = 1;
   __pyx_t_6 = 2;
 
-  /* "instakit/utils/ext/api.pyx":36
+  /* "instakit/utils/ext/api.pyx":31
  * cpdef double[:] rgb_to_hpluv(double[:] rgb_triple) nogil:
  *     cdef double[:] hpl_triple = rgb_triple
  *     funcs.rgb2hpluv(        rgb_triple[0],          rgb_triple[1],          rgb_triple[2],             # <<<<<<<<<<<<<<
@@ -2492,7 +2492,7 @@ static __Pyx_memviewslice __pyx_f_8instakit_5utils_3ext_3api_rgb_to_hpluv(__Pyx_
  */
   rgb2hpluv((*((double *) ( /* dim=0 */ (__pyx_v_rgb_triple.data + __pyx_t_1 * __pyx_v_rgb_triple.strides[0]) ))), (*((double *) ( /* dim=0 */ (__pyx_v_rgb_triple.data + __pyx_t_2 * __pyx_v_rgb_triple.strides[0]) ))), (*((double *) ( /* dim=0 */ (__pyx_v_rgb_triple.data + __pyx_t_3 * __pyx_v_rgb_triple.strides[0]) ))), (&(*((double *) ( /* dim=0 */ (__pyx_v_hpl_triple.data + __pyx_t_4 * __pyx_v_hpl_triple.strides[0]) )))), (&(*((double *) ( /* dim=0 */ (__pyx_v_hpl_triple.data + __pyx_t_5 * __pyx_v_hpl_triple.strides[0]) )))), (&(*((double *) ( /* dim=0 */ (__pyx_v_hpl_triple.data + __pyx_t_6 * __pyx_v_hpl_triple.strides[0]) )))));
 
-  /* "instakit/utils/ext/api.pyx":38
+  /* "instakit/utils/ext/api.pyx":33
  *     funcs.rgb2hpluv(        rgb_triple[0],          rgb_triple[1],          rgb_triple[2],
  *                     address(hpl_triple[0]), address(hpl_triple[1]), address(hpl_triple[2]))
  *     return hpl_triple             # <<<<<<<<<<<<<<
@@ -2501,9 +2501,9 @@ static __Pyx_memviewslice __pyx_f_8instakit_5utils_3ext_3api_rgb_to_hpluv(__Pyx_
   __pyx_r = __pyx_v_hpl_triple;
   goto __pyx_L0;
 
-  /* "instakit/utils/ext/api.pyx":34
- * @cython.boundscheck(False)
- * @cython.wraparound(False)
+  /* "instakit/utils/ext/api.pyx":29
+ *     return rgb_triple
+ * 
  * cpdef double[:] rgb_to_hpluv(double[:] rgb_triple) nogil:             # <<<<<<<<<<<<<<
  *     cdef double[:] hpl_triple = rgb_triple
  *     funcs.rgb2hpluv(        rgb_triple[0],          rgb_triple[1],          rgb_triple[2],
@@ -2527,7 +2527,7 @@ static PyObject *__pyx_pw_8instakit_5utils_3ext_3api_7rgb_to_hpluv(PyObject *__p
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("rgb_to_hpluv (wrapper)", 0);
   assert(__pyx_arg_rgb_triple); {
-    __pyx_v_rgb_triple = __Pyx_PyObject_to_MemoryviewSlice_ds_double(__pyx_arg_rgb_triple, PyBUF_WRITABLE); if (unlikely(!__pyx_v_rgb_triple.memview)) __PYX_ERR(0, 34, __pyx_L3_error)
+    __pyx_v_rgb_triple = __Pyx_PyObject_to_MemoryviewSlice_ds_double(__pyx_arg_rgb_triple, PyBUF_WRITABLE); if (unlikely(!__pyx_v_rgb_triple.memview)) __PYX_ERR(0, 29, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -2549,9 +2549,9 @@ static PyObject *__pyx_pf_8instakit_5utils_3ext_3api_6rgb_to_hpluv(CYTHON_UNUSED
   PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("rgb_to_hpluv", 0);
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_rgb_triple.memview)) { __Pyx_RaiseUnboundLocalError("rgb_triple"); __PYX_ERR(0, 34, __pyx_L1_error) }
-  __pyx_t_1 = __pyx_f_8instakit_5utils_3ext_3api_rgb_to_hpluv(__pyx_v_rgb_triple, 0); if (unlikely(!__pyx_t_1.memview)) __PYX_ERR(0, 34, __pyx_L1_error)
-  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_t_1, 1, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 34, __pyx_L1_error)
+  if (unlikely(!__pyx_v_rgb_triple.memview)) { __Pyx_RaiseUnboundLocalError("rgb_triple"); __PYX_ERR(0, 29, __pyx_L1_error) }
+  __pyx_t_1 = __pyx_f_8instakit_5utils_3ext_3api_rgb_to_hpluv(__pyx_v_rgb_triple, 0); if (unlikely(!__pyx_t_1.memview)) __PYX_ERR(0, 29, __pyx_L1_error)
+  __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_t_1, 1, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 29, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __PYX_XDEC_MEMVIEW(&__pyx_t_1, 1);
   __pyx_t_1.memview = NULL;
@@ -6822,7 +6822,7 @@ static PyObject *__pyx_memoryview_convert_item_to_object(struct __pyx_memoryview
  * 
  */
         __Pyx_XDECREF(__pyx_r);
-        __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_result, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 494, __pyx_L5_except_error)
+        __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_result, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 494, __pyx_L5_except_error)
         __Pyx_GOTREF(__pyx_t_1);
         __pyx_r = __pyx_t_1;
         __pyx_t_1 = 0;
@@ -15250,7 +15250,7 @@ static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *__
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
     __PYX_ERR(1, 12, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_1);
   __Pyx_GOTREF(__pyx_v___pyx_result->name);
@@ -15295,7 +15295,7 @@ static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *__
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
       __PYX_ERR(1, 14, __pyx_L1_error)
     }
-    __pyx_t_6 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(1, 14, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(!__pyx_t_6)) __PYX_ERR(1, 14, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __pyx_t_8 = NULL;
     if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_7))) {
@@ -16438,11 +16438,11 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 }
 
 static CYTHON_SMALL_CODE int __Pyx_InitGlobals(void) {
-  if (__Pyx_InitStrings(__pyx_string_tab) < 0) __PYX_ERR(0, 2, __pyx_L1_error);
-  __pyx_int_0 = PyInt_FromLong(0); if (unlikely(!__pyx_int_0)) __PYX_ERR(0, 2, __pyx_L1_error)
-  __pyx_int_1 = PyInt_FromLong(1); if (unlikely(!__pyx_int_1)) __PYX_ERR(0, 2, __pyx_L1_error)
-  __pyx_int_184977713 = PyInt_FromLong(184977713L); if (unlikely(!__pyx_int_184977713)) __PYX_ERR(0, 2, __pyx_L1_error)
-  __pyx_int_neg_1 = PyInt_FromLong(-1); if (unlikely(!__pyx_int_neg_1)) __PYX_ERR(0, 2, __pyx_L1_error)
+  if (__Pyx_InitStrings(__pyx_string_tab) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  __pyx_int_0 = PyInt_FromLong(0); if (unlikely(!__pyx_int_0)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_int_1 = PyInt_FromLong(1); if (unlikely(!__pyx_int_1)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_int_184977713 = PyInt_FromLong(184977713L); if (unlikely(!__pyx_int_184977713)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_int_neg_1 = PyInt_FromLong(-1); if (unlikely(!__pyx_int_neg_1)) __PYX_ERR(0, 1, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -16677,30 +16677,30 @@ if (!__Pyx_RefNanny) {
 }
 #endif
   __Pyx_RefNannySetupContext("__Pyx_PyMODINIT_FUNC PyInit_api(void)", 0);
-  if (__Pyx_check_binary_version() < 0) __PYX_ERR(0, 2, __pyx_L1_error)
+  if (__Pyx_check_binary_version() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #ifdef __Pxy_PyFrame_Initialize_Offsets
   __Pxy_PyFrame_Initialize_Offsets();
   #endif
-  __pyx_empty_tuple = PyTuple_New(0); if (unlikely(!__pyx_empty_tuple)) __PYX_ERR(0, 2, __pyx_L1_error)
-  __pyx_empty_bytes = PyBytes_FromStringAndSize("", 0); if (unlikely(!__pyx_empty_bytes)) __PYX_ERR(0, 2, __pyx_L1_error)
-  __pyx_empty_unicode = PyUnicode_FromStringAndSize("", 0); if (unlikely(!__pyx_empty_unicode)) __PYX_ERR(0, 2, __pyx_L1_error)
+  __pyx_empty_tuple = PyTuple_New(0); if (unlikely(!__pyx_empty_tuple)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_empty_bytes = PyBytes_FromStringAndSize("", 0); if (unlikely(!__pyx_empty_bytes)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_empty_unicode = PyUnicode_FromStringAndSize("", 0); if (unlikely(!__pyx_empty_unicode)) __PYX_ERR(0, 1, __pyx_L1_error)
   #ifdef __Pyx_CyFunction_USED
-  if (__pyx_CyFunction_init() < 0) __PYX_ERR(0, 2, __pyx_L1_error)
+  if (__pyx_CyFunction_init() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
   #ifdef __Pyx_FusedFunction_USED
-  if (__pyx_FusedFunction_init() < 0) __PYX_ERR(0, 2, __pyx_L1_error)
+  if (__pyx_FusedFunction_init() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
   #ifdef __Pyx_Coroutine_USED
-  if (__pyx_Coroutine_init() < 0) __PYX_ERR(0, 2, __pyx_L1_error)
+  if (__pyx_Coroutine_init() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
   #ifdef __Pyx_Generator_USED
-  if (__pyx_Generator_init() < 0) __PYX_ERR(0, 2, __pyx_L1_error)
+  if (__pyx_Generator_init() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
   #ifdef __Pyx_AsyncGen_USED
-  if (__pyx_AsyncGen_init() < 0) __PYX_ERR(0, 2, __pyx_L1_error)
+  if (__pyx_AsyncGen_init() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
   #ifdef __Pyx_StopAsyncIteration_USED
-  if (__pyx_StopAsyncIteration_init() < 0) __PYX_ERR(0, 2, __pyx_L1_error)
+  if (__pyx_StopAsyncIteration_init() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
   /*--- Library function declarations ---*/
   /*--- Threads initialization code ---*/
@@ -16719,36 +16719,36 @@ if (!__Pyx_RefNanny) {
   #else
   __pyx_m = PyModule_Create(&__pyx_moduledef);
   #endif
-  if (unlikely(!__pyx_m)) __PYX_ERR(0, 2, __pyx_L1_error)
+  if (unlikely(!__pyx_m)) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
-  __pyx_d = PyModule_GetDict(__pyx_m); if (unlikely(!__pyx_d)) __PYX_ERR(0, 2, __pyx_L1_error)
+  __pyx_d = PyModule_GetDict(__pyx_m); if (unlikely(!__pyx_d)) __PYX_ERR(0, 1, __pyx_L1_error)
   Py_INCREF(__pyx_d);
-  __pyx_b = PyImport_AddModule(__Pyx_BUILTIN_MODULE_NAME); if (unlikely(!__pyx_b)) __PYX_ERR(0, 2, __pyx_L1_error)
-  __pyx_cython_runtime = PyImport_AddModule((char *) "cython_runtime"); if (unlikely(!__pyx_cython_runtime)) __PYX_ERR(0, 2, __pyx_L1_error)
+  __pyx_b = PyImport_AddModule(__Pyx_BUILTIN_MODULE_NAME); if (unlikely(!__pyx_b)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_cython_runtime = PyImport_AddModule((char *) "cython_runtime"); if (unlikely(!__pyx_cython_runtime)) __PYX_ERR(0, 1, __pyx_L1_error)
   #if CYTHON_COMPILING_IN_PYPY
   Py_INCREF(__pyx_b);
   #endif
-  if (PyObject_SetAttrString(__pyx_m, "__builtins__", __pyx_b) < 0) __PYX_ERR(0, 2, __pyx_L1_error);
+  if (PyObject_SetAttrString(__pyx_m, "__builtins__", __pyx_b) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
   /*--- Initialize various global constants etc. ---*/
-  if (__Pyx_InitGlobals() < 0) __PYX_ERR(0, 2, __pyx_L1_error)
+  if (__Pyx_InitGlobals() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #if PY_MAJOR_VERSION < 3 && (__PYX_DEFAULT_STRING_ENCODING_IS_ASCII || __PYX_DEFAULT_STRING_ENCODING_IS_DEFAULT)
-  if (__Pyx_init_sys_getdefaultencoding_params() < 0) __PYX_ERR(0, 2, __pyx_L1_error)
+  if (__Pyx_init_sys_getdefaultencoding_params() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
   if (__pyx_module_is_main_instakit__utils__ext__api) {
-    if (PyObject_SetAttr(__pyx_m, __pyx_n_s_name_2, __pyx_n_s_main) < 0) __PYX_ERR(0, 2, __pyx_L1_error)
+    if (PyObject_SetAttr(__pyx_m, __pyx_n_s_name_2, __pyx_n_s_main) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   }
   #if PY_MAJOR_VERSION >= 3
   {
-    PyObject *modules = PyImport_GetModuleDict(); if (unlikely(!modules)) __PYX_ERR(0, 2, __pyx_L1_error)
+    PyObject *modules = PyImport_GetModuleDict(); if (unlikely(!modules)) __PYX_ERR(0, 1, __pyx_L1_error)
     if (!PyDict_GetItemString(modules, "instakit.utils.ext.api")) {
-      if (unlikely(PyDict_SetItemString(modules, "instakit.utils.ext.api", __pyx_m) < 0)) __PYX_ERR(0, 2, __pyx_L1_error)
+      if (unlikely(PyDict_SetItemString(modules, "instakit.utils.ext.api", __pyx_m) < 0)) __PYX_ERR(0, 1, __pyx_L1_error)
     }
   }
   #endif
   /*--- Builtin init code ---*/
-  if (__Pyx_InitCachedBuiltins() < 0) __PYX_ERR(0, 2, __pyx_L1_error)
+  if (__Pyx_InitCachedBuiltins() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   /*--- Constants init code ---*/
-  if (__Pyx_InitCachedConstants() < 0) __PYX_ERR(0, 2, __pyx_L1_error)
+  if (__Pyx_InitCachedConstants() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   /*--- Global type/function init code ---*/
   (void)__Pyx_modinit_global_init_code();
   (void)__Pyx_modinit_variable_export_code();
@@ -16759,18 +16759,17 @@ if (!__Pyx_RefNanny) {
   (void)__Pyx_modinit_function_import_code();
   /*--- Execution code ---*/
   #if defined(__Pyx_Generator_USED) || defined(__Pyx_Coroutine_USED)
-  if (__Pyx_patch_abc() < 0) __PYX_ERR(0, 2, __pyx_L1_error)
+  if (__Pyx_patch_abc() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
 
-  /* "instakit/utils/ext/api.pyx":2
- * 
- * cimport cython             # <<<<<<<<<<<<<<
- * from cython.operator cimport address
- * from cython cimport view
+  /* "instakit/utils/ext/api.pyx":1
+ * #cython: boundscheck=False             # <<<<<<<<<<<<<<
+ * #cython: nonecheck=False
+ * #cython: wraparound=False
  */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 2, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_test, __pyx_t_1) < 0) __PYX_ERR(0, 2, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_test, __pyx_t_1) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "View.MemoryView":209
