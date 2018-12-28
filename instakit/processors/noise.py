@@ -97,9 +97,6 @@ if __name__ == '__main__':
     for idx, image_input in enumerate(image_inputs + image_inputs[:2]):
         for NoiseProcessor in noises:
             NoiseProcessor().process(image_input).show()
-        # image_input.show()
-        #Noise().process(image_input).show()
-        # noises[idx]().process(image_input).show()
     
     print(image_paths)
     
