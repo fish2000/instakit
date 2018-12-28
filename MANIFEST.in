@@ -11,5 +11,5 @@ include requirements.txt
 include setup.cfg
 include setup.py
 include tox.ini
-recursive-include instakit/data *
+recursive-include instakit *
 recursive-exclude instakit *.pyc *~ *.so .DS_Store
