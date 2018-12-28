@@ -8,27 +8,50 @@ Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 """
 from __future__ import print_function
 
+from enum import Enum, unique
+from skimage.util import random_noise
+
 from instakit.utils.ndarrays import NDProcessor
+
+
+@unique
+class NoiseMode(Enum):
+    
+    LOCALVAR        = 'localvar'
+    GAUSSIAN        = 'gaussian'
+    POISSON         = 'poisson'
+    SALT            = 'salt'
+    PEPPER          = 'pepper'
+    SALT_N_PEPPER   = 's&p'
+    SPECKLE         = 'speckle'
+    
+    def to_string(self):
+        return str(self.value)
+    
+    def __str__(self):
+        return self.to_string()
+    
+    def process_nd(self, ndimage):
+        return random_noise(ndimage,
+                            mode=self.to_string())
+
 
 class Noise(NDProcessor):
     """ Base noise processor (defaults to 'localvar' mode) """
+    mode = NoiseMode.LOCALVAR
     
-    mode = 'localvar'
-    
-    def process_ndimage(self, ndimage):
-        from skimage.util import random_noise
-        return self.compand(
-               random_noise(ndimage,
-                            mode=type(self).mode))
+    def process_nd(self, ndimage):
+        noisemaker = type(self).mode
+        return self.compand(noisemaker.process_nd(ndimage))
 
 
 class GaussianNoise(Noise):
     """ Add Gaussian noise """
-    mode = 'gaussian'
+    mode = NoiseMode.GAUSSIAN
 
 class PoissonNoise(Noise):
     """ Add Poisson-distributed noise """
-    mode = 'poisson'
+    mode = NoiseMode.POISSON
 
 class GaussianLocalVarianceNoise(Noise):
     """ Add Gaussian noise, with image-dependant local variance """
@@ -36,20 +59,20 @@ class GaussianLocalVarianceNoise(Noise):
 
 class SaltNoise(Noise):
     """ Add 'salt noise' -- replace random pixel values with 1.0f (255) """
-    mode = 'salt'
+    mode = NoiseMode.SALT
 
 class PepperNoise(Noise):
     """ Add 'pepper noise' -- replace random pixel values with zero """
-    mode = 'pepper'
+    mode = NoiseMode.PEPPER
 
 class SaltAndPepperNoise(Noise):
     """ Add 'salt and pepper noise' -- replace random pixel values with 1.0f (255) or zero """
-    mode = 's&p'
+    mode = NoiseMode.SALT_N_PEPPER
 
 class SpeckleNoise(Noise):
     """ Add multiplicative noise using out = image + n*image
         (where n is uniform noise with specified mean & variance) """
-    mode = 'speckle'
+    mode = NoiseMode.SPECKLE
 
 
 if __name__ == '__main__':
@@ -63,15 +86,20 @@ if __name__ == '__main__':
         lambda image_path: Mode.RGB.open(image_path),
             image_paths))
     
-    noises = [
-        GaussianNoise, PoissonNoise, GaussianLocalVarianceNoise,
-        SaltNoise, PepperNoise, SaltAndPepperNoise, SpeckleNoise
-    ]
+    noises = [GaussianNoise,
+              PoissonNoise,
+              GaussianLocalVarianceNoise,
+              SaltNoise,
+              PepperNoise,
+              SaltAndPepperNoise,
+              SpeckleNoise]
     
     for idx, image_input in enumerate(image_inputs + image_inputs[:2]):
-        image_input.show()
+        for NoiseProcessor in noises:
+            NoiseProcessor().process(image_input).show()
+        # image_input.show()
         #Noise().process(image_input).show()
-        noises[idx]().process(image_input).show()
+        # noises[idx]().process(image_input).show()
     
     print(image_paths)
     

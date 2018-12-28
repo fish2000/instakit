@@ -9,7 +9,7 @@ The `bytescale`, `ndarray_fromimage`, and `ndarray_toimage` functions
 were originally published in the `scipy.misc.pilutils` codebase.
 
 """
-from __future__ import division
+from __future__ import division, print_function
 
 import numpy
 from PIL import Image
@@ -75,7 +75,7 @@ def bytescale(data, cmin=None, cmax=None,
     bytedata = (data - cmin) * scale + low
     return (bytedata.clip(low, high) + 0.5).astype(uint8_t)
 
-def ndarray_fromimage(image, flatten=False, mode=None):
+def fromimage(image, flatten=False, mode=None):
     """
     Return a copy of a PIL image as a numpy array.
     
@@ -128,7 +128,7 @@ def ndarray_fromimage(image, flatten=False, mode=None):
 
 _errstr = "Mode unknown or incompatible with input array shape"
 
-def ndarray_toimage(array, high=255,  low=0,
+def toimage(array, high=255,  low=0,
                            cmin=None, cmax=None,
                            pal=None,
                            mode=None, channel_axis=None):
@@ -272,11 +272,10 @@ def ndarray_toimage(array, high=255,  low=0,
 class NDProcessor(object):
     
     def process(self, image):
-        return ndarray_toimage(
-            self.process_ndimage(
-                ndarray_fromimage(image)))
+        return toimage(self.process_nd(
+                       fromimage(image)))
     
-    def process_ndimage(self, ndimage):
+    def process_nd(self, ndimage):
         """ Override me! """
         return ndimage
     
@@ -287,3 +286,39 @@ class NDProcessor(object):
     @staticmethod
     def uncompand(ndimage):
         return float32_t(ndimage) / 255.0
+
+
+def test():
+    """ Tests for bytescale(¬) adapted from scipy.misc.pilutil doctests,
+        q.v. https://git.io/fhkHI supra.
+    """
+    # print()
+    print("«TESTING: BYTESCALE UTILITY FUNCTION»")
+    
+    image = numpy.array((91.06794177,   3.39058326,  84.4221549,
+                         73.88003259,  80.91433048,   4.88878881,
+                         51.53875334,  34.45808177,  27.5873488)).reshape((3, 3))
+    assert numpy.all(
+           bytescale(image) == numpy.array((255,   0, 236,
+                                            205, 225,   4,
+                                            140,  90,  70),
+                                           dtype=uint8_t).reshape((3, 3)))
+    assert numpy.all(
+           bytescale(image,
+                     high=200,
+                     low=100) == numpy.array((200, 100, 192,
+                                              180, 188, 102,
+                                              155, 135, 128),
+                                             dtype=uint8_t).reshape((3, 3)))
+    assert numpy.all(
+           bytescale(image,
+                     cmin=0,
+                     cmax=255) == numpy.array((91,  3, 84,
+                                               74, 81,  5,
+                                               52, 34, 28),
+                                              dtype=uint8_t).reshape((3, 3)))
+    print("«SUCCESS»")
+    print()
+
+if __name__ == '__main__':
+    test()

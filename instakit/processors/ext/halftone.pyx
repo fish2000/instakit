@@ -9,7 +9,7 @@ import numpy
 cimport numpy
 cimport cython
 
-from instakit.utils.ndarrays import ndarray_fromimage, ndarray_toimage
+from instakit.utils import ndarrays
 
 INT = numpy.int
 UINT8 = numpy.uint8
@@ -134,11 +134,11 @@ cdef class Atkinson:
     @cython.wraparound(False)
     @cython.cdivision(True)
     def process(self, image not None):
-        input_array = ndarray_fromimage(image.convert('L')).astype(UINT8)
+        input_array = ndarrays.fromimage(image.convert('L')).astype(UINT8)
         cdef uint8_t[:, :] input_view = input_array
         atkinson_dither(input_view, image.size[0], image.size[1])
         output_array = numpy.asarray(input_view.base)
-        return ndarray_toimage(output_array)
+        return ndarrays.toimage(output_array)
 
 @cython.freelist(4)
 cdef class FloydSteinberg:
@@ -160,8 +160,8 @@ cdef class FloydSteinberg:
     @cython.wraparound(False)
     @cython.cdivision(True)
     def process(self, image not None):
-        input_array = ndarray_fromimage(image.convert('L')).astype(UINT8)
+        input_array = ndarrays.fromimage(image.convert('L')).astype(UINT8)
         cdef uint8_t[:, :] input_view = input_array
         floyd_steinberg_dither(input_view, image.size[0], image.size[1])
         output_array = numpy.asarray(input_view.base)
-        return ndarray_toimage(output_array)
+        return ndarrays.toimage(output_array)
