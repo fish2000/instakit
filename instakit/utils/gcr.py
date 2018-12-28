@@ -6,7 +6,7 @@ CMYK = Mode.CMYK.value
 cmyk = CMYK.mode
 
 def gcr(image, percentage=20, revert_mode=False):
-    ''' basic "Gray Component Replacement" function. Returns a CMYK image* with 
+    ''' basic “Gray Component Replacement” function. Returns a CMYK image* with 
         percentage gray component removed from the CMY channels and put in the
         K channel, ie. for percentage=100, (41, 100, 255, 0) >> (0, 59, 214, 41).
         
