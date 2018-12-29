@@ -5,8 +5,14 @@ ndarrays.py
 
 Created by FI$H 2000 on 2013-08-23.
 Copyright © 2012-2019 Objects In Space And Time, LLC. All rights reserved.
-The `bytescale`, `ndarray_fromimage`, and `ndarray_toimage` functions
-were originally published in the `scipy.misc.pilutils` codebase.
+
+The `bytescale`[0], `fromimage`[1], and `toimage`[2] functions have been
+adapted from the versions published in the now-historic `scipy.misc.pilutils`
+module; the last official release of which looks to have been in SciPy 1.1.0:
+
+* [0] https://git.io/fhIoX
+* [1] https://git.io/fhIo1
+* [2] https://git.io/fhIoD
 
 """
 from __future__ import division, print_function
@@ -24,15 +30,16 @@ float32_t = numpy.float32
 def bytescale(data, cmin=None, cmax=None,
                     high=255,  low=0):
     """
-    Byte scales an array (image).
+    Byte-scales a `numpy.ndarray` of nd-image data.
     
-    Byte scaling means converting the input image to uint8 dtype and scaling
-    the range to ``(low, high)`` (default 0-255). If the input image already
-    has dtype uint8, no scaling is done.
+    “Byte scaling” means 1) casting the input image to the ``uint8_t`` dtype, and
+                         2) scaling the range to ``(low, high)`` (default 0-255).
+    
+    If the input image data is already of dtype ``uint8_t``, no scaling is done.
     
     Parameters
     ----------
-    data : ndarray
+    data : `numpy.ndarray`
         PIL image data array.
     cmin : scalar, optional
         Bias scaling of small values. Default is ``data.min()``.
@@ -45,7 +52,7 @@ def bytescale(data, cmin=None, cmax=None,
     
     Returns
     -------
-    img_array : uint8 ndarray
+    array : `numpy.ndarray` of dtype ``uint8_t``
         The byte-scaled array.
     """
     if data.dtype == uint8_t:
@@ -75,26 +82,31 @@ def bytescale(data, cmin=None, cmax=None,
     bytedata = (data - cmin) * scale + low
     return (bytedata.clip(low, high) + 0.5).astype(uint8_t)
 
-def fromimage(image, flatten=False, mode=None):
+def fromimage(image, flatten=False,
+                        mode=None,
+                       dtype=None):
     """
-    Return a copy of a PIL image as a numpy array.
+    Return the data from an input PIL image as a `numpy.ndarray`.
     
     Parameters
     ----------
     im : PIL image
         Input image.
-    flatten : bool
-        If true, convert the output to grey-scale.
-    mode : str, optional
-        Mode to convert image to, e.g. ``'RGB'``.  See the Notes of the
+    flatten : bool, optional
+        If true, convert the output to greyscale. Default is False.
+    mode : str / Mode, optional
+        Mode to convert image to, e.g. ``'RGB'``. See the Notes of the
         `imread` docstring for more details.
+    dtype : str / ``numpy.dtype``, optional
+        Numpy dtype to which to cast the output image array data,
+        e.g. ``'float64'`` or ``'uint16'``. 
     
     Returns
     -------
-    fromimage : ndarray
-        The different colour bands/channels are stored in the
-        third dimension, such that a grey-image is MxN, an
-        RGB-image MxNx3 and an RGBA-image MxNx4.
+    fromimage : ndarray (rank 2..3)
+        The individual color channels of the input image are stored in the
+        third dimension, such that greyscale (`L`) images are MxN (rank-2),
+        `RGB` images are MxNx3 (rank-3), and `RGBA` images are MxNx4 (rank-3).
     """
     if not Image.isImageType(image):
         raise TypeError("Input is not a PIL image (got %s)" % repr(image))
@@ -124,27 +136,40 @@ def fromimage(image, flatten=False, mode=None):
         image = Mode.L.process(image)
     
     out = numpy.array(image)
+    
+    if dtype is not None:
+        return out.astype(
+              numpy.dtype(dtype))
+    
     return out
 
 _errstr = "Mode unknown or incompatible with input array shape"
 
-def toimage(array, high=255,  low=0,
-                           cmin=None, cmax=None,
-                           pal=None,
-                           mode=None, channel_axis=None):
+def toimage(array,  high=255,    low=0,
+                    cmin=None,  cmax=None,
+                     pal=None,
+                    mode=None,
+            channel_axis=None):
     """
-    Takes a numpy array and returns a PIL image. The mode of the image returned
-    depends on the array shape and the `pal` and `mode` keywords.
+    Takes an input `numpy.ndarray` and returns a PIL image.
+            
+    The mode of the image returned depends on 1) the array shape, and 
+                                              2) the `pal` and `mode` keywords.
     
-    For 2D arrays, if `pal` is a valid (N, 3) byte-array giving the RGB values
-    (from 0 to 255) then ``mode='P'``, otherwise ``mode='L'``, unless mode
-    is given as 'F' or 'I' in which case a float and/or integer array is made.
+    For 2D arrays, if `pal` is a valid (N, 3) rank-2, ``uint8_t`` bytearray --
+    populated with an `RGB` LUT of values from 0 to 255, ``mode='P'`` (256-color
+    single-channel palette mode) will be used; otherwise ``mode='L'`` (256-level
+    single-channel grayscale mode) will be employed -- unless a “mode” argument
+    is given, as either 'F' or 'I'; in which case conversion to either a float
+    or an integer rank-3 array will be made.
     
     .. warning::
     
-        This function uses `bytescale` under the hood to rescale images to use
-        the full (0, 255) range if ``mode`` is one of ``None, 'L', 'P', 'l'``.
-        It will also cast data for 2-D images to ``uint32`` for ``mode=None``
+        This function calls `bytescale` under the hood, to rescale the image
+        pixel values across the full (0, 255) ``uint8_t`` range if ``mode``
+        is one of either: ``None, 'L', 'P', 'l'``.
+        
+        It will also cast rank-2 image data to ``uint32_t`` when ``mode=None``
         (which is the default).
     
     Notes
@@ -153,7 +178,7 @@ def toimage(array, high=255,  low=0,
     array holds the channel data. If one of the dimensions is 3, the mode
     is 'RGB' by default, or 'YCbCr' if selected.
     
-    The numpy array must be either 2- or 3-dimensional.
+    The input `numpy.ndarray` must be either rank-2 or rank-3.
     """
     data = numpy.asarray(array)
     if numpy.iscomplexobj(data):
@@ -271,27 +296,59 @@ def toimage(array, high=255,  low=0,
 
 class NDProcessor(object):
     
+    """ An image processor ancestor class that represents PIL image
+        data in a `numpy.ndarray`. Subclasses can override the
+        `process_nd(…)` method to receive, transform, and return
+        the image data using NumPy, SciPy, and the like.
+    """
+    
     def process(self, image):
-        return toimage(self.process_nd(
-                       fromimage(image)))
+        """ NDProcessor.process(…) converts its PIL image operand
+            to a `numpy.ndarray`, hands it off to the delegate
+            method NDProcessor.process_nd(…), and converts whatever
+            that method call returns back to a PIL image before
+            finally returning it.
+        """
+        return toimage(self.process_nd(fromimage(image)))
     
     def process_nd(self, ndimage):
-        """ Override me! """
+        """ Override NDProcessor.process_nd(…) in subclasses
+            to provide functionality that acts on image data stored
+            in a `numpy.ndarray`.
+        """
         return ndimage
     
     @staticmethod
     def compand(ndimage):
+        """ The NDProcessor.compand(…) static method scales a
+            `numpy.ndarray` with floating-point values from 0.0»1.0
+            to unsigned 8-bit integer values from 0»255.
+        """
         return uint8_t(float32_t(ndimage) * 255.0)
     
     @staticmethod
     def uncompand(ndimage):
+        """ The NDProcessor.uncompand(…) static method scales a
+            `numpy.ndarray` with unsigned 8-bit integer values
+            from 0»255 to floating-point values from 0.0»1.0.
+        """
         return float32_t(ndimage) / 255.0
 
 
 def test():
-    """ Tests for bytescale(¬) adapted from scipy.misc.pilutil doctests,
+    """ Tests for bytescale(¬) adapted from `scipy.misc.pilutil` doctests,
         q.v. https://git.io/fhkHI supra.
     """
+    from instakit.utils import static
+    from instakit.utils.mode import Mode
+    
+    image_paths = list(map(
+        lambda image_file: static.path('img', image_file),
+            static.listfiles('img')))
+    image_inputs = list(map(
+        lambda image_path: Mode.RGB.open(image_path),
+            image_paths))
+    
     # print()
     print("«TESTING: BYTESCALE UTILITY FUNCTION»")
     
@@ -317,6 +374,21 @@ def test():
                                                74, 81,  5,
                                                52, 34, 28),
                                               dtype=uint8_t).reshape((3, 3)))
+    print("«SUCCESS»")
+    print()
+    
+    # print()
+    print("«TESTING: FROMIMAGE»")
+    
+    image_arrays = list(map(
+        lambda image_input: fromimage(image_input),
+            image_inputs))
+    
+    for idx, image_array in enumerate(image_arrays):
+        assert image_array.dtype == uint8_t
+        assert image_array.shape[0] == image_inputs[idx].size[1]
+        assert image_array.shape[1] == image_inputs[idx].size[0]
+    
     print("«SUCCESS»")
     print()
 
