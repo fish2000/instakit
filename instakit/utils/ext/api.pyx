@@ -2,9 +2,7 @@
 #cython: nonecheck=False
 #cython: wraparound=False
 
-cimport cython
 from cython.operator cimport address
-
 from instakit.utils.ext cimport funcs
 
 cpdef double[:] hsluv_to_rgb(double[:] hsl_triple) nogil:
