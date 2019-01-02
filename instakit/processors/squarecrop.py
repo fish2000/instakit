@@ -13,16 +13,16 @@ def histogram_entropy(image):
         Used for "smart cropping" in easy-thumbnails:
             https://raw.github.com/SmileyChris/easy-thumbnails/master/easy_thumbnails/utils.py
     """
-    import math
+    from math import log2, fsum
     
     if not hasattr(image, 'histogram'):
         return 0  # Fall back to a constant entropy.
     
     histogram = image.histogram()
     histosum = float(sum(histogram))
-    histonorm = [histocol / histosum for histocol in histogram]
+    histonorm = (histocol / histosum for histocol in histogram)
     
-    return -sum([p * math.log(p, 2) for p in histonorm if p != 0])
+    return -fsum(p * log2(p) for p in histonorm if p != 0.0)
 
 def compare_entropy(start_slice, end_slice, slice, difference):
     """ Calculate the entropy of two slices (from the start
