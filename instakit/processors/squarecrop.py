@@ -19,7 +19,7 @@ def histogram_entropy(image):
         return 0  # Fall back to a constant entropy.
     
     histogram = image.histogram()
-    histosum = float(sum(histogram))
+    histosum = fsum(histogram)
     histonorm = (histocol / histosum for histocol in histogram)
     
     return -fsum(p * log2(p) for p in histonorm if p != 0.0)
