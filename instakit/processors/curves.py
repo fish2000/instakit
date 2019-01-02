@@ -17,11 +17,13 @@ Copyright (c) 2012-2019 Objects In Space And Time, LLC. All rights reserved.
 """
 from __future__ import print_function
 
-import numpy, os
+import numpy
+import os
+import struct
+
 from PIL import Image
 from enum import Enum, unique
 from scipy import interpolate
-from struct import unpack
 
 from instakit.utils import static
 from instakit.utils.mode import Mode
@@ -137,20 +139,37 @@ class CurveSet(object):
     @staticmethod
     def read_one_curve(acv_file, name, interpolation_mode):
         curve = SingleCurve(name)
-        points_in_curve, = unpack("!h", acv_file.read(2))
+        points_in_curve, = struct.unpack("!h", acv_file.read(2))
         for _ in range(points_in_curve):
-            y, x = unpack("!hh", acv_file.read(4))
+            y, x = struct.unpack("!hh", acv_file.read(4))
             curve.append((x, y))
         return curve.interpolate(interpolation_mode)
     
+    @staticmethod
+    def write_one_curve(acv_file, curve):
+        points_in_curve = len(curve)
+        acv_file.write(struct.pack("!h", points_in_curve))
+        for idx in range(points_in_curve):
+            x, y = curve[idx]
+            acv_file.write(struct.pack("!hh", y, x))
+        return points_in_curve
+    
     def read_acv(self, acv_path, interpolation_mode):
         with open(acv_path, "rb") as acv_file:
-            _, self.count = unpack("!hh", acv_file.read(4))
+            _, self.count = struct.unpack("!hh", acv_file.read(4))
             for idx in range(self.count):
                 self.curves.append(
                     self.read_one_curve(acv_file,
                                    type(self).channel_name(idx),
                                         interpolation_mode))
+    
+    def write_acv(self, acv_path):
+        if self.count < 1:
+            raise ValueError("Can't write empty curveset as ACV data")
+        with open(acv_path, "wb") as acv_file:
+            acv_file.write(struct.pack("!hh", 0, self.count))
+            for curve in self.curves:
+                self.write_one_curve(acv_file, curve)
     
     def process(self, image):
         mode = Mode.of(image)
