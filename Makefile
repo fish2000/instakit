@@ -18,10 +18,6 @@ clean-all-pyc:
 clean-cython:
 	find . -name \*.so -print -delete
 
-clean-all-cython:
-	find . -name \*.so -print -delete
-	find . -name \*.c -print -delete
-
 clean-build-artifacts:
 	rm -rf build dist instakit.egg-info
 

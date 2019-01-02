@@ -341,7 +341,6 @@ def test():
         q.v. https://git.io/fhkHI supra.
     """
     from instakit.utils import static
-    from instakit.utils.mode import Mode
     
     image_paths = list(map(
         lambda image_file: static.path('img', image_file),
