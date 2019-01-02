@@ -68,7 +68,8 @@ class ModeAncestor(Enum):
     ('1',    'L',     'I',     'F',     'P',
      'RGB',  'RGBX',  'RGBA',  'CMYK',  'YCbCr',
      'LAB',  'HSV',   'RGBa',  'LA',    'La',
-     'PA',   'I;16',  'I;16L', 'I;16B') """
+     'PA',   'I;16',  'I;16L', 'I;16B')
+    """
     
     def _generate_next_value_(name,
                               start,
