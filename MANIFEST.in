@@ -1,5 +1,5 @@
 exclude *.pyc *~ *.so .DS_Store
-recursive-include requirements *
+recursive-include requirements *.txt
 include __version__.py
 include .bumpversion.cfg
 include .gitignore
@@ -12,4 +12,7 @@ include setup.cfg
 include setup.py
 include tox.ini
 recursive-include instakit *
+recursive-include tests *
+recursive-exclude requirements *.pyc *~ *.so .DS_Store
 recursive-exclude instakit *.pyc *~ *.so .DS_Store
+recursive-exclude tests *.pyc *~ *.so .DS_Store
