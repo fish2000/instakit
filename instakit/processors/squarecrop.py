@@ -11,7 +11,7 @@ from __future__ import print_function
 def histogram_entropy(image):
     """ Calculate the entropy of an images' histogram.
         Used for "smart cropping" in easy-thumbnails:
-            https://raw.github.com/SmileyChris/easy-thumbnails/master/easy_thumbnails/utils.py
+            https://git.io/fhqxd
     """
     from math import log2, fsum
     
@@ -29,6 +29,9 @@ def compare_entropy(start_slice, end_slice, slice, difference):
         and end of an axis), returning a tuple containing
         the amount that should be added to the start
         and removed from the end of the axis.
+        
+        Based on the eponymous function from easy-thumbnails:
+            https://git.io/fhqpT
     """
     start_entropy = histogram_entropy(start_slice)
     end_entropy = histogram_entropy(end_slice)
@@ -51,7 +54,7 @@ class SquareCrop(object):
         with the least entropy.
         
         Based on smart crop implementation from easy-thumbnails:
-            https://github.com/SmileyChris/easy-thumbnails/blob/master/easy_thumbnails/processors.py#L193
+            https://git.io/fhqxj
     """
     
     def process(self, image):
