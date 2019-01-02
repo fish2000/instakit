@@ -1,0 +1,9 @@
+-r install.txt
+flake8
+flake8-bugbear
+flake8-pyi
+pyre-check
+pywatchman
+typeshed
+typing
+pytest
