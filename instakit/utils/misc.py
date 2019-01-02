@@ -3,7 +3,7 @@
 
 from __future__ import print_function
 
-class SimpleNamespace(object):
+class Namespace(object):
     
     """ Implementation courtesy this SO answer:
         • https://stackoverflow.com/a/37161391/298171
@@ -20,3 +20,6 @@ class SimpleNamespace(object):
     
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
+
+# Backwards-compatibility:
+SimpleNamespace = Namespace
