@@ -18,9 +18,6 @@ module; the last official release of which looks to have been in SciPy 1.1.0:
 from __future__ import division, print_function
 
 import numpy
-from PIL import Image
-from pprint import pformat
-
 from instakit.utils.mode import Mode
 
 uint8_t = numpy.uint8
@@ -108,6 +105,8 @@ def fromimage(image, flatten=False,
         third dimension, such that greyscale (`L`) images are MxN (rank-2),
         `RGB` images are MxNx3 (rank-3), and `RGBA` images are MxNx4 (rank-3).
     """
+    from PIL import Image
+    
     if not Image.isImageType(image):
         raise TypeError("Input is not a PIL image (got %s)" % repr(image))
     
@@ -180,6 +179,8 @@ def toimage(array,  high=255,    low=0,
     
     The input `numpy.ndarray` must be either rank-2 or rank-3.
     """
+    from pprint import pformat
+    
     data = numpy.asarray(array)
     if numpy.iscomplexobj(data):
         raise ValueError("Cannot convert arrays of complex values")
