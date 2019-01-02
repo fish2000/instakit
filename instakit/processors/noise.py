@@ -76,7 +76,7 @@ class SpeckleNoise(Noise):
     mode = NoiseMode.SPECKLE
 
 
-if __name__ == '__main__':
+def test():
     from instakit.utils import static
     from instakit.utils.mode import Mode
     
@@ -100,4 +100,6 @@ if __name__ == '__main__':
             NoiseProcessor().process(image_input).show()
     
     print(image_paths)
-    
+
+if __name__ == '__main__':
+    test()
