@@ -220,7 +220,7 @@ def toimage(array,  high=255,    low=0,
         
         if mode is Mode.MONO:  # high input gives threshold for 1
             bytedata = (data > high)
-            return Mode.MONO.frombytes(shape, bytedata.tostring())
+            return mode.frombytes(shape, bytedata.tostring())
         
         if cmin is None:
             cmin = numpy.amin(numpy.ravel(data))
@@ -231,7 +231,7 @@ def toimage(array,  high=255,    low=0,
         data = (data * 1.0 - cmin) * (high - low) / (cmax - cmin) + low
         
         if mode is Mode.I:
-            image = Mode.I.frombytes(shape, data.astype(uint32_t).tostring())
+            image = mode.frombytes(shape, data.astype(uint32_t).tostring())
         else:
             raise ValueError(_errstr)
         
