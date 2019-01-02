@@ -4,7 +4,7 @@
 noise.py
 
 Created by FI$H 2000 on 2014-05-23.
-Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
+Copyright (c) 2012-2019 Objects In Space And Time, LLC. All rights reserved.
 """
 from __future__ import print_function
 
@@ -38,7 +38,9 @@ class NoiseMode(Enum):
 
 
 class Noise(NDProcessor):
-    """ Base noise processor (defaults to 'localvar' mode) """
+    """ Base noise processor
+        -- defaults to “localvar” mode; q.v. `GaussianLocalVarianceNoise` sub.
+    """
     mode = NoiseMode.LOCALVAR
     
     def process_nd(self, ndimage):
@@ -59,20 +61,28 @@ class GaussianLocalVarianceNoise(Noise):
     pass
 
 class SaltNoise(Noise):
-    """ Add 'salt noise' -- replace random pixel values with 1.0f (255) """
+    """ Add “salt noise”
+        -- replace random pixel values with 1.0f (255)
+    """
     mode = NoiseMode.SALT
 
 class PepperNoise(Noise):
-    """ Add 'pepper noise' -- replace random pixel values with zero """
+    """ Add “pepper noise”
+        -- replace random pixel values with zero
+    """
     mode = NoiseMode.PEPPER
 
 class SaltAndPepperNoise(Noise):
-    """ Add 'salt and pepper noise' -- replace random pixel values with 1.0f (255) or zero """
+    """ Add “salt and pepper noise”
+        -- replace random pixel values with either 1.0f (255) or zero
+    """
     mode = NoiseMode.SALT_N_PEPPER
 
 class SpeckleNoise(Noise):
-    """ Add multiplicative noise using out = image + n*image
-        (where n is uniform noise with specified mean & variance) """
+    """ Add “speckle noise”
+        --- multiplicative noise using `out = image + n * image`
+           (where `n` is uniform noise with specified mean + variance)
+    """
     mode = NoiseMode.SPECKLE
 
 
