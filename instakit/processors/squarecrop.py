@@ -10,7 +10,7 @@ from __future__ import print_function
 
 def histogram_entropy(image):
     """ Calculate the entropy of an images' histogram.
-        Used for "smart cropping" in easy-thumbnails:
+        Used for “smart cropping” in easy-thumbnails:
             https://git.io/fhqxd
     """
     from math import log2, fsum
@@ -25,10 +25,10 @@ def histogram_entropy(image):
     return -fsum(p * log2(p) for p in histonorm if p != 0.0)
 
 def compare_entropy(start_slice, end_slice, slice, difference):
-    """ Calculate the entropy of two slices (from the start
-        and end of an axis), returning a tuple containing
-        the amount that should be added to the start
-        and removed from the end of the axis.
+    """ Calculate the entropy of two slices (from the start and end
+        of an axis), returning a tuple containing the amount that
+        should be added to the start, and removed from the end
+        of that axis.
         
         Based on the eponymous function from easy-thumbnails:
             https://git.io/fhqpT
@@ -49,11 +49,10 @@ def compare_entropy(start_slice, end_slice, slice, difference):
         return slice, 0
 
 class SquareCrop(object):
-    """ Crop an image to an Instagrammy square,
-        by whittling away the parts of the image
-        with the least entropy.
+    """ Crop an image to an Instagrammy square, by whittling away
+        the parts of the image with the least entropy.
         
-        Based on smart crop implementation from easy-thumbnails:
+        Based on a smart-crop implementation from easy-thumbnails:
             https://git.io/fhqxj
     """
     
