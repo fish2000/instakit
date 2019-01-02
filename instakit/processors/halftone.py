@@ -20,6 +20,8 @@ HI_TUP = (255,)
 
 class ThresholdMatrixProcessor(ABC):
     
+    """ Abstract base class for a processor using a uint8 threshold matrix """
+    
     def __init__(self, threshold = 128.0):
         """ Initialize with a threshold value between 0 and 255 """
         self.threshold_matrix = int(threshold)  * LO_TUP + \
