@@ -8,6 +8,7 @@ Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 """
 from __future__ import print_function
 
+from abc import ABC, abstractmethod as abstract
 from PIL import ImageDraw
 
 from instakit.utils import pipeline, stats
@@ -17,7 +18,18 @@ from instakit.utils.mode import Mode
 LO_TUP = (0,)
 HI_TUP = (255,)
 
-class SlowAtkinson(object):
+class ThresholdMatrixProcessor(ABC):
+    
+    def __init__(self, threshold = 128.0):
+        """ Initialize with a threshold value between 0 and 255 """
+        self.threshold_matrix = int(threshold)  * LO_TUP + \
+                           (256-int(threshold)) * HI_TUP
+    
+    @abstract
+    def process(self, image): ...
+
+
+class SlowAtkinson(ThresholdMatrixProcessor):
     
     """ It’s not a joke, this processor is slow as fuck;
         if at all possible, use the cythonized version instead
@@ -25,11 +37,6 @@ class SlowAtkinson(object):
         use this one if at all possible – unless, like, you’re
         being paid by the hour or somesuch. Up to you dogg.
     """
-    
-    def __init__(self, threshold = 128.0):
-        """ Initialize with a threshold value between 0 and 255 """
-        self.threshold_matrix = int(threshold)  * LO_TUP + \
-                           (256-int(threshold)) * HI_TUP
     
     def process(self, image):
         """ The process call returns a monochrome ('L'-mode) image """
@@ -53,7 +60,7 @@ class SlowAtkinson(object):
                         pass # it happens, evidently.
         return image
 
-class SlowFloydSteinberg(object):
+class SlowFloydSteinberg(ThresholdMatrixProcessor):
     
     """ A similarly super-slow reference implementation of Floyd-Steinberg.
         Adapted from an RGB version here: https://github.com/trimailov/qwer
@@ -64,11 +71,6 @@ class SlowFloydSteinberg(object):
     THREE_FRAC = 3/16
     CINCO_FRAC = 5/16
     ALONE_FRAC = 1/16
-    
-    def __init__(self, threshold = 128.0):
-        """ Initialize with a threshold value between 0 and 255 """
-        self.threshold_matrix = int(threshold)  * LO_TUP + \
-                           (256-int(threshold)) * HI_TUP
     
     def process(self, image):
         """ The process call returns a monochrome ('L'-mode) image """
