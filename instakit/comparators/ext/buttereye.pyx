@@ -6,7 +6,9 @@ from cython.operator cimport dereference as deref
 from cpython.float cimport PyFloat_AS_DOUBLE
 from libcpp.memory cimport unique_ptr
 
-from instakit.comparators.ext.butteraugli cimport Image8, ImageF, image8vec, imagefvec, floatvecvec, CreatePlanes
+from instakit.comparators.ext.butteraugli cimport Image8, ImageF
+from instakit.comparators.ext.butteraugli cimport image8vec, imagefvec
+from instakit.comparators.ext.butteraugli cimport floatvecvec, CreatePlanes
 from instakit.utils.mode import Mode
 
 ctypedef unique_ptr[ImageF] imagef_ptr

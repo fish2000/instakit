@@ -19,9 +19,7 @@ cdef extern from "butteraugli.h" namespace "butteraugli" nogil:
         size_t ysize() const
         
         const ComponentType* Row(size_t const)
-        # const ComponentType const* Row(size_t const) const
         const uint8_t* byte_ptr "bytes"()
-        # const uint8_t const* byte_ptr "bytes"() const
         
         size_t bytes_per_row()
         intptr_t PixelsPerRow() const
@@ -30,16 +28,6 @@ ctypedef Image[float]   ImageF
 ctypedef Image[uint8_t] Image8
 
 cdef extern from "butteraugli.h" namespace "butteraugli" nogil:
-    
-    # cppclass ImageF(ImageFAncestor):
-    #     ImageF()
-    #     ImageF(size_t const, size_t const)
-    #     ImageF(ImageF&&)
-    
-    # cppclass Image8(Image8Ancestor):
-    #     Image8()
-    #     Image8(size_t const, size_t const)
-    #     Image8(Image8&&)
     
     cdef vector[Image[T]] CreatePlanes[T](size_t const,
                                           size_t const,
