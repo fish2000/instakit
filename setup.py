@@ -64,7 +64,8 @@ def cython_module(*args, **kwargs):
     if language.lower() == 'c++':
         extra_compile_args.extend(['-std=c++17',
                                    '-stdlib=libc++',
-                                   '-Wno-sign-compare'])
+                                   '-Wno-sign-compare',
+                                   '-Wno-unused-private-field'])
     return Extension(ext_package, sources,
         language=language,
         include_dirs=include_dirs,
@@ -223,10 +224,10 @@ hsluv_source = os.path.join(os.path.relpath(instakit_base_path,
                                                         'ext',
                                                         'hsluv.c')
 
-buttereye_source = os.path.join(os.path.relpath(instakit_base_path,
-                          start=os.path.dirname(__file__)), 'comparators',
-                                                            'ext',
-                                                            'butteraugli.cc')
+butteraugli_source = os.path.join(os.path.relpath(instakit_base_path,
+                            start=os.path.dirname(__file__)), 'comparators',
+                                                              'ext',
+                                                              'butteraugli.cc')
 
 include_dirs = [
     os.path.curdir,
@@ -258,9 +259,12 @@ setup(
     include_dirs=include_dirs,
     
     ext_modules=cythonize([
-        cython_comparator("buttereye", language="c++", sources=[buttereye_source]),
-        cython_processor("halftone", include_dirs=include_dirs),
-        cython_utility("api", sources=[hsluv_source])
+        cython_comparator("buttereye",  sources=[butteraugli_source],
+                                        language="c++"),
+        cython_processor("halftone",    include_dirs=include_dirs,
+                                        language="c"),
+        cython_utility("api",           sources=[hsluv_source],
+                                        language="c")
         ], compiler_directives=dict(language_level=3,
                                     infer_types=True,
                                     embedsignature=True)),
