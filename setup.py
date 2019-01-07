@@ -55,15 +55,19 @@ def cython_module(*args, **kwargs):
     ext_pth = os.path.sep.join(args) + os.extsep + "pyx"
     sources.insert(0, ext_pth)
     language = kwargs.pop('language', 'c')
+    extra_compile_args = ['-Wno-unused-function',
+                          '-Wno-unneeded-internal-declaration',
+                          '-O3',
+                          '-fstrict-aliasing',
+                          '-funroll-loops',
+                          '-mtune=native']
+    if language.lower == 'c++':
+        extra_compile_args.extend(['-std=c++17',
+                                   '-stdlib=libc++'])
     return Extension(ext_package, sources,
         language=language,
         include_dirs=include_dirs,
-        extra_compile_args=['-Wno-unused-function',
-                            '-Wno-unneeded-internal-declaration',
-                            '-O3',
-                            '-fstrict-aliasing',
-                            '-funroll-loops',
-                            '-mtune=native'])
+        extra_compile_args=extra_compile_args)
 
 def cython_processor(name, **kwargs):
     return cython_module('instakit', 'processors', 'ext', name, **kwargs)

@@ -58,9 +58,10 @@ ImageMode.getmode('RGB') # one call must be made to getmode()
 junkdrawer.modes = ImageMode._modes
 junkdrawer.types = Image._MODE_CONV
 
-image_mode_strings = tuple(junkdrawer.modes.keys())
+mode_strings = tuple(junkdrawer.modes.keys())
 dtypes_for_modes = { k : v[0] for k, v in junkdrawer.types.items() }
 
+junkdrawer.idxmode = lambda idx: ImageMode.getmode(mode_strings[idx])
 
 class ModeAncestor(Enum):
     """
@@ -75,14 +76,12 @@ class ModeAncestor(Enum):
                               start,
                               count,
                               last_values):
-        return ImageMode.getmode(
-               image_mode_strings[count])
+        return junkdrawer.idxmode(count)
     
     @classmethod
     def _missing_(cls, value):
         try:
-            return cls(ImageMode.getmode(
-                       image_mode_strings[value]))
+            return cls(junkdrawer.idxmode(value))
         except (IndexError, TypeError):
             pass
         return super(ModeAncestor, cls)._missing_(value)
@@ -104,6 +103,7 @@ class ModeContext(contextlib.AbstractContextManager):
     
     __slots__ = ('initial_image',
                          'image',
+                   'final_image',
                  'original_mode',
                           'mode')
     
@@ -116,6 +116,7 @@ class ModeContext(contextlib.AbstractContextManager):
         print("ModeContext.__init__: configured with image: %s" % label)
         self.initial_image = image
         self.image = None
+        self.final_image = None
         self.original_mode = Mode.of(image)
         self.mode = mode
     
@@ -146,8 +147,8 @@ class ModeContext(contextlib.AbstractContextManager):
         original_mode = getattr(self, 'original_mode', None)
         if image is not None and original_mode is not None:
             print("ModeContext.__exit__: converting %s to %s" % (Mode.of(image), original_mode))
-            initial_image = original_mode.process(image)
-        setattr(self, 'initial_image', initial_image)
+            final_image = original_mode.process(image)
+        setattr(self, 'final_image', final_image)
         return exc_type is None
 
 
@@ -201,6 +202,14 @@ class Mode(ModeAncestor):
     
     def __str__(self):
         return self.to_string()
+    
+    def __repr__(self):
+        repr_string = "%s(%s: [%s/%s] ∞ {%s » %s}) @ %s"
+        return repr_string % (type(self).__qualname__,
+                                   self.label,
+                                   self.basemode, self.basetype,
+                                   self.dtype_code(), self.dtype,
+                                id(self))
     
     def __bytes__(self):
         return bytes(self.to_string(), encoding="UTF-8")
