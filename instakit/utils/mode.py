@@ -107,13 +107,15 @@ class ModeContext(contextlib.AbstractContextManager):
                  'original_mode',
                           'mode')
     
-    def __init__(self, image, mode):
+    def __init__(self, image, mode, **kwargs):
         assert Image.isImageType(image)
         assert Mode.is_mode(mode)
         label = getattr(image, 'filename', None) \
             and os.path.basename(getattr(image, 'filename', None)) \
             or str(image)
-        print("ModeContext.__init__: configured with image: %s" % label)
+        self.verbose = kwargs.get('verbose', False)
+        if self.verbose:
+            print("ModeContext.__init__: configured with image: %s" % label)
         self.initial_image = image
         self.image = None
         self.final_image = None
@@ -137,7 +139,8 @@ class ModeContext(contextlib.AbstractContextManager):
         initial_image = getattr(self, 'initial_image', None)
         mode = getattr(self, 'mode', None)
         if initial_image is not None and mode is not None:
-            print("ModeContext.__enter__: converting %s to %s" % (Mode.of(initial_image), mode))
+            if self.verbose:
+                print("ModeContext.__enter__: converting %s to %s" % (Mode.of(initial_image), mode))
             image = mode.process(initial_image)
             setattr(self, 'image', image)
         return self
@@ -146,7 +149,8 @@ class ModeContext(contextlib.AbstractContextManager):
         image = getattr(self, 'image', None)
         original_mode = getattr(self, 'original_mode', None)
         if image is not None and original_mode is not None:
-            print("ModeContext.__exit__: converting %s to %s" % (Mode.of(image), original_mode))
+            if self.verbose:
+                print("ModeContext.__exit__: converting %s to %s" % (Mode.of(image), original_mode))
             final_image = original_mode.process(image)
         setattr(self, 'final_image', final_image)
         return exc_type is None
@@ -214,8 +218,8 @@ class Mode(ModeAncestor):
     def __bytes__(self):
         return bytes(self.to_string(), encoding="UTF-8")
     
-    def __call__(self, image):
-        return ModeContext(image, self)
+    def __call__(self, image, **kwargs):
+        return ModeContext(image, self, **kwargs)
     
     def dtype_code(self):
         return dtypes_for_modes.get(self.to_string(), None) or \
@@ -336,7 +340,7 @@ def test():
             image_paths))
     
     for image in image_inputs:
-        with Mode.L(image) as grayscale:
+        with Mode.L(image, verbose=True) as grayscale:
             assert Mode.of(grayscale.image) is Mode.L
             print(grayscale.image)
             grayscale.image = Mode.MONO.process(grayscale.image)
