@@ -15,9 +15,6 @@ def histogram_entropy(image):
     """
     from math import log2, fsum
     
-    if not hasattr(image, 'histogram'):
-        return 0  # Fall back to a constant entropy.
-    
     histogram = image.histogram()
     histosum = fsum(histogram)
     histonorm = (histocol / histosum for histocol in histogram)
