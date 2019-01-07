@@ -12,7 +12,7 @@ from enum import Enum, auto, unique
 
 from instakit.utils import misc
 
-junkdrawer = misc.SimpleNamespace()
+junkdrawer = misc.Namespace()
 junkdrawer.imode = lambda image: ImageMode.getmode(image.mode)
 
 def split_abbreviations(s):

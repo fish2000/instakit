@@ -8,7 +8,7 @@ root = os.path.join(os.path.dirname(__file__), '..', 'data')
 listfiles = lambda *pth: os.listdir(os.path.join(root, *pth))
 path = lambda *pth: os.path.abspath(os.path.join(root, *pth))
 
-tests = misc.SimpleNamespace()
+tests = misc.Namespace()
 tests.root = os.path.join(os.path.dirname(__file__), '..', '..', 'tests')
 tests.data = os.path.join(tests.root, 'data')
 tests.listfiles = lambda *pth: os.listdir(os.path.join(tests.data, *pth))
