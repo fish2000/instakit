@@ -320,6 +320,12 @@ def test():
     assert split_abbreviations('sRGB') == ('R', 'G', 'B')
     assert split_abbreviations('XYZ') == ('X', 'Y', 'Z')
     
+    assert split_abbreviations('RGB') == Mode.RGB.bands
+    assert split_abbreviations('CMYK') == Mode.CMYK.bands
+    assert split_abbreviations('YCbCr') == Mode.YCbCr.bands
+    assert split_abbreviations('sRGB') == Mode.RGB.bands
+    # assert split_abbreviations('XYZ') == ('X', 'Y', 'Z')
+    
     print("«SUCCESS»")
     
     # print(list(Mode))
