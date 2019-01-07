@@ -886,7 +886,7 @@ static const char *__pyx_f[] = {
 
 /*--- Type declarations ---*/
 
-/* "instakit/comparators/ext/butteraugli.pxd":29
+/* "instakit/comparators/ext/butteraugli.pxd":27
  *         intptr_t PixelsPerRow() const
  * 
  * ctypedef Image[float]   ImageF             # <<<<<<<<<<<<<<
@@ -895,7 +895,7 @@ static const char *__pyx_f[] = {
  */
 typedef butteraugli::Image<float>  __pyx_t_8instakit_11comparators_3ext_11butteraugli_ImageF;
 
-/* "instakit/comparators/ext/butteraugli.pxd":30
+/* "instakit/comparators/ext/butteraugli.pxd":28
  * 
  * ctypedef Image[float]   ImageF
  * ctypedef Image[uint8_t] Image8             # <<<<<<<<<<<<<<
@@ -904,7 +904,7 @@ typedef butteraugli::Image<float>  __pyx_t_8instakit_11comparators_3ext_11butter
  */
 typedef butteraugli::Image<uint8_t>  __pyx_t_8instakit_11comparators_3ext_11butteraugli_Image8;
 
-/* "instakit/comparators/ext/butteraugli.pxd":48
+/* "instakit/comparators/ext/butteraugli.pxd":36
  *                                           size_t const)
  * 
  * ctypedef vector[ImageF]     imagefvec             # <<<<<<<<<<<<<<
@@ -913,7 +913,7 @@ typedef butteraugli::Image<uint8_t>  __pyx_t_8instakit_11comparators_3ext_11butt
  */
 typedef std::vector<__pyx_t_8instakit_11comparators_3ext_11butteraugli_ImageF>  __pyx_t_8instakit_11comparators_3ext_11butteraugli_imagefvec;
 
-/* "instakit/comparators/ext/butteraugli.pxd":49
+/* "instakit/comparators/ext/butteraugli.pxd":37
  * 
  * ctypedef vector[ImageF]     imagefvec
  * ctypedef vector[Image8]     image8vec             # <<<<<<<<<<<<<<
@@ -922,7 +922,7 @@ typedef std::vector<__pyx_t_8instakit_11comparators_3ext_11butteraugli_ImageF>  
  */
 typedef std::vector<__pyx_t_8instakit_11comparators_3ext_11butteraugli_Image8>  __pyx_t_8instakit_11comparators_3ext_11butteraugli_image8vec;
 
-/* "instakit/comparators/ext/butteraugli.pxd":50
+/* "instakit/comparators/ext/butteraugli.pxd":38
  * ctypedef vector[ImageF]     imagefvec
  * ctypedef vector[Image8]     image8vec
  * ctypedef vector[float]      floatvec             # <<<<<<<<<<<<<<
@@ -931,7 +931,7 @@ typedef std::vector<__pyx_t_8instakit_11comparators_3ext_11butteraugli_Image8>  
  */
 typedef std::vector<float>  __pyx_t_8instakit_11comparators_3ext_11butteraugli_floatvec;
 
-/* "instakit/comparators/ext/butteraugli.pxd":51
+/* "instakit/comparators/ext/butteraugli.pxd":39
  * ctypedef vector[Image8]     image8vec
  * ctypedef vector[float]      floatvec
  * ctypedef vector[floatvec]   floatvecvec             # <<<<<<<<<<<<<<
@@ -940,7 +940,7 @@ typedef std::vector<float>  __pyx_t_8instakit_11comparators_3ext_11butteraugli_f
  */
 typedef std::vector<__pyx_t_8instakit_11comparators_3ext_11butteraugli_floatvec>  __pyx_t_8instakit_11comparators_3ext_11butteraugli_floatvecvec;
 
-/* "instakit/comparators/ext/buttereye.pyx":12
+/* "instakit/comparators/ext/buttereye.pyx":14
  * from instakit.utils.mode import Mode
  * 
  * ctypedef unique_ptr[ImageF] imagef_ptr             # <<<<<<<<<<<<<<
@@ -949,12 +949,12 @@ typedef std::vector<__pyx_t_8instakit_11comparators_3ext_11butteraugli_floatvec>
  */
 typedef std::unique_ptr<__pyx_t_8instakit_11comparators_3ext_11butteraugli_ImageF>  __pyx_t_8instakit_11comparators_3ext_9buttereye_imagef_ptr;
 
-/* "instakit/comparators/ext/buttereye.pyx":13
+/* "instakit/comparators/ext/buttereye.pyx":15
  * 
  * ctypedef unique_ptr[ImageF] imagef_ptr
  * ctypedef unique_ptr[Image8] image8_ptr             # <<<<<<<<<<<<<<
  * 
- * # cdef imagef_ptr image_to_planar(object pilimage):
+ * cdef imagefvec image_to_planar_vector(object pilimage):
  */
 typedef std::unique_ptr<__pyx_t_8instakit_11comparators_3ext_11butteraugli_Image8>  __pyx_t_8instakit_11comparators_3ext_9buttereye_image8_ptr;
 
@@ -1303,8 +1303,8 @@ static PyObject *__pyx_n_s_split;
 static PyObject *__pyx_n_s_test;
 /* Late includes */
 
-/* "instakit/comparators/ext/buttereye.pyx":36
- * #     return plane
+/* "instakit/comparators/ext/buttereye.pyx":17
+ * ctypedef unique_ptr[Image8] image8_ptr
  * 
  * cdef imagefvec image_to_planar_vector(object pilimage):             # <<<<<<<<<<<<<<
  *     cdef int width, height, x, y
@@ -1344,14 +1344,14 @@ static __pyx_t_8instakit_11comparators_3ext_11butteraugli_imagefvec __pyx_f_8ins
   int __pyx_t_14;
   __Pyx_RefNannySetupContext("image_to_planar_vector", 0);
 
-  /* "instakit/comparators/ext/buttereye.pyx":47
+  /* "instakit/comparators/ext/buttereye.pyx":27
+ *     cdef int bandcount, idx
  * 
- *     # image = Mode.F.process(pilimage)
  *     width, height = pilimage.size             # <<<<<<<<<<<<<<
  *     bands = Mode.RGB.process(pilimage).split()
  * 
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_pilimage, __pyx_n_s_size); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 47, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_pilimage, __pyx_n_s_size); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 27, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   if ((likely(PyTuple_CheckExact(__pyx_t_1))) || (PyList_CheckExact(__pyx_t_1))) {
     PyObject* sequence = __pyx_t_1;
@@ -1359,7 +1359,7 @@ static __pyx_t_8instakit_11comparators_3ext_11butteraugli_imagefvec __pyx_f_8ins
     if (unlikely(size != 2)) {
       if (size > 2) __Pyx_RaiseTooManyValuesError(2);
       else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-      __PYX_ERR(0, 47, __pyx_L1_error)
+      __PYX_ERR(0, 27, __pyx_L1_error)
     }
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
     if (likely(PyTuple_CheckExact(sequence))) {
@@ -1372,15 +1372,15 @@ static __pyx_t_8instakit_11comparators_3ext_11butteraugli_imagefvec __pyx_f_8ins
     __Pyx_INCREF(__pyx_t_2);
     __Pyx_INCREF(__pyx_t_3);
     #else
-    __pyx_t_2 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 47, __pyx_L1_error)
+    __pyx_t_2 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 27, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 47, __pyx_L1_error)
+    __pyx_t_3 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 27, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     #endif
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   } else {
     Py_ssize_t index = -1;
-    __pyx_t_4 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 47, __pyx_L1_error)
+    __pyx_t_4 = PyObject_GetIter(__pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 27, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_t_5 = Py_TYPE(__pyx_t_4)->tp_iternext;
@@ -1388,7 +1388,7 @@ static __pyx_t_8instakit_11comparators_3ext_11butteraugli_imagefvec __pyx_f_8ins
     __Pyx_GOTREF(__pyx_t_2);
     index = 1; __pyx_t_3 = __pyx_t_5(__pyx_t_4); if (unlikely(!__pyx_t_3)) goto __pyx_L3_unpacking_failed;
     __Pyx_GOTREF(__pyx_t_3);
-    if (__Pyx_IternextUnpackEndCheck(__pyx_t_5(__pyx_t_4), 2) < 0) __PYX_ERR(0, 47, __pyx_L1_error)
+    if (__Pyx_IternextUnpackEndCheck(__pyx_t_5(__pyx_t_4), 2) < 0) __PYX_ERR(0, 27, __pyx_L1_error)
     __pyx_t_5 = NULL;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     goto __pyx_L4_unpacking_done;
@@ -1396,29 +1396,29 @@ static __pyx_t_8instakit_11comparators_3ext_11butteraugli_imagefvec __pyx_f_8ins
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_t_5 = NULL;
     if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-    __PYX_ERR(0, 47, __pyx_L1_error)
+    __PYX_ERR(0, 27, __pyx_L1_error)
     __pyx_L4_unpacking_done:;
   }
-  __pyx_t_6 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_6 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 47, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyInt_As_int(__pyx_t_2); if (unlikely((__pyx_t_6 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 27, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_3); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 47, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyInt_As_int(__pyx_t_3); if (unlikely((__pyx_t_7 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 27, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_width = __pyx_t_6;
   __pyx_v_height = __pyx_t_7;
 
-  /* "instakit/comparators/ext/buttereye.pyx":48
- *     # image = Mode.F.process(pilimage)
+  /* "instakit/comparators/ext/buttereye.pyx":28
+ * 
  *     width, height = pilimage.size
  *     bands = Mode.RGB.process(pilimage).split()             # <<<<<<<<<<<<<<
  * 
  *     with nogil:
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_Mode); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 48, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_Mode); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 28, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_RGB); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 48, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_RGB); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 28, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_process); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 48, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_process); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 28, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_t_4 = NULL;
@@ -1433,10 +1433,10 @@ static __pyx_t_8instakit_11comparators_3ext_11butteraugli_imagefvec __pyx_f_8ins
   }
   __pyx_t_3 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_4, __pyx_v_pilimage) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_pilimage);
   __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 48, __pyx_L1_error)
+  if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 28, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_split); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 48, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_split); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 28, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_t_3 = NULL;
@@ -1451,13 +1451,13 @@ static __pyx_t_8instakit_11comparators_3ext_11butteraugli_imagefvec __pyx_f_8ins
   }
   __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 48, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 28, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_bands = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "instakit/comparators/ext/buttereye.pyx":50
+  /* "instakit/comparators/ext/buttereye.pyx":30
  *     bands = Mode.RGB.process(pilimage).split()
  * 
  *     with nogil:             # <<<<<<<<<<<<<<
@@ -1472,7 +1472,7 @@ static __pyx_t_8instakit_11comparators_3ext_11butteraugli_imagefvec __pyx_f_8ins
       #endif
       /*try:*/ {
 
-        /* "instakit/comparators/ext/buttereye.pyx":51
+        /* "instakit/comparators/ext/buttereye.pyx":31
  * 
  *     with nogil:
  *         bandcount = 3             # <<<<<<<<<<<<<<
@@ -1481,7 +1481,7 @@ static __pyx_t_8instakit_11comparators_3ext_11butteraugli_imagefvec __pyx_f_8ins
  */
         __pyx_v_bandcount = 3;
 
-        /* "instakit/comparators/ext/buttereye.pyx":52
+        /* "instakit/comparators/ext/buttereye.pyx":32
  *     with nogil:
  *         bandcount = 3
  *         planes = CreatePlanes[float](width,             # <<<<<<<<<<<<<<
@@ -1491,7 +1491,7 @@ static __pyx_t_8instakit_11comparators_3ext_11butteraugli_imagefvec __pyx_f_8ins
         __pyx_v_planes = butteraugli::CreatePlanes<float>(__pyx_v_width, __pyx_v_height, __pyx_v_bandcount);
       }
 
-      /* "instakit/comparators/ext/buttereye.pyx":50
+      /* "instakit/comparators/ext/buttereye.pyx":30
  *     bands = Mode.RGB.process(pilimage).split()
  * 
  *     with nogil:             # <<<<<<<<<<<<<<
@@ -1510,7 +1510,7 @@ static __pyx_t_8instakit_11comparators_3ext_11butteraugli_imagefvec __pyx_f_8ins
       }
   }
 
-  /* "instakit/comparators/ext/buttereye.pyx":56
+  /* "instakit/comparators/ext/buttereye.pyx":36
  *                                      bandcount)
  * 
  *     for idx in range(bandcount):             # <<<<<<<<<<<<<<
@@ -1522,31 +1522,31 @@ static __pyx_t_8instakit_11comparators_3ext_11butteraugli_imagefvec __pyx_f_8ins
   for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_6; __pyx_t_8+=1) {
     __pyx_v_idx = __pyx_t_8;
 
-    /* "instakit/comparators/ext/buttereye.pyx":57
+    /* "instakit/comparators/ext/buttereye.pyx":37
  * 
  *     for idx in range(bandcount):
  *         band = bands[idx]             # <<<<<<<<<<<<<<
  *         image = Mode.F.process(band)
  *         accessor = image.load()
  */
-    __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_bands, __pyx_v_idx, int, 1, __Pyx_PyInt_From_int, 0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 57, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_bands, __pyx_v_idx, int, 1, __Pyx_PyInt_From_int, 0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 37, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_XDECREF_SET(__pyx_v_band, __pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "instakit/comparators/ext/buttereye.pyx":58
+    /* "instakit/comparators/ext/buttereye.pyx":38
  *     for idx in range(bandcount):
  *         band = bands[idx]
  *         image = Mode.F.process(band)             # <<<<<<<<<<<<<<
  *         accessor = image.load()
- *         # plane.reset(new ImageF(width, height))
+ * 
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_Mode); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 58, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_Mode); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 38, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_F); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 58, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_F); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 38, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_process); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 58, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_process); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 38, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __pyx_t_3 = NULL;
@@ -1561,20 +1561,20 @@ static __pyx_t_8instakit_11comparators_3ext_11butteraugli_imagefvec __pyx_f_8ins
     }
     __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_v_band) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_band);
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 58, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 38, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_XDECREF_SET(__pyx_v_image, __pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "instakit/comparators/ext/buttereye.pyx":59
+    /* "instakit/comparators/ext/buttereye.pyx":39
  *         band = bands[idx]
  *         image = Mode.F.process(band)
  *         accessor = image.load()             # <<<<<<<<<<<<<<
- *         # plane.reset(new ImageF(width, height))
  * 
+ *         for y in range(height):
  */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_image, __pyx_n_s_load); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 59, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_image, __pyx_n_s_load); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 39, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_t_3 = NULL;
     if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
@@ -1588,35 +1588,35 @@ static __pyx_t_8instakit_11comparators_3ext_11butteraugli_imagefvec __pyx_f_8ins
     }
     __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 59, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 39, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_XDECREF_SET(__pyx_v_accessor, __pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "instakit/comparators/ext/buttereye.pyx":62
- *         # plane.reset(new ImageF(width, height))
+    /* "instakit/comparators/ext/buttereye.pyx":41
+ *         accessor = image.load()
  * 
  *         for y in range(height):             # <<<<<<<<<<<<<<
- *             # planerow = deref(plane).Row(y)
  *             planerow = planes[idx].Row(y)
+ *             for x in range(width):
  */
     __pyx_t_9 = __pyx_v_height;
     __pyx_t_10 = __pyx_t_9;
     for (__pyx_t_11 = 0; __pyx_t_11 < __pyx_t_10; __pyx_t_11+=1) {
       __pyx_v_y = __pyx_t_11;
 
-      /* "instakit/comparators/ext/buttereye.pyx":64
+      /* "instakit/comparators/ext/buttereye.pyx":42
+ * 
  *         for y in range(height):
- *             # planerow = deref(plane).Row(y)
  *             planerow = planes[idx].Row(y)             # <<<<<<<<<<<<<<
  *             for x in range(width):
  *                 pypoint = accessor[x, y]
  */
       __pyx_v_planerow = (__pyx_v_planes[__pyx_v_idx]).Row(__pyx_v_y);
 
-      /* "instakit/comparators/ext/buttereye.pyx":65
- *             # planerow = deref(plane).Row(y)
+      /* "instakit/comparators/ext/buttereye.pyx":43
+ *         for y in range(height):
  *             planerow = planes[idx].Row(y)
  *             for x in range(width):             # <<<<<<<<<<<<<<
  *                 pypoint = accessor[x, y]
@@ -1627,18 +1627,18 @@ static __pyx_t_8instakit_11comparators_3ext_11butteraugli_imagefvec __pyx_f_8ins
       for (__pyx_t_14 = 0; __pyx_t_14 < __pyx_t_13; __pyx_t_14+=1) {
         __pyx_v_x = __pyx_t_14;
 
-        /* "instakit/comparators/ext/buttereye.pyx":66
+        /* "instakit/comparators/ext/buttereye.pyx":44
  *             planerow = planes[idx].Row(y)
  *             for x in range(width):
  *                 pypoint = accessor[x, y]             # <<<<<<<<<<<<<<
  *                 point = PyFloat_AS_DOUBLE(pypoint)
  *                 planerow[x] = <float>point
  */
-        __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_x); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 66, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_x); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 44, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_y); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 66, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_y); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 44, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
-        __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 66, __pyx_L1_error)
+        __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 44, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
         __Pyx_GIVEREF(__pyx_t_1);
         PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_1);
@@ -1646,13 +1646,13 @@ static __pyx_t_8instakit_11comparators_3ext_11butteraugli_imagefvec __pyx_f_8ins
         PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_t_2);
         __pyx_t_1 = 0;
         __pyx_t_2 = 0;
-        __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_accessor, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 66, __pyx_L1_error)
+        __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_accessor, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 44, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
         __Pyx_XDECREF_SET(__pyx_v_pypoint, __pyx_t_2);
         __pyx_t_2 = 0;
 
-        /* "instakit/comparators/ext/buttereye.pyx":67
+        /* "instakit/comparators/ext/buttereye.pyx":45
  *             for x in range(width):
  *                 pypoint = accessor[x, y]
  *                 point = PyFloat_AS_DOUBLE(pypoint)             # <<<<<<<<<<<<<<
@@ -1661,20 +1661,20 @@ static __pyx_t_8instakit_11comparators_3ext_11butteraugli_imagefvec __pyx_f_8ins
  */
         __pyx_v_point = PyFloat_AS_DOUBLE(__pyx_v_pypoint);
 
-        /* "instakit/comparators/ext/buttereye.pyx":68
+        /* "instakit/comparators/ext/buttereye.pyx":46
  *                 pypoint = accessor[x, y]
  *                 point = PyFloat_AS_DOUBLE(pypoint)
  *                 planerow[x] = <float>point             # <<<<<<<<<<<<<<
  * 
- *         # planes.push_back(deref(imagef_ptr))
+ *     # AND SO NOW WHAT??!
  */
         (__pyx_v_planerow[__pyx_v_x]) = ((float)__pyx_v_point);
       }
     }
   }
 
-  /* "instakit/comparators/ext/buttereye.pyx":36
- * #     return plane
+  /* "instakit/comparators/ext/buttereye.pyx":17
+ * ctypedef unique_ptr[Image8] image8_ptr
  * 
  * cdef imagefvec image_to_planar_vector(object pilimage):             # <<<<<<<<<<<<<<
  *     cdef int width, height, x, y
@@ -1764,7 +1764,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 56, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 36, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -2047,24 +2047,24 @@ if (!__Pyx_RefNanny) {
   if (__Pyx_patch_abc() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
 
-  /* "instakit/comparators/ext/buttereye.pyx":10
- * 
- * from instakit.comparators.ext.butteraugli cimport Image8, ImageF, image8vec, imagefvec, floatvecvec, CreatePlanes
+  /* "instakit/comparators/ext/buttereye.pyx":12
+ * from instakit.comparators.ext.butteraugli cimport image8vec, imagefvec
+ * from instakit.comparators.ext.butteraugli cimport floatvecvec, CreatePlanes
  * from instakit.utils.mode import Mode             # <<<<<<<<<<<<<<
  * 
  * ctypedef unique_ptr[ImageF] imagef_ptr
  */
-  __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 10, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_INCREF(__pyx_n_s_Mode);
   __Pyx_GIVEREF(__pyx_n_s_Mode);
   PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s_Mode);
-  __pyx_t_2 = __Pyx_Import(__pyx_n_s_instakit_utils_mode, __pyx_t_1, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 10, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_Import(__pyx_n_s_instakit_utils_mode, __pyx_t_1, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_Mode); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 10, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_Mode); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_Mode, __pyx_t_1) < 0) __PYX_ERR(0, 10, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_Mode, __pyx_t_1) < 0) __PYX_ERR(0, 12, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 

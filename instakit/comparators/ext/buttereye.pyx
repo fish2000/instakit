@@ -14,27 +14,6 @@ from instakit.utils.mode import Mode
 ctypedef unique_ptr[ImageF] imagef_ptr
 ctypedef unique_ptr[Image8] image8_ptr
 
-# cdef imagef_ptr image_to_planar(object pilimage):
-#     cdef int width, height, x, y
-#     cdef double point
-#     cdef float* planerow
-#     cdef object pypoint, image, accessor
-#     cdef imagef_ptr plane
-#
-#     image = Mode.F.process(pilimage)
-#     accessor = image.load()
-#     width, height = image.size
-#     # plane.reset(new ImageF(width, height))
-#
-#     for y in range(height):
-#         planerow = deref(plane).Row(y)
-#         for x in range(width):
-#             pypoint = accessor[x, y]
-#             point = PyFloat_AS_DOUBLE(pypoint)
-#             planerow[x] = <float>point
-#
-#     return plane
-
 cdef imagefvec image_to_planar_vector(object pilimage):
     cdef int width, height, x, y
     cdef double point
@@ -45,7 +24,6 @@ cdef imagefvec image_to_planar_vector(object pilimage):
     cdef imagefvec planes
     cdef int bandcount, idx
     
-    # image = Mode.F.process(pilimage)
     width, height = pilimage.size
     bands = Mode.RGB.process(pilimage).split()
     
@@ -59,18 +37,12 @@ cdef imagefvec image_to_planar_vector(object pilimage):
         band = bands[idx]
         image = Mode.F.process(band)
         accessor = image.load()
-        # plane.reset(new ImageF(width, height))
         
         for y in range(height):
-            # planerow = deref(plane).Row(y)
             planerow = planes[idx].Row(y)
             for x in range(width):
                 pypoint = accessor[x, y]
                 point = PyFloat_AS_DOUBLE(pypoint)
                 planerow[x] = <float>point
-        
-        # planes.push_back(deref(imagef_ptr))
-        # planes[idx] = ImageF(deref(plane))
-        # planes.push_back(plane.release())
     
-    # return planes
+    # AND SO NOW WHAT??!
