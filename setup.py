@@ -268,5 +268,4 @@ setup(
         ], compiler_directives=dict(language_level=3,
                                     infer_types=True,
                                     embedsignature=True)),
-    
 )
