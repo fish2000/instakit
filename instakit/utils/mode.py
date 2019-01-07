@@ -105,7 +105,8 @@ class ModeContext(contextlib.AbstractContextManager):
                          'image',
                    'final_image',
                  'original_mode',
-                          'mode')
+                          'mode',
+                       'verbose')
     
     def __init__(self, image, mode, **kwargs):
         assert Image.isImageType(image)
