@@ -61,13 +61,17 @@ def cython_module(*args, **kwargs):
                           '-fstrict-aliasing',
                           '-funroll-loops',
                           '-mtune=native']
-    if language.lower == 'c++':
+    if language.lower() == 'c++':
         extra_compile_args.extend(['-std=c++17',
-                                   '-stdlib=libc++'])
+                                   '-stdlib=libc++',
+                                   '-Wno-sign-compare'])
     return Extension(ext_package, sources,
         language=language,
         include_dirs=include_dirs,
         extra_compile_args=extra_compile_args)
+
+def cython_comparator(name, **kwargs):
+    return cython_module('instakit', 'comparators', 'ext', name, **kwargs)
 
 def cython_processor(name, **kwargs):
     return cython_module('instakit', 'processors', 'ext', name, **kwargs)
@@ -219,6 +223,11 @@ hsluv_source = os.path.join(os.path.relpath(instakit_base_path,
                                                         'ext',
                                                         'hsluv.c')
 
+buttereye_source = os.path.join(os.path.relpath(instakit_base_path,
+                          start=os.path.dirname(__file__)), 'comparators',
+                                                            'ext',
+                                                            'butteraugli.cc')
+
 include_dirs = [
     os.path.curdir,
     numpy.get_include(),
@@ -249,6 +258,7 @@ setup(
     include_dirs=include_dirs,
     
     ext_modules=cythonize([
+        cython_comparator("buttereye", language="c++", sources=[buttereye_source]),
         cython_processor("halftone", include_dirs=include_dirs),
         cython_utility("api", sources=[hsluv_source])
         ], compiler_directives=dict(language_level=3,
