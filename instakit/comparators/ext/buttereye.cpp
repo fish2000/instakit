@@ -15,7 +15,8 @@
             "-mtune=native",
             "-std=c++17",
             "-stdlib=libc++",
-            "-Wno-sign-compare"
+            "-Wno-sign-compare",
+            "-Wno-unused-private-field"
         ],
         "include_dirs": [
             "./instakit/comparators/ext"
