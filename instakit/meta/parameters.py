@@ -7,7 +7,7 @@ import argparse
 import enum
 import importlib
 import inspect
-import os
+# import os
 import types
 import typing as tx
 
@@ -192,7 +192,7 @@ def get_processors_from(module):
         processors = []
         _module = importlib.import_module(module)
         print("Module: %s (%s)" % (_module.__name__,
-                   os.path.relpath(_module.__file__, start=asset.root)))
+                    asset.relative(str(_module.__file__))))
         for thing in (getattr(_module, name) for name in dir(_module)):
             if hasattr(thing, 'process'):
                 print("Found thing: %s" % thing)
