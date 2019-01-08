@@ -7,6 +7,8 @@ import argparse
 import enum
 import importlib
 import inspect
+import os
+import types
 import typing as tx
 
 # class Meta:
@@ -77,6 +79,7 @@ def qualified_import(qualified):
     tail = qualified.replace("%s%s" % (QUALIFIER, head), '')
     module = importlib.import_module(tail)
     cls = getattr(module, head)
+    print("Qualified Import: %s" % qualified)
     return cls
 
 def qualified_name_tuple(cls):
@@ -93,7 +96,9 @@ def qualified_name(cls):
         e.g. 'instakit.processors.halftone.FloydSteinberg'
     """
     mod_name, cls_name = qualified_name_tuple(cls)
-    return "%s%s%s" % (mod_name, QUALIFIER, cls_name)
+    out = "%s%s%s" % (mod_name, QUALIFIER, cls_name)
+    print("Qualified Name: %s" % out)
+    return out
 
 class Nothing(object):
     """ Placeholder singleton, signifying nothing """
@@ -114,7 +119,8 @@ def default_arguments(cls):
     try:
         signature = inspect.signature(cls)
     except (ValueError, TypeError) as exc:
-        qn = qualified_name(cls).replace('ext.', '')
+        m, n = qualified_name_tuple(cls)
+        qn = "%s%sSlow%s" % (m.replace('ext.', ''), QUALIFIER, n)
         NonCythonCls = qualified_import(qn)
         if qualified_name(NonCythonCls) != qualified_name(cls):
             return default_arguments(NonCythonCls)
@@ -130,6 +136,9 @@ def is_enum(cls):
     """ Predicate function to ascertain whether a class is an Enum. """
     return enum.Enum in cls.__mro__
 
+def enum_choices(cls):
+    return [choice.name for choice in cls]
+
 FILE_ARGUMENT_NAMES = ('path', 'pth', 'file')
 
 def add_argparser(subparsers, cls):
@@ -143,35 +152,55 @@ def add_argparser(subparsers, cls):
     parser = subparsers.add_parser(qualname, help=cls_help)
     if is_enum(cls): # Deal with enums
         argument_name = cls.__name__.lower()
-        argument_choices = [choice.name for choice in cls]
-        add_argument_args = dict(choices=argument_choices,
+        add_argument_args = dict(choices=enum_choices(cls),
+                                 type=str,
                                  help='help for enum %s' % argument_name)
         parser.add_argument(argument_name,
                           **add_argument_args)
     else: # Deal with __init__ signature
-        for argument_name, argument_value in default_arguments(cls):
+        for argument_name, argument_value in default_arguments(cls).items():
             argument_type = type(argument_value)
             argument_required = False
-            add_argument_args = dict(type=argument_type,
-                                     help='help for argument %s' % argument_name)
-            if argument_name in FILE_ARGUMENT_NAMES:
-                add_argument_args.update({ 'type' : argument_value is Nothing \
-                                                and argparse.FileType('rb') \
-                                                 or argument_type })
-            if argument_type is bool:
-                add_argument_args.update({ 'action' : 'store_true' })
-            elif is_enum(argument_type):
-                argument_choices = [choice.name for choice in argument_type]
-                add_argument_args.update({ 'choices' : argument_choices })
+            add_argument_args = dict(help='help for argument %s' % argument_name)
             if argument_value is not Nothing:
                 add_argument_args.update({ 'default' : argument_value })
             else:
-                add_argument_args.update({ 'type' : str })
+                add_argument_args.update({ 'type' : argument_name in FILE_ARGUMENT_NAMES \
+                                                and argparse.FileType('rb') \
+                                                 or str })
                 argument_required = True
+            if argument_type is bool:
+                add_argument_args.update({ 'action' : 'store_true' })
+            elif argument_type is type(None):
+                add_argument_args.update({ 'type' : str })
+            elif is_enum(argument_type):
+                add_argument_args.update({ 'choices' : enum_choices(argument_type),
+                                              'type' : str })
             argument_template = argument_required and '%s' or '--%s'
             parser.add_argument(argument_template % argument_name,
                               **add_argument_args)
     return parser
+
+functype = types.FunctionType
+
+def get_processors_from(module):
+    """ Memoized processor-extraction function """
+    from instakit.utils.static import asset
+    if not hasattr(get_processors_from, 'cache'):
+        get_processors_from.cache = {}
+    if module not in get_processors_from.cache:
+        processors = []
+        _module = importlib.import_module(module)
+        print("Module: %s (%s)" % (_module.__name__, os.path.relpath(_module.__file__, start=asset.root)))
+        for thing in (getattr(_module, name) for name in dir(_module)):
+            if hasattr(thing, 'process'):
+                print("Found thing: %s" % thing)
+                processors.append(thing)
+                if thing not in processors:
+                    if type(getattr(thing, 'process')) is functype:
+                        processors.append(thing)
+        get_processors_from.cache[module] = tuple(processors)
+    return get_processors_from.cache[module] 
 
 
 def test():
@@ -269,12 +298,39 @@ def test():
     print("Success!")
     print()
     
+    # Test “is_enum()”:
+    print("Testing “add_argparser()”…")
+    from pprint import pprint
     
-    # print(default_args)
-    # assert default_args == dict(value=1.0)
-    # Test “add_argparser()”:
+    parser = argparse.ArgumentParser(prog='instaprocess')
+    parser.add_argument('--verbose', '-v',
+                        action='store_true',
+                        help="print verbose messages to STDOUT")
     
+    processor_names = ('adjust', 'blur', 'curves', 'halftone', 'noise', 'squarecrop')
+    utility_names = ('colortype', 'gcr', 'kernels', 'lutmap', 'misc', 'mode', 'ndarrays', 'pipeline', 'stats')
     
+    module_names = []
+    module_names.extend(['instakit.processors.%s' % name for name in processor_names])
+    module_names.extend(['instakit.utils.%s' % name for name in utility_names])
+    
+    processors = {}
+    
+    for module_name in module_names:
+        processors[module_name] = get_processors_from(module_name)
+    
+    subparsers = parser.add_subparsers(help="subcommands for instakit processors")
+    for processor_tuple in processors.values():
+        for processor in processor_tuple:
+            add_argparser(subparsers, processor)
+    
+    pprint(processors, indent=4)
+    
+    ns = parser.parse_args(['-h'])
+    print(ns)
+    
+    print("Success!")
+    print()
 
 
 if __name__ == '__main__':
