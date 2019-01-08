@@ -191,7 +191,8 @@ def get_processors_from(module):
     if module not in get_processors_from.cache:
         processors = []
         _module = importlib.import_module(module)
-        print("Module: %s (%s)" % (_module.__name__, os.path.relpath(_module.__file__, start=asset.root)))
+        print("Module: %s (%s)" % (_module.__name__,
+                   os.path.relpath(_module.__file__, start=asset.root)))
         for thing in (getattr(_module, name) for name in dir(_module)):
             if hasattr(thing, 'process'):
                 print("Found thing: %s" % thing)
