@@ -12,11 +12,6 @@ asset.data = os.path.join(asset.root, 'data')
 asset.listfiles = lambda *p: os.listdir(os.path.join(asset.data, *p))
 asset.path = lambda *p: os.path.abspath(os.path.join(asset.data, *p))
 
-# root = os.path.join(projectdir, 'instakit')
-# data = os.path.join(root, 'data')
-# listfiles = lambda *pth: os.listdir(os.path.join(data, *pth))
-# path = lambda *pth: os.path.abspath(os.path.join(data, *pth))
-
 root = asset.root
 data = asset.data
 listfiles = asset.listfiles
@@ -38,6 +33,7 @@ def test():
     assert len(asset.listfiles('img')) > 0
     assert len(asset.listfiles('lut')) > 0
     
+    # SHIT RIGHT HERE IS DEPRECATED:
     assert os.path.isdir(root)
     assert len(listfiles('acv')) > 0
     assert len(listfiles('icc')) > 0

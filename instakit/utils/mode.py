@@ -348,11 +348,11 @@ def test():
     
     print("«TESTING: CONTEXT-MANAGED IMAGE MODES»")
     print()
-    from instakit.utils import static
+    from instakit.utils.static import asset
     
     image_paths = list(map(
-        lambda image_file: static.path('img', image_file),
-            static.listfiles('img')))
+        lambda image_file: asset.path('img', image_file),
+            asset.listfiles('img')))
     image_inputs = list(map(
         lambda image_path: Mode.RGB.open(image_path),
             image_paths))

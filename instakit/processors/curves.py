@@ -25,7 +25,7 @@ from PIL import Image
 from enum import Enum, unique
 from scipy import interpolate
 
-from instakit.utils import static
+from instakit.utils.static import asset
 from instakit.utils.mode import Mode
 
 interpolate_mode_strings = ('linear',
@@ -129,8 +129,8 @@ class CurveSet(object):
     
     @classmethod
     def builtin(cls, name):
-        print("Reading curves [builtin]: %s%s" % (name, cls.dotacv))
-        acv_path = static.path(cls.acv, "%s%s" % (name, cls.dotacv))
+        print("Reading curves [builtin] %s%s" % (name, cls.dotacv))
+        acv_path = asset.path(cls.acv, "%s%s" % (name, cls.dotacv))
         out = cls(acv_path)
         out._is_builtin = True
         return out
@@ -138,7 +138,7 @@ class CurveSet(object):
     @classmethod
     def instakit_names(cls):
         return [curve_file.rstrip(cls.dotacv) \
-            for curve_file in static.listfiles(cls.acv) \
+            for curve_file in asset.listfiles(cls.acv) \
             if curve_file.lower().endswith(cls.dotacv)]
     
     @classmethod
@@ -243,8 +243,8 @@ def test():
     curve_sets = CurveSet.instakit_curve_sets()
     
     image_paths = list(map(
-        lambda image_file: static.path('img', image_file),
-            static.listfiles('img')))
+        lambda image_file: asset.path('img', image_file),
+            asset.listfiles('img')))
     image_inputs = list(map(
         lambda image_path: Mode.RGB.open(image_path),
             image_paths))
