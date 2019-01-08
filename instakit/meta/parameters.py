@@ -3,6 +3,7 @@
 
 from __future__ import print_function
 
+import enum
 import importlib
 import inspect
 import typing as tx
@@ -116,6 +117,10 @@ def default_arguments(cls):
                                 for parameter \
                                 in signature.parameters.values() }
 
+def is_enum(cls):
+    """ Predicate function to ascertain whether a class is an Enum. """
+    return enum.Enum in cls.__mro__
+
 def add_argparser(subparsers, cls):
     """ Add a subparser -- an instance of “argparse.ArgumentParser” --
         with arguments and defaults matching the keyword arguments and
@@ -123,16 +128,20 @@ def add_argparser(subparsers, cls):
         definition supra.)
     """
     qualname = qualified_name(cls)
-    cls_help = getattr(cls, '__doc__', "help for %s" % qualname)
+    cls_help = getattr(cls, '__doc__', None) or "help for %s" % qualname
     parser = subparsers.add_parser(qualname, help=cls_help)
-    for argument_name, argument_value in default_arguments(cls):
-        argument_type = type(argument_value)
-        add_argument_args = dict(type=argument_type,
-                                 default=argument_value,
-                                 help='help for argument %s' % argument_name)
-        if argument_type is bool:
-            add_argument_args.update({ 'action' : 'store_true' })
-        parser.add_argument('--%s' % argument_name, **add_argument_args)
+    if is_enum(cls):
+        # Deal with enums
+        pass
+    else:
+        for argument_name, argument_value in default_arguments(cls):
+            argument_type = type(argument_value)
+            add_argument_args = dict(type=argument_type,
+                                     default=argument_value,
+                                     help='help for argument %s' % argument_name)
+            if argument_type is bool:
+                add_argument_args.update({ 'action' : 'store_true' })
+            parser.add_argument('--%s' % argument_name, **add_argument_args)
     return parser
 
 
@@ -203,12 +212,28 @@ def test():
     print("Success!")
     print()
     
+    # Test “is_enum()”:
+    print("Testing “is_enum()”…")
+    
+    assert not is_enum(Parameter)
+    assert not is_enum(ImportedFloydSteinberg)
+    assert not is_enum(ImportedAtkinson)
+    
+    mode = 'instakit.utils.mode.Mode'
+    assert is_enum(qualified_import(mode))
+    
+    interpolate_mode = 'instakit.processors.curves.InterpolateMode'
+    assert is_enum(qualified_import(interpolate_mode))
+    
+    noise_mode = 'instakit.processors.noise.NoiseMode'
+    assert is_enum(qualified_import(noise_mode))
+    
+    print("Success!")
+    print()
+    
+    
     # print(default_args)
     # assert default_args == dict(value=1.0)
-    
-    
-    
-    
     # Test “add_argparser()”:
     
     
