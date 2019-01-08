@@ -3,6 +3,7 @@
 
 from __future__ import print_function
 
+import argparse
 import enum
 import importlib
 import inspect
@@ -78,17 +79,25 @@ def qualified_import(qualified):
     cls = getattr(module, head)
     return cls
 
-def qualified_name(cls):
-    """ Get a qualified thing-name for a class.
-        e.g. 'instakit.processors.halftone.FloydSteinberg'
+def qualified_name_tuple(cls):
+    """ Get the module name and the thing-name for a class.
+        e.g. ('instakit.processors.halftone', 'FloydSteinberg')
     """
     mod_name = getattr(cls, '__module__')
     cls_name = getattr(cls, '__qualname__',
                getattr(cls, '__name__'))
+    return mod_name, cls_name
+
+def qualified_name(cls):
+    """ Get a qualified thing-name for a class.
+        e.g. 'instakit.processors.halftone.FloydSteinberg'
+    """
+    mod_name, cls_name = qualified_name_tuple(cls)
     return "%s%s%s" % (mod_name, QUALIFIER, cls_name)
 
 class Nothing(object):
     """ Placeholder singleton, signifying nothing """
+    # __class__ = type('Nothing', tuple(), {})
     def __new__(cls):
         return Nothing
 
@@ -121,6 +130,8 @@ def is_enum(cls):
     """ Predicate function to ascertain whether a class is an Enum. """
     return enum.Enum in cls.__mro__
 
+FILE_ARGUMENT_NAMES = ('path', 'pth', 'file')
+
 def add_argparser(subparsers, cls):
     """ Add a subparser -- an instance of “argparse.ArgumentParser” --
         with arguments and defaults matching the keyword arguments and
@@ -130,18 +141,36 @@ def add_argparser(subparsers, cls):
     qualname = qualified_name(cls)
     cls_help = getattr(cls, '__doc__', None) or "help for %s" % qualname
     parser = subparsers.add_parser(qualname, help=cls_help)
-    if is_enum(cls):
-        # Deal with enums
-        pass
-    else:
+    if is_enum(cls): # Deal with enums
+        argument_name = cls.__name__.lower()
+        argument_choices = [choice.name for choice in cls]
+        add_argument_args = dict(choices=argument_choices,
+                                 help='help for enum %s' % argument_name)
+        parser.add_argument(argument_name,
+                          **add_argument_args)
+    else: # Deal with __init__ signature
         for argument_name, argument_value in default_arguments(cls):
             argument_type = type(argument_value)
+            argument_required = False
             add_argument_args = dict(type=argument_type,
-                                     default=argument_value,
                                      help='help for argument %s' % argument_name)
+            if argument_name in FILE_ARGUMENT_NAMES:
+                add_argument_args.update({ 'type' : argument_value is Nothing \
+                                                and argparse.FileType('rb') \
+                                                 or argument_type })
             if argument_type is bool:
                 add_argument_args.update({ 'action' : 'store_true' })
-            parser.add_argument('--%s' % argument_name, **add_argument_args)
+            elif is_enum(argument_type):
+                argument_choices = [choice.name for choice in argument_type]
+                add_argument_args.update({ 'choices' : argument_choices })
+            if argument_value is not Nothing:
+                add_argument_args.update({ 'default' : argument_value })
+            else:
+                add_argument_args.update({ 'type' : str })
+                argument_required = True
+            argument_template = argument_required and '%s' or '--%s'
+            parser.add_argument(argument_template % argument_name,
+                              **add_argument_args)
     return parser
 
 
@@ -176,6 +205,15 @@ def test():
     
     class_name = qualified_name(ImportedAtkinson)
     assert class_name == 'instakit.processors.ext.halftone.Atkinson'
+    
+    print("Success!")
+    print()
+    
+    # Test “Nothing”:
+    print("Testing “Nothing”…")
+    
+    assert type(Nothing) == type
+    assert Nothing() == Nothing
     
     print("Success!")
     print()
