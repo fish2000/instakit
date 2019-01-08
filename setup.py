@@ -61,7 +61,8 @@ def cython_module(*args, **kwargs):
                           '-fstrict-aliasing',
                           '-funroll-loops',
                           '-mtune=native']
-    if language.lower() == 'c++':
+    if language.lower() == 'c++' or \
+       language.lower() == 'mm':
         extra_compile_args.extend(['-std=c++17',
                                    '-stdlib=libc++',
                                    '-Wno-sign-compare',
