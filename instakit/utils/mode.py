@@ -90,6 +90,7 @@ class ModeAncestor(Enum):
     def is_mode(cls, instance):
         return type(instance) in cls.__mro__
 
+junkdrawer.or_none = lambda thing, name: getattr(thing, name, None)
 
 class ModeContext(contextlib.AbstractContextManager):
     
@@ -111,11 +112,11 @@ class ModeContext(contextlib.AbstractContextManager):
     def __init__(self, image, mode, **kwargs):
         assert Image.isImageType(image)
         assert Mode.is_mode(mode)
-        label = getattr(image, 'filename', None) \
-            and os.path.basename(getattr(image, 'filename', None)) \
-            or str(image)
-        self.verbose = kwargs.get('verbose', False)
+        self.verbose = bool(kwargs.get('verbose', False))
         if self.verbose:
+            label = junkdrawer.or_none(image, 'filename') \
+                and os.path.basename(getattr(image, 'filename')) \
+                or str(image)
             print("ModeContext.__init__: configured with image: %s" % label)
         self.initial_image = image
         self.image = None
@@ -136,24 +137,34 @@ class ModeContext(contextlib.AbstractContextManager):
     def __len__(self):
         return len(self.__slots__)
     
+    def attr_or_none(self, name):
+        return junkdrawer.or_none(self, name)
+    
+    def attr_set(self, name, value):
+        setattr(self, name, value)
+    
     def __enter__(self):
-        initial_image = getattr(self, 'initial_image', None)
-        mode = getattr(self, 'mode', None)
+        initial_image = self.attr_or_none('initial_image')
+        mode = self.attr_or_none('mode')
         if initial_image is not None and mode is not None:
             if self.verbose:
-                print("ModeContext.__enter__: converting %s to %s" % (Mode.of(initial_image), mode))
+                print("ModeContext.__enter__: converting %s to %s" % (
+                       Mode.of(initial_image),
+                       mode))
             image = mode.process(initial_image)
-            setattr(self, 'image', image)
+            self.attr_set('image', image)
         return self
     
     def __exit__(self, exc_type=None, exc_val=None, exc_tb=None):
-        image = getattr(self, 'image', None)
-        original_mode = getattr(self, 'original_mode', None)
+        image = self.attr_or_none('image')
+        original_mode = self.attr_or_none('original_mode')
         if image is not None and original_mode is not None:
             if self.verbose:
-                print("ModeContext.__exit__: converting %s to %s" % (Mode.of(image), original_mode))
+                print("ModeContext.__exit__: converting %s to %s" % (
+                       Mode.of(image),
+                       original_mode))
             final_image = original_mode.process(image)
-        setattr(self, 'final_image', final_image)
+            self.attr_set('final_image', final_image)
         return exc_type is None
 
 
