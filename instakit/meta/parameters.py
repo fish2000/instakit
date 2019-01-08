@@ -7,7 +7,6 @@ import argparse
 import enum
 import importlib
 import inspect
-# import os
 import types
 import typing as tx
 
@@ -137,6 +136,7 @@ def is_enum(cls):
     return enum.Enum in cls.__mro__
 
 def enum_choices(cls):
+    """ Return a list of the names of the given Enum class members. """
     return [choice.name for choice in cls]
 
 FILE_ARGUMENT_NAMES = ('path', 'pth', 'file')
@@ -192,14 +192,14 @@ def get_processors_from(module):
         processors = []
         _module = importlib.import_module(module)
         print("Module: %s (%s)" % (_module.__name__,
-                    asset.relative(str(_module.__file__))))
+                    asset.relative(_module.__file__)))
         for thing in (getattr(_module, name) for name in dir(_module)):
             if hasattr(thing, 'process'):
                 print("Found thing: %s" % thing)
-                processors.append(thing)
-                if thing not in processors:
-                    if type(getattr(thing, 'process')) is functype:
-                        processors.append(thing)
+                if _module.__name__ in thing.__module__:
+                    if thing not in processors:
+                        if type(getattr(thing, 'process')) is functype:
+                            processors.append(thing)
         get_processors_from.cache[module] = tuple(processors)
     return get_processors_from.cache[module] 
 
@@ -303,7 +303,9 @@ def test():
     print("Testing “add_argparser()”…")
     from pprint import pprint
     
-    parser = argparse.ArgumentParser(prog='instaprocess')
+    parser = argparse.ArgumentParser(prog='instaprocess',
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
+    
     parser.add_argument('--verbose', '-v',
                         action='store_true',
                         help="print verbose messages to STDOUT")
@@ -327,7 +329,12 @@ def test():
     
     pprint(processors, indent=4)
     
-    ns = parser.parse_args(['-h'])
+    # print()
+    # ns = parser.parse_args(['-h'])
+    # print(ns)
+    
+    print()
+    ns = parser.parse_args(['instakit.utils.mode.Mode', '--help'])
     print(ns)
     
     print("Success!")
