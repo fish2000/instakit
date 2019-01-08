@@ -7,13 +7,7 @@ Created by FI$H 2000 on 2012-08-23.
 Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 """
 from __future__ import print_function
-
-from PIL import Image
-from PIL.ImageFilter import UnsharpMask as PILUnsharpMask
-from PIL.ImageFilter import GaussianBlur as PILGaussianBlur
-from PIL.ImageFilter import (CONTOUR, DETAIL, EMBOSS, FIND_EDGES,
-                             EDGE_ENHANCE, EDGE_ENHANCE_MORE,
-                             SMOOTH, SMOOTH_MORE, SHARPEN)
+from PIL import ImageFilter
 
 
 class ImagingCoreFilterMixin(object):
@@ -21,60 +15,59 @@ class ImagingCoreFilterMixin(object):
     def process(self, image):
         return image.filter(self)
 
-
-class Contour(CONTOUR, ImagingCoreFilterMixin):
+class Contour(ImageFilter.CONTOUR, ImagingCoreFilterMixin):
     """ Contour-Enhance Filter """
     pass
 
 
-class Detail(DETAIL, ImagingCoreFilterMixin):
+class Detail(ImageFilter.DETAIL, ImagingCoreFilterMixin):
     """ Detail-Enhance Filter """
     pass
 
 
-class Emboss(EMBOSS, ImagingCoreFilterMixin):
+class Emboss(ImageFilter.EMBOSS, ImagingCoreFilterMixin):
     """ Emboss-Effect Filter """
     pass
 
 
-class FindEdges(FIND_EDGES, ImagingCoreFilterMixin):
+class FindEdges(ImageFilter.FIND_EDGES, ImagingCoreFilterMixin):
     """ Edge-Finder Filter """
     pass
 
 
-class EdgeEnhance(EDGE_ENHANCE, ImagingCoreFilterMixin):
+class EdgeEnhance(ImageFilter.EDGE_ENHANCE, ImagingCoreFilterMixin):
     """ Edge-Enhance Filter """
     pass
 
 
-class EdgeEnhanceMore(EDGE_ENHANCE_MORE, ImagingCoreFilterMixin):
+class EdgeEnhanceMore(ImageFilter.EDGE_ENHANCE_MORE, ImagingCoreFilterMixin):
     """ Edge-Enhance (With Extreme Predjudice) Filter """
     pass
 
 
-class Smooth(SMOOTH, ImagingCoreFilterMixin):
+class Smooth(ImageFilter.SMOOTH, ImagingCoreFilterMixin):
     """ Image-Smoothing Filter """
     pass
 
 
-class SmoothMore(SMOOTH_MORE, ImagingCoreFilterMixin):
+class SmoothMore(ImageFilter.SMOOTH_MORE, ImagingCoreFilterMixin):
     """ Image-Smoothing (With Extreme Prejudice) Filter """
     pass
 
 
-class Sharpen(SHARPEN, ImagingCoreFilterMixin):
+class Sharpen(ImageFilter.SHARPEN, ImagingCoreFilterMixin):
     """ Image Sharpener """
     pass
 
 
-class UnsharpMask(PILUnsharpMask, ImagingCoreFilterMixin):
+class UnsharpMask(ImageFilter.UnsharpMask, ImagingCoreFilterMixin):
     """ Unsharp Mask Filter 
         Optionally initialize with params:
             radius (2), percent (150), threshold (3) """
     pass
 
 
-class SimpleGaussianBlur(PILGaussianBlur, ImagingCoreFilterMixin):
+class SimpleGaussianBlur(ImageFilter.GaussianBlur, ImagingCoreFilterMixin):
     """ Simple Gaussian Blur Filter 
         Optionally initialize with radius (2) """
     pass
@@ -93,10 +86,11 @@ class GaussianBlur(object):
         self.sigmaZ = sigmaZ or sigmaX
     
     def process(self, image):
-        import numpy
+        from PIL import Image
+        from numpy import array
         from instakit.utils import kernels
         return Image.fromarray(kernels.gaussian_blur_filter(
-                               input=numpy.array(image),
+                                input=array(image),
                                sigmaX=self.sigmaX,
                                sigmaY=self.sigmaY,
                                sigmaZ=self.sigmaZ))

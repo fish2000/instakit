@@ -15,17 +15,18 @@ from instakit.utils import pipeline, stats
 from instakit.utils.gcr import gcr
 from instakit.utils.mode import Mode
 
-LO_TUP = (0,)
-HI_TUP = (255,)
 
 class ThresholdMatrixProcessor(ABC):
     
     """ Abstract base class for a processor using a uint8 threshold matrix """
     
+    LO_TUP = (0,)
+    HI_TUP = (255,)
+    
     def __init__(self, threshold = 128.0):
         """ Initialize with a threshold value between 0 and 255 """
-        self.threshold_matrix = int(threshold)  * LO_TUP + \
-                           (256-int(threshold)) * HI_TUP
+        self.threshold_matrix = int(threshold)  * self.LO_TUP + \
+                           (256-int(threshold)) * self.HI_TUP
     
     @abstract
     def process(self, image): ...
@@ -236,9 +237,10 @@ if __name__ == '__main__':
         
         Atkinson(threshold=128.0).process(image_input).show()
         # FloydSteinberg(threshold=128.0).process(image_input).show()
+        # SlowFloydSteinberg(threshold=128.0).process(image_input).show()
         
         # CMYKAtkinson().process(image_input).show()
         # CMYKFloydsterBill().process(image_input).show()
-        CMYKDotScreen(sample=10, scale=4).process(image_input).show()
+        # CMYKDotScreen(sample=10, scale=4).process(image_input).show()
     
     print(image_paths)

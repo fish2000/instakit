@@ -8,7 +8,6 @@ Copyright (c) 2018 Objects In Space And Time, LLC. All rights reserved.
 """
 
 from __future__ import print_function
-
 from instakit.utils.mode import Mode
 
 def pixel_count(image):

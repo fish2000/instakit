@@ -7,9 +7,7 @@ Created by FI$H 2000 on 2014-05-23.
 Copyright (c) 2012-2019 Objects In Space And Time, LLC. All rights reserved.
 """
 from __future__ import print_function
-
 from enum import Enum, unique
-from skimage.util import random_noise
 
 from instakit.utils.ndarrays import NDProcessor
 
@@ -32,6 +30,7 @@ class NoiseMode(Enum):
         return self.to_string()
     
     def process_nd(self, ndimage, **kwargs):
+        from skimage.util import random_noise
         return random_noise(ndimage,
                             mode=self.to_string(),
                           **kwargs)
