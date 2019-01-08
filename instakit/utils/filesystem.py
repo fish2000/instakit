@@ -90,7 +90,7 @@ def back_tick(command,  as_str=True,
             In either case `stdout` and `stderr` are strings containing output
             from the commands’ execution. Default is False.
         raise_err : None or bool, optional
-            If True, raise instakit.meta.filesystem.errors.ExecutionError when
+            If True, raise instakit.utils.filesystem.errors.ExecutionError when
             calling the function results in a non-zero return code.
             If None, it is set to True if `ret_err` is False,
                                   False if `ret_err` is True.
@@ -119,7 +119,7 @@ def back_tick(command,  as_str=True,
         
         Raises
         ------
-        A `instakit.meta.filesystem.errors.ExecutionError` will raise if the
+        A `instakit.utils.filesystem.errors.ExecutionError` will raise if the
         executed command returns with any non-zero exit status, and `raise_err`
         is set to True.
         
@@ -234,7 +234,7 @@ def temporary(suffix=None, prefix=None, parent=None, **kwargs):
 
 class TypeLocker(abc.ABCMeta):
     
-    """ instakit.meta.filesystem.TypeLocker is a metaclass that does two
+    """ instakit.utils.filesystem.TypeLocker is a metaclass that does two
         things with the types for whom it is designated as meta:
         
         1) It keeps an index of those types in a dictionary member of
@@ -247,7 +247,7 @@ class TypeLocker(abc.ABCMeta):
            was passed).
         
         … The point of this is to allow any of the classes throughout the
-        instakit.meta.filesystem module regardless of where they are defined
+        instakit.utils.filesystem module regardless of where they are defined
         or from whom they inherit, to make use of cheaply-constructed Directory
         instances wherever convenient.
         
@@ -270,7 +270,7 @@ class TypeLocker(abc.ABCMeta):
     def __new__(metacls, name, bases, attributes, **kwargs):
         """ All classes are initialized with a “directory(…)”
             class method, lazily returning an instance of the
-            instakit.meta.filesystem.Directory(…) class, per
+            instakit.utils.filesystem.Directory(…) class, per
             the arguments:
         """
         # Always replace the “directory” method anew:
@@ -332,14 +332,14 @@ def TemporaryNamedFile(tempth, mode='wb', buffer_size=-1, delete=True):
         
         Returns
         -------
-            A ``instakit.meta.filesystem.TemporaryFileWrapper`` object,
+            A ``instakit.utils.filesystem.TemporaryFileWrapper`` object,
             initialized and ready to be used, as per its counterpart(s),
             ``tempfile.NamedTemporaryFile``, and
             `filesystem.NamedTemporaryFile`.
         
         Raises
         ------
-            A `instakit.meta.filesystem.FilesystemError`, corresponding to
+            A `instakit.utils.filesystem.FilesystemError`, corresponding to
             any errors that may be raised during its own internal calls to
             ``os.open(…)`` and ``os.fdopen(…)``
         
@@ -1161,7 +1161,7 @@ del TemporaryFileWrapperBase
 
 def test():
     
-    """ Run the inline tests for the instakit.meta.filesystem module. """
+    """ Run the inline tests for the instakit.utils.filesystem module. """
     
     # Simple inline tests for “TemporaryName”, “cd” and “cwd”,
     # and “TemporaryDirectory”:
