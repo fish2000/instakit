@@ -187,6 +187,28 @@ def stringify(instance, fields):
     hex_id = hex(id(instance))
     return f"{typename}({field_dict_string}) @ {hex_id}"
 
+def suffix_searcher(suffix):
+    """ Return a boolean function that will search for the given
+        file suffix in strings with which it is called, returning
+        True when they are found and False when they aren’t.
+        
+        Useful in filter(…) calls and comprehensions, e.g.:
+        
+        >>> plists = filter(suffix_searcher('plist'), os.listdir())
+        >>> mmsuffix = suffix_searcher('mm')
+        >>> objcpp = (f for f in os.listdir() where mmsuffix(f))
+    """
+    import re, os
+    if len(suffix) < 1:
+        return lambda searching_for: True
+    regex_str = r""
+    if suffix.startswith(os.extsep):
+        regex_str += rf"\%s$" % suffix
+    else:
+        regex_str += rf"\%s%s$" % (os.extsep, suffix)
+    searcher = re.compile(regex_str, re.IGNORECASE).search
+    return lambda searching_for: bool(searcher(searching_for))
+
 def u8encode(source) -> bytes:
     """ Encode a source as bytes using the UTF-8 codec """
     return bytes(source, encoding=UTF8_ENCODING)
