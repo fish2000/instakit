@@ -18,5 +18,7 @@ build/
 dist/
 sdist/
 
+.envrc
+
 tmtags
 tmtagsHistory

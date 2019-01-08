@@ -1,18 +1,17 @@
 
 clean: clean-pyc clean-cython
 
-distclean: clean-all-pyc clean-cython clean-build-artifacts
+distclean: clean-pyc clean-cython clean-build-artifacts
 
-dist: cython distclean upload
+rebuild: distclean cython
 
-upload: bump sdist twine-upload
+dist: rebuild sdist twine-upload
 
-bigupload: bigbump sdist twine-upload
+upload: bump dist
+
+bigupload: bigbump dist
 
 clean-pyc:
-	find . -name \*.pyc -print -delete
-
-clean-all-pyc:
 	find . -name \*.pyc -print -delete
 
 clean-cython:
@@ -28,7 +27,7 @@ sdist:
 	python setup.py sdist
 
 twine-upload:
-	twine upload --repository-url=https://upload.pypi.org/legacy/ dist/*
+	twine upload -s --repository-url=https://upload.pypi.org/legacy/ dist/*
 
 bump:
 	bumpversion --verbose patch
@@ -36,5 +35,7 @@ bump:
 bigbump:
 	bumpversion --verbose minor
 
+.PHONY: clean-pyc clean-cython clean-build-artifacts
+.PHONY: cython sdist twine-upload bump bigbump
+.PHONY: clean distclean rebuild dist upload bigupload
 
-.PHONY: bigbump bump clean distclean dist cython upload
