@@ -49,7 +49,7 @@ class SimpleNamespace(object):
 
 
 class Namespace(SimpleNamespace, collections.abc.MutableMapping,
-                                 collections.abc.Iterable):
+                                 collections.abc.Hashable):
     
     """ A less-simple namespace -- one implementing several useful
         interface APIs from `collections.abc`.
