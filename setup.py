@@ -25,30 +25,34 @@
 #
 
 from __future__ import print_function
-from io import open
+import os, sys
 
-import sys
-import os
-import os.path
-
-# HOST PYTHON VERSION
-python_version = float("%s%s%s" % (sys.version_info.major,
-                                   os.extsep,
-                                   sys.version_info.minor))
-
-try:
-    from setuptools import setup, Extension
-except ImportError:
-    from ez_setup import use_setuptools
-    use_setuptools()
-    from setuptools import setup, Extension
+from setuptools import setup, Extension
 from Cython.Build import cythonize
 from distutils.sysconfig import get_python_inc
+from io import open
+
+# HOST PYTHON VERSION
+PYTHON_VERSION = float("%s%s%s" % (sys.version_info.major, os.extsep,
+                                   sys.version_info.minor))
 
 # CONSTANTS
-KEYWORDS = ('instakit',
-            'django',
-            'imagekit',
+PROJECT_NAME = 'instakit'
+AUTHOR_NAME = 'Alexander Böhn'
+AUTHOR_USER = 'fish2000'
+
+GITHUB = 'github.com'
+GMAIL = 'gmail.com'
+
+AUTHOR_EMAIL = '%s@%s' % (AUTHOR_USER, GMAIL)
+PROJECT_GH_URL = 'https://%s/%s/%s' % (GITHUB,
+                                       AUTHOR_USER,
+                                       PROJECT_NAME)
+PROJECT_DL_URL = '%s/zipball/master' % PROJECT_GH_URL
+
+KEYWORDS = ('django',
+            'imagekit', PROJECT_NAME,
+                        AUTHOR_USER,
             'image processing',
             'halftone',
             'dithering',
@@ -110,10 +114,6 @@ try:
 except:
     __version__ = '0.6.4'
 
-name = 'instakit'
-
-keywords = " ".join(KEYWORDS)
-
 # PROJECT DESCRIPTION
 description = 'Image processing tools based on PIL/Pillow and scikit-image'
 
@@ -154,7 +154,7 @@ install_requires = [
     'scipy>=1.1.0',
     'scikit-image>=0.10.0']
 
-if python_version < 3.4:
+if PYTHON_VERSION < 3.4:
     install_requires.append('enum34>=1.1.0')
 
 classifiers = [
@@ -171,8 +171,7 @@ classifiers = [
     'Programming Language :: Python :: 3.4',
     'Programming Language :: Python :: 3.5',
     'Programming Language :: Python :: 3.6',
-    'Programming Language :: Python :: 3.7',
-]
+    'Programming Language :: Python :: 3.7']
 
 try:
     import numpy
@@ -220,16 +219,16 @@ if 'sdist' in sys.argv:
         output = subprocess.getoutput(finder % theplace)
         print(output)
 
-instakit_base_path = os.path.join(
-                     os.path.abspath(
-                     os.path.dirname(__file__)), 'instakit')
+base_path = os.path.join(
+            os.path.abspath(
+            os.path.dirname(__file__)), PROJECT_NAME)
 
-hsluv_source = os.path.join(os.path.relpath(instakit_base_path,
+hsluv_source = os.path.join(os.path.relpath(base_path,
                       start=os.path.dirname(__file__)), 'utils',
                                                         'ext',
                                                         'hsluv.c')
 
-butteraugli_source = os.path.join(os.path.relpath(instakit_base_path,
+butteraugli_source = os.path.join(os.path.relpath(base_path,
                             start=os.path.dirname(__file__)), 'comparators',
                                                               'ext',
                                                               'butteraugli.cc')
@@ -240,18 +239,17 @@ include_dirs = [
     get_python_inc(plat_specific=1)]
 
 setup(
-    name=name,
+    name=PROJECT_NAME,
+    author=AUTHOR_NAME,
+    author_email=AUTHOR_EMAIL,
     version=__version__,
-    author="Alexander Böhn",
-    author_email='fish2000@gmail.com',
     
     description=description,
     long_description=longer_description,
     long_description_content_type="text/markdown",
     
-    keywords=keywords,
-    url='https://github.com/fish2000/instakit',
-    download_url='https://github.com/fish2000/instakit/zipball/master',
+    keywords=" ".join(KEYWORDS),
+    url=PROJECT_GH_URL, download_url=PROJECT_DL_URL,
     classifiers=classifiers,
     license=license, platforms=['any'],
     
