@@ -1,0 +1,4 @@
+target = "instakit/meta/vendored"
+packages = [
+    "six",
+]
