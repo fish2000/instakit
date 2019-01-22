@@ -30,7 +30,6 @@ import os, sys
 from setuptools import setup, Extension
 from Cython.Build import cythonize
 from distutils.sysconfig import get_python_inc
-from io import open
 
 # HOST PYTHON VERSION
 PYTHON_VERSION = float("%s%s%s" % (sys.version_info.major, os.extsep,
@@ -54,19 +53,32 @@ KEYWORDS = ('django',
             'imagekit', PROJECT_NAME,
                         AUTHOR_USER,
             'image processing',
-            'halftone',
-            'dithering',
+            'image analysis',
+            'image comparison',
+            'halftone', 'dithering',
+            'Photoshop', 'acv', 'curves',
+            'PIL', 'Pillow',
             'Cython',
-            'Photoshop',
-            'PIL',
-            'Pillow',
-            'NumPy',
-            'SciPy',
-            'scikit-image',
-            'acv',
-            'curves')
+            'NumPy', 'SciPy', 'scikit-image')
 
 CPPLANGS = ('c++', 'cxx', 'cpp', 'cc', 'mm')
+
+# PROJECT DIRECTORY
+CWD = os.path.dirname(__file__)
+BASE_PATH = os.path.join(
+            os.path.abspath(CWD), PROJECT_NAME)
+
+def project_content(filename):
+    import io
+    filepath = os.path.join(CWD, filename)
+    if not os.path.isfile(filepath):
+        raise IOError("""File %s doesn't exist""" % filepath)
+    out = ''
+    with io.open(filepath, 'r') as handle:
+        out += handle.read()
+    if not out:
+        raise ValueError("""File %s couldn't be read""" % filename)
+    return out
 
 # CYTHON & C-API EXTENSION MODULES
 def cython_module(*args, **kwargs):
@@ -95,56 +107,30 @@ def cython_module(*args, **kwargs):
         extra_compile_args=extra_compile_args)
 
 def cython_comparator(name, **kwargs):
-    return cython_module('instakit', 'comparators', 'ext', name, **kwargs)
+    return cython_module(PROJECT_NAME, 'comparators', 'ext', name, **kwargs)
 
 def cython_processor(name, **kwargs):
-    return cython_module('instakit', 'processors', 'ext', name, **kwargs)
+    return cython_module(PROJECT_NAME, 'processors', 'ext', name, **kwargs)
 
 def cython_utility(name, **kwargs):
-    return cython_module('instakit', 'utils', 'ext', name, **kwargs)
+    return cython_module(PROJECT_NAME, 'utils', 'ext', name, **kwargs)
 
 # PROJECT VERSION & METADATA
 __version__ = "<undefined>"
 try:
     exec(compile(
-        open(os.path.join(
-             os.path.dirname(__file__),
+        open(os.path.join(CWD,
             '__version__.py')).read(),
             '__version__.py', 'exec'))
 except:
     __version__ = '0.6.5'
 
 # PROJECT DESCRIPTION
-description = 'Image processing tools based on PIL/Pillow and scikit-image'
-
-longer_description = """Instakit: Filters and Tools; BYO Facebook Buyout
-========================================================================
-
-Image processors and filters - inspired by Instagram, built on top of the
-PIL/Pillow, SciPy and scikit-image packages, accelerated with Cython, and
-ready to use with PILKit and the django-imagekit framework.
-
-Included are filters for Atkinson and Floyd-Steinberg dithering, dot-pitch
-halftoning (with GCR and per-channel pipeline processors), classes exposing
-image-processing pipeline data as NumPy ND-arrays, Gaussian kernel functions,
-processors for applying channel-based LUT curves to images from Photoshop
-.acv files, imagekit-ready processors furnishing streamlined access to a wide
-schmorgasbord of Pillow's many image adjustment algorithms (e.g. noise, blur,
-and sharpen functions, histogram-based operations like Brightness/Contrast,
-among others), an implementation of the entropy-based smart-crop algorithm
-many will recognize from the easy-thumbnails Django app - and much more."""
-
-long_description_etc = """
-Experienced users may also make use of the many utilities shipping with
-instakit: LUT maps, color structs, pipeline processing primitives and 
-ink-based separation simulation tools, Enums and wrapper APIs to simplify
-PIL's rougher edges – like (say) image modes and compositing - plus other
-related miscellany for the enterprising programmer. """
+description = 'Image processors based on PIL/Pillow, SciPy, and scikit-image'
+longer_description = project_content('ABOUT.md')
 
 # LICENSE
-license = open(os.path.join(
-               os.path.dirname(__file__),
-               'LICENSE.txt')).read()
+license = project_content('LICENSE.txt')
 
 # REQUIRED DEPENDENCIES
 install_requires = [
@@ -165,7 +151,6 @@ classifiers = [
     'Operating System :: OS Independent',
     'Operating System :: POSIX',
     'Operating System :: Unix',
-    'Programming Language :: Python :: 2.6',
     'Programming Language :: Python :: 2.7',
     'Programming Language :: Python :: 3.3',
     'Programming Language :: Python :: 3.4',
@@ -211,7 +196,7 @@ except ImportError:
 # SETUPTOOLS: CLEAN BUILD ARTIFACTS
 if 'sdist' in sys.argv:
     import subprocess
-    finder = "/usr/bin/find %s \( -iname \*.pyc -or -name .DS_Store \) -delete"
+    finder = "/usr/bin/find %s \( -iname \*.pyc -or -iname .ds_store \) -print -delete"
     theplace = os.getcwd()
     if theplace not in (os.path.sep, os.path.curdir):
         print("+ Deleting crapola from %s..." % theplace)
@@ -219,19 +204,17 @@ if 'sdist' in sys.argv:
         output = subprocess.getoutput(finder % theplace)
         print(output)
 
-base_path = os.path.join(
-            os.path.abspath(
-            os.path.dirname(__file__)), PROJECT_NAME)
+hsluv_source = os.path.join(
+               os.path.relpath(BASE_PATH,
+                               start=CWD), 'utils',
+                                           'ext',
+                                           'hsluv.c')
 
-hsluv_source = os.path.join(os.path.relpath(base_path,
-                      start=os.path.dirname(__file__)), 'utils',
-                                                        'ext',
-                                                        'hsluv.c')
-
-butteraugli_source = os.path.join(os.path.relpath(base_path,
-                            start=os.path.dirname(__file__)), 'comparators',
-                                                              'ext',
-                                                              'butteraugli.cc')
+butteraugli_source = os.path.join(
+                     os.path.relpath(BASE_PATH,
+                                     start=CWD), 'comparators',
+                                                 'ext',
+                                                 'butteraugli.cc')
 
 include_dirs = [numpy.get_include(),
                 get_python_inc(plat_specific=1)]
