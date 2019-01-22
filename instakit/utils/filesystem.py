@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 from __future__ import print_function
 
 import abc
@@ -226,9 +225,9 @@ def temporary(suffix=None, prefix=None, parent=None, **kwargs):
         suffix = tempsplit[1][1:]
     if not prefix or kwargs.pop('randomized', False):
         prefix, _ = os.path.splitext(tempsplit[0]) # WTF, HAX!
-    fullpth = os.path.join(directory, f"{prefix}{suffix}")
+    fullpth = os.path.join(directory, "%s%s" % (prefix, suffix))
     if os.path.exists(fullpth):
-        raise FilesystemError(f"temporary(): file exists: {fullpth}")
+        raise FilesystemError("temporary(): file exists: %s" % fullpth)
     return fullpth
 
 
@@ -402,9 +401,9 @@ class TemporaryName(collections.abc.Hashable,
             randomized = True
         if suffix:
             if not suffix.startswith(os.extsep):
-                suffix = f"{os.extsep}{suffix}"
+                suffix = "%s%s" % (os.extsep, suffix)
         else:
-            suffix = f"{os.extsep}tmp"
+            suffix = "%stmp" % os.extsep
         if parent is None:
             parent = kwargs.pop('dir', None)
         if parent:
@@ -571,7 +570,7 @@ class Directory(collections.abc.Hashable,
               'will_change',        'did_change',
               'will_change_back',   'did_change_back')
     
-    zip_suffix = f"{os.extsep}zip"
+    zip_suffix = "%szip" % os.extsep
     
     def __init__(self, pth=None):
         """ Initialize a new Directory object.
@@ -817,11 +816,11 @@ class Directory(collections.abc.Hashable,
         """
         pth = self.subpath(subdir, whence, requisite=False)
         if os.path.isfile(pth):
-            raise FilesystemError(f"file exists at subdirectory path: {pth}")
+            raise FilesystemError("file exists at subdirectory path: %s" % pth)
         if os.path.islink(pth):
-            raise FilesystemError(f"symlink exists at subdirectory path: {pth}")
+            raise FilesystemError("symlink exists at subdirectory path: %s" % pth)
         if os.path.ismount(pth):
-            raise FilesystemError(f"mountpoint exists at subdirectory path: {pth}")
+            raise FilesystemError("mountpoint exists at subdirectory path: %s" % pth)
         return self.directory(pth)
     
     def makedirs(self, pth=None):
@@ -876,7 +875,7 @@ class Directory(collections.abc.Hashable,
         if whereto.exists or os.path.isfile(whereto.name) \
                           or os.path.islink(whereto.name):
             raise FilesystemError(
-                f"copy_all() destination exists: {whereto.name}")
+                "copy_all() destination exists: %s" % whereto.name)
         if self.exists:
             return shutil.copytree(self.name, whereto.name)
         return False
@@ -897,7 +896,7 @@ class Directory(collections.abc.Hashable,
             zpth += self.zip_suffix
         if os.path.exists(zpth):
             if os.path.isdir(zpth):
-                raise FilesystemError(f"Can't overwrite a directory: {zpth}")
+                raise FilesystemError("Can't overwrite a directory: %s" % zpth)
             raise FilesystemError("File path for zip-archive already exists")
         if not zmode:
             zmode = zipfile.ZIP_DEFLATED
@@ -950,7 +949,7 @@ class Directory(collections.abc.Hashable,
         pth = self.subpath(filename, requisite=True)
         if not pth:
             raise KeyError(
-                f"file not found: {os.fspath(filename)}")
+                "file not found: %s" % os.fspath(filename))
         return pth
     
     def __contains__(self, filename):
@@ -1024,7 +1023,7 @@ class TemporaryDirectory(Directory):
         from tempfile import mkdtemp
         if suffix:
             if not suffix.startswith(os.extsep):
-                suffix = f"{os.extsep}{suffix}"
+                suffix = "%s%s" % (os.extsep, suffix)
         if parent is None:
             parent = kwargs.pop('dir', None)
         if parent:
@@ -1108,7 +1107,7 @@ class Intermediate(TemporaryDirectory, Directory):
         """
         if pth is not None:
             return Directory(pth=pth)
-        return TemporaryDirectory(prefix=f"{cls.__name__}-",
+        return TemporaryDirectory(prefix="%s-" % cls.__name__,
                                   change=False)
     
     def __init__(self, pth=None):
@@ -1134,9 +1133,9 @@ def NamedTemporaryFile(mode='w+b', buffer_size=-1,
     
     if suffix:
         if not suffix.startswith(os.extsep):
-            suffix = f"{os.extsep}{suffix}"
+            suffix = "%s%s" % (os.extsep, suffix)
     else:
-        suffix = f"{os.extsep}tmp"
+        suffix = "%stmp" % os.extsep
     
     if 'b' in mode:
         flags = _bin_openflags
@@ -1173,7 +1172,7 @@ def test():
     
     with TemporaryName(prefix="test-temporaryname-",
                        randomized=True) as tfn:
-        print(f"* Testing TemporaryName file instance: {tfn.name}")
+        print("* Testing TemporaryName file instance: %s" % tfn.name)
         assert os.path.samefile(os.getcwd(),            initial)
         assert gettempdir() in tfn.name
         assert tfn.prefix == "test-temporaryname-"
@@ -1218,7 +1217,7 @@ def test():
     assert not os.path.exists(tfp)
     
     with wd() as cwd:
-        print(f"* Testing working-directory instance: {cwd.name}")
+        print("* Testing working-directory instance: %s" % cwd.name)
         assert os.path.samefile(os.getcwd(),           cwd.new)
         assert os.path.samefile(os.getcwd(),           cwd.old)
         assert os.path.samefile(os.getcwd(),           os.fspath(cwd))
@@ -1250,7 +1249,7 @@ def test():
         print("")
     
     with cd(gettempdir()) as tmp:
-        print(f"* Testing directory-change instance: {tmp.name}")
+        print("* Testing directory-change instance: %s" % tmp.name)
         assert os.path.samefile(os.getcwd(),          gettempdir())
         assert os.path.samefile(os.getcwd(),          tmp.new)
         assert os.path.samefile(gettempdir(),         tmp.new)
@@ -1280,7 +1279,7 @@ def test():
         print("")
     
     with TemporaryDirectory(prefix="test-temporarydirectory-") as ttd:
-        print(f"* Testing TemporaryDirectory instance: {ttd.name}")
+        print("* Testing TemporaryDirectory instance: %s" % ttd.name)
         # assert os.path.commonpath((os.getcwd(), gettempdir())) == gettempdir()
         # print(os.path.commonpath((os.getcwd(), gettempdir())))
         assert gettempdir() in ttd.name

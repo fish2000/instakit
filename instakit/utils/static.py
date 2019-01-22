@@ -1,27 +1,39 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import print_function
-
 import os
-from instakit.utils import misc
 
 projectdir = os.path.join(os.path.dirname(__file__), '..', '..')
+namespaces = set()
 
-asset = misc.Namespace()
-asset.root = os.path.join(projectdir, 'instakit')
-asset.data = os.path.join(asset.root, 'data')
-asset.relative = lambda p: os.path.relpath(p, start=asset.root)
-asset.listfiles = lambda *p: os.listdir(os.path.join(asset.data, *p))
-asset.path = lambda *p: os.path.abspath(os.path.join(asset.data, *p))
+def static_namespace(name):
+    """ Configure and return an instakit.utils.misc.Namespace instance,
+        festooning it with shortcuts allowing for accesing static files
+        within subdirectories of the Instakit project package tree.
+    """
+    from instakit.utils.misc import Namespace
+    ns = Namespace()
+    ns.name = str(name)
+    ns.root = os.path.join(projectdir, ns.name)
+    ns.data = os.path.join(ns.root, 'data')
+    ns.relative = lambda p: os.path.relpath(p, start=ns.root)
+    ns.listfiles = lambda *p: os.listdir(os.path.join(ns.data, *p))
+    ns.path = lambda *p: os.path.abspath(os.path.join(ns.data, *p))
+    namespaces.add(ns)
+    return ns
 
-tests = misc.Namespace()
-tests.root = os.path.join(projectdir, 'tests')
-tests.data = os.path.join(tests.root, 'data')
-asset.relative = lambda p: os.path.relpath(p, start=tests.root)
-tests.listfiles = lambda *p: os.listdir(os.path.join(tests.data, *p))
-tests.path = lambda *p: os.path.abspath(os.path.join(tests.data, *p))
+asset = static_namespace('instakit')
+tests = static_namespace('tests')
+
+__all__ = ('projectdir',
+           'namespaces',
+           'static_namespace') + tuple(namespaces)
+
+__dir__ = lambda: list(__all__)
 
 def test():
     assert os.path.isdir(projectdir)
+    assert len(namespaces) == 2
     
     assert os.path.isdir(asset.root)
     assert os.path.isdir(asset.data)

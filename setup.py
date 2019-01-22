@@ -45,6 +45,25 @@ except ImportError:
 from Cython.Build import cythonize
 from distutils.sysconfig import get_python_inc
 
+# CONSTANTS
+KEYWORDS = ('instakit',
+            'django',
+            'imagekit',
+            'image processing',
+            'halftone',
+            'dithering',
+            'Cython',
+            'Photoshop',
+            'PIL',
+            'Pillow',
+            'NumPy',
+            'SciPy',
+            'scikit-image',
+            'acv',
+            'curves')
+
+CPPLANGS = ('c++', 'cxx', 'cpp', 'cc', 'mm')
+
 # CYTHON & C-API EXTENSION MODULES
 def cython_module(*args, **kwargs):
     sources = []
@@ -54,15 +73,14 @@ def cython_module(*args, **kwargs):
     ext_package = os.path.extsep.join(args)
     ext_pth = os.path.sep.join(args) + os.extsep + "pyx"
     sources.insert(0, ext_pth)
-    language = kwargs.pop('language', 'c')
+    language = kwargs.pop('language', 'c').lower()
     extra_compile_args = ['-Wno-unused-function',
                           '-Wno-unneeded-internal-declaration',
                           '-O3',
                           '-fstrict-aliasing',
                           '-funroll-loops',
                           '-mtune=native']
-    if language.lower() == 'c++' or \
-       language.lower() == 'mm':
+    if language in CPPLANGS:
         extra_compile_args.extend(['-std=c++17',
                                    '-stdlib=libc++',
                                    '-Wno-sign-compare',
@@ -94,21 +112,7 @@ except:
 
 name = 'instakit'
 
-keywords = " ".join(('instakit',
-                     'django',
-                     'imagekit',
-                     'image processing',
-                     'halftone',
-                     'dithering',
-                     'Cython',
-                     'Photoshop',
-                     'PIL',
-                     'Pillow',
-                     'NumPy',
-                     'SciPy',
-                     'scikit-image',
-                     'acv',
-                     'curves'))
+keywords = " ".join(KEYWORDS)
 
 # PROJECT DESCRIPTION
 description = 'Image processing tools based on PIL/Pillow and scikit-image'

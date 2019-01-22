@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # encoding: utf-8
-
 from __future__ import print_function
 
 import argparse
@@ -8,63 +7,10 @@ import enum
 import importlib
 import inspect
 import types
-import typing as tx
-
-# class Meta:
-#     params = { 'sigmaX' : { 'type' : int,
-#                              'max' : 255,
-#                              'min' : 0    },
-#                'sigmaY' : { 'type' : int,
-#                              'max' : 255,
-#                              'min' : 0    },
-#                'sigmaZ' : { 'type' : int,
-#                              'max' : 255,
-#                              'min' : 0    } }
-#     input =  { 'type' : 'image', 'mode' : '*' }
-#     output = { 'type' : 'image', 'mode' : '*' }
 
 class Parameter(object):
-    
-    __slots__: tx.ClassVar[tx.Tuple[str, ...]] = ('type', 'min',
-                                                          'max',
-                                                          'default')
-    
-    def __init__(self, parameter_type,
-                       parameter_min,
-                       parameter_max,
-                       default_value=None, **kwargs):
-        self.type = parameter_type
-        self.min = parameter_min
-        self.max = parameter_max
-        self.default = default_value or parameter_type.__call__()
-    
-    def __get__(self,
-                instance: tx.Any,
-                cls: tx.Optional[type] = None) -> tx.Tuple[str, ...]:
-        if cls is None:
-            cls = type(instance)
-        return dict(type=self.type,
-                     min=self.min,
-                     max=self.max,
-                 default=self.default)
-    
-    def __set__(self,
-                instance: tx.Any,
-                newdict: tx.Mapping[str, tx.Any]):
-        if 'type' in newdict:
-            self.type = newdict['type']
-        if 'min' in newdict:
-            self.min = newdict['min']
-        if 'max' in newdict:
-            self.max = newdict['max']
-        if 'default' in newdict:
-            self.default = newdict['defualt']
-    
-    def __delete__(self,
-                   instance: tx.Any):
-        raise AttributeError("Can't delete a Parameter attribute")
-
-""" MEET MISTER ACORONTIA STYX """
+    """ A placeholder object, used for the moment in the inline tests """
+    pass
 
 QUALIFIER = '.'
 
@@ -73,7 +19,8 @@ def qualified_import(qualified):
         e.g. 'instakit.processors.halftone.FloydSteinberg'
     """
     if QUALIFIER not in qualified:
-        raise ValueError("qualified_import() needs a qualified name (got %s)" % qualified)
+        raise ValueError("qualified_import() needs a qualified name "
+                         "(got %s)" % qualified)
     head = qualified.split(QUALIFIER)[-1]
     tail = qualified.replace("%s%s" % (QUALIFIER, head), '')
     module = importlib.import_module(tail)
@@ -119,7 +66,7 @@ def default_arguments(cls):
         signature = inspect.signature(cls)
     except (ValueError, TypeError) as exc:
         m, n = qualified_name_tuple(cls)
-        qn = "%s%sSlow%s" % (m.replace('ext.', ''), QUALIFIER, n)
+        qn = "%s%sSlow%s" % (m.replace('ext.', ''), QUALIFIER, n) # WTF HAX
         NonCythonCls = qualified_import(qn)
         if qualified_name(NonCythonCls) != qualified_name(cls):
             return default_arguments(NonCythonCls)
@@ -299,7 +246,7 @@ def test():
     print("Success!")
     print()
     
-    # Test “is_enum()”:
+    # Test “add_argparser()”:
     print("Testing “add_argparser()”…")
     from pprint import pprint
     
@@ -311,7 +258,8 @@ def test():
                         help="print verbose messages to STDOUT")
     
     processor_names = ('adjust', 'blur', 'curves', 'halftone', 'noise', 'squarecrop')
-    utility_names = ('colortype', 'gcr', 'kernels', 'lutmap', 'misc', 'mode', 'ndarrays', 'pipeline', 'stats')
+    utility_names = ('colortype', 'gcr', 'kernels', 'lutmap',
+                     'misc', 'mode', 'ndarrays', 'pipeline', 'stats')
     
     module_names = []
     module_names.extend(['instakit.processors.%s' % name for name in processor_names])

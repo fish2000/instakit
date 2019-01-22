@@ -1,9 +1,14 @@
+#!/usr/bin/env python
+# encoding: utf-8
+from __future__ import print_function
 
 from instakit.utils.mode import Mode
 
 RGB = Mode.RGB.value
 CMYK = Mode.CMYK.value
 cmyk = CMYK.mode
+
+PERCENT_ADMONISHMENT = "Do you not know how percents work??!"
 
 def gcr(image, percentage=20, revert_mode=False):
     ''' basic “Gray Component Replacement” function. Returns a CMYK image* with 
@@ -20,7 +25,7 @@ def gcr(image, percentage=20, revert_mode=False):
         return revert_mode and image or Mode.CMYK.process(image)
     
     if percentage > 100 or percentage < 1:
-        raise ValueError("Do you not know how percents work??!")
+        raise ValueError(PERCENT_ADMONISHMENT)
     
     percent = percentage / 100
     
@@ -54,9 +59,9 @@ class BasicGCR(object):
     
     def __init__(self, percentage=20, revert_mode=False):
         if percentage is None:
-            raise ValueError("Do you not know how percents work??!")
+            raise ValueError(PERCENT_ADMONISHMENT)
         if percentage > 100 or percentage < 1:
-            raise ValueError("Do you not know how percents work??!")
+            raise ValueError(PERCENT_ADMONISHMENT)
         self.percentage = percentage
         self.revert_mode = revert_mode
     

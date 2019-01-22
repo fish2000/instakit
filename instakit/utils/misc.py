@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # encoding: utf-8
-
 from __future__ import print_function
 
 import collections.abc
@@ -17,12 +16,25 @@ except ImportError:
 
 UTF8_ENCODING = 'UTF-8'
 
+def tuplize(*items):
+    """ Return a new tuple containing all non-`None` arguments """
+    return tuple(item for item in items if item is not None)
+
+def uniquify(*items):
+    """ Return a tuple with a unique set of all non-`None` arguments """
+    return tuple(frozenset(item for item in items if item is not None))
+
+def listify(*items):
+    """ Return a new list containing all non-`None` arguments """
+    return list(item for item in items if item is not None)
+
+
 class SimpleNamespace(object):
     
     """ Implementation courtesy this SO answer:
         • https://stackoverflow.com/a/37161391/298171
     """
-    __slots__ = ('__dict__', '__weakref__')
+    __slots__ = tuplize('__dict__', '__weakref__')
     
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
@@ -37,9 +49,7 @@ class SimpleNamespace(object):
 
 
 class Namespace(SimpleNamespace, collections.abc.MutableMapping,
-                                 collections.abc.Sized,
-                                 collections.abc.Iterable,
-                                 collections.abc.Container):
+                                 collections.abc.Iterable):
     
     """ A less-simple namespace -- one implementing several useful
         interface APIs from `collections.abc`.
@@ -73,6 +83,10 @@ class Namespace(SimpleNamespace, collections.abc.MutableMapping,
     def update(self, iterable=None, **kwargs):
         self.__dict__.update(iterable or tuple(), **kwargs)
     
+    def __hash__(self):
+        return hash(tuple(self.__dict__.keys()) +
+                    tuple(self.__dict__.values()))
+    
     def __iter__(self):
         return iter(self.__dict__)
     
@@ -82,19 +96,6 @@ class Namespace(SimpleNamespace, collections.abc.MutableMapping,
     def __eq__(self, other):
         return self.__dict__ == getattr(other, '__dict__', {})
 
-
-def tuplize(*items):
-    """ Return a new tuple containing all non-`None` arguments """
-    return tuple(item for item in items if item is not None)
-
-def uniquify(*items):
-    """ Return a tuple with a unique set of all non-`None` arguments """
-    return tuple(frozenset(item for item in items if item is not None))
-
-def listify(*items):
-    """ Return a new list containing all non-`None` arguments """
-    return list(item for item in items if item is not None)
-
 def wrap_value(value):
     return lambda *args, **kwargs: value
 
@@ -102,7 +103,6 @@ none_function = wrap_value(None)
 
 string_types = uniquify(type(''),
                         type(b''),
-                        type(f''),
                         type(r''),
                        *six.string_types)
 
@@ -181,11 +181,11 @@ def stringify(instance, fields):
             field_dict.update({ u8str(field) : field_value })
     field_dict_items = []
     for k, v in field_dict.items():
-        field_dict_items.append(f'''{k}="{v}"''')
+        field_dict_items.append('''%s="%s"''' % (k, v))
     typename = type(instance).__name__
     field_dict_string = ", ".join(field_dict_items)
     hex_id = hex(id(instance))
-    return f"{typename}({field_dict_string}) @ {hex_id}"
+    return "%s(%s) @ %s" % (typename, field_dict_string, hex_id)
 
 def suffix_searcher(suffix):
     """ Return a boolean function that will search for the given
@@ -203,9 +203,9 @@ def suffix_searcher(suffix):
         return lambda searching_for: True
     regex_str = r""
     if suffix.startswith(os.extsep):
-        regex_str += rf"\%s$" % suffix
+        regex_str += r"\%s$" % suffix
     else:
-        regex_str += rf"\%s%s$" % (os.extsep, suffix)
+        regex_str += r"\%s%s$" % (os.extsep, suffix)
     searcher = re.compile(regex_str, re.IGNORECASE).search
     return lambda searching_for: bool(searcher(searching_for))
 
