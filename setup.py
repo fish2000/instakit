@@ -233,10 +233,8 @@ butteraugli_source = os.path.join(os.path.relpath(base_path,
                                                               'ext',
                                                               'butteraugli.cc')
 
-include_dirs = [
-    os.path.curdir,
-    numpy.get_include(),
-    get_python_inc(plat_specific=1)]
+include_dirs = [numpy.get_include(),
+                get_python_inc(plat_specific=1)]
 
 setup(
     name=PROJECT_NAME,
