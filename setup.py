@@ -23,6 +23,7 @@
 #    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
 #    SOFTWARE.
 #
+'''Image processors based on PIL/Pillow, SciPy, and scikit-image'''
 
 from __future__ import print_function
 import os, sys
@@ -127,8 +128,7 @@ except:
     __version__ = '0.6.6'
 
 # PROJECT DESCRIPTION
-description = 'Image processors based on PIL/Pillow, SciPy, and scikit-image'
-longer_description = project_content('ABOUT.md')
+long_description = project_content('ABOUT.md')
 
 # LICENSE
 license = project_content('LICENSE.txt')
@@ -226,8 +226,8 @@ setup(
     author_email=AUTHOR_EMAIL,
     version=__version__,
     
-    description=description,
-    long_description=longer_description,
+    description=__doc__,
+    long_description=long_description,
     long_description_content_type="text/markdown",
     
     keywords=" ".join(KEYWORDS),
