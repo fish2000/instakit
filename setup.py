@@ -27,6 +27,7 @@
 from __future__ import print_function
 import os, sys
 
+from psutil import cpu_count
 from setuptools import setup, Extension
 from Cython.Build import cythonize
 from distutils.sysconfig import get_python_inc
@@ -249,7 +250,8 @@ setup(
                                         language="c"),
         cython_utility("api",           sources=[hsluv_source],
                                         language="c")
-        ], compiler_directives=dict(language_level=3,
+        ], nthreads=cpu_count(),
+           compiler_directives=dict(language_level=3,
                                     infer_types=True,
                                     embedsignature=True)),
 )
