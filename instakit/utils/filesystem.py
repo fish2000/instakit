@@ -291,11 +291,11 @@ class TemporaryFileWrapper(TemporaryFileWrapperBase,
     
     """ Local subclass of `tempfile._TemporaryFileWrapper`.
         
-        We inherit from both `tempfile._TemporaryFileWrapper` and
-        the `os.PathLike` abstract base class -- the latter requires
+        We also inherit from both `contextlib.AbstractContextManager`
+        and the `os.PathLike` abstract bases -- the latter requires
         that we implement an __fspath__(…) method (q.v. implementation,
-        sub.) -- and we also have specified the `filesystem.TypeLocker`
-        metaclass (q.v. metaclass __new__(…) implementation supra.)
+        sub.) -- and additionally, `filesystem.TypeLocker` is named as
+        the metaclass (q.v. metaclass __new__(…) implementation supra.)
         to cache its type and register it as an os.PathLike subclass.
         
         … Basically a better deal than the original ancestor, like
