@@ -117,6 +117,10 @@ def cython_processor(name, **kwargs):
 def cython_utility(name, **kwargs):
     return cython_module(PROJECT_NAME, 'utils', 'ext', name, **kwargs)
 
+def additional_source(*args):
+    return os.path.join(
+           os.path.relpath(BASE_PATH, start=CWD), *args)
+
 # PROJECT VERSION & METADATA
 __version__ = "<undefined>"
 try:
@@ -205,35 +209,27 @@ if 'sdist' in sys.argv:
         output = subprocess.getoutput(finder % theplace)
         print(output)
 
-hsluv_source = os.path.join(
-               os.path.relpath(BASE_PATH,
-                               start=CWD), 'utils',
-                                           'ext',
-                                           'hsluv.c')
-
-butteraugli_source = os.path.join(
-                     os.path.relpath(BASE_PATH,
-                                     start=CWD), 'comparators',
-                                                 'ext',
-                                                 'butteraugli.cc')
-
+# SOURCES & INCLUDE DIRECTORIES
+hsluv_source = additional_source('utils', 'ext', 'hsluv.c')
+augli_source = additional_source('comparators', 'ext', 'butteraugli.cc')
 include_dirs = [numpy.get_include(),
                 get_python_inc(plat_specific=1)]
 
+# THE CALL TO `setup(…)`
 setup(
     name=PROJECT_NAME,
     author=AUTHOR_NAME,
     author_email=AUTHOR_EMAIL,
-    version=__version__,
-    
-    description=__doc__,
-    long_description=long_description,
-    long_description_content_type="text/markdown",
     
     keywords=" ".join(KEYWORDS),
     url=PROJECT_GH_URL, download_url=PROJECT_DL_URL,
     classifiers=classifiers,
     license=license, platforms=['any'],
+    
+    version=__version__,
+    description=__doc__,
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     
     packages=find_packages(),
     package_data={ '' : ['*.*'] },
@@ -244,7 +240,7 @@ setup(
     include_dirs=include_dirs,
     
     ext_modules=cythonize([
-        cython_comparator("buttereye",  sources=[butteraugli_source],
+        cython_comparator("buttereye",  sources=[augli_source],
                                         language="c++"),
         cython_processor("halftone",    include_dirs=include_dirs,
                                         language="c"),
