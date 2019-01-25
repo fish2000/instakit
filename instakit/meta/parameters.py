@@ -130,25 +130,25 @@ def add_argparser(subparsers, cls):
 
 functype = types.FunctionType
 
-def get_processors_from(module):
+def get_processors_from(module_name):
     """ Memoized processor-extraction function """
     from instakit.utils.static import asset
     if not hasattr(get_processors_from, 'cache'):
         get_processors_from.cache = {}
-    if module not in get_processors_from.cache:
+    if module_name not in get_processors_from.cache:
         processors = []
-        _module = importlib.import_module(module)
-        print("Module: %s (%s)" % (_module.__name__,
-                    asset.relative(_module.__file__)))
-        for thing in (getattr(_module, name) for name in dir(_module)):
+        module = importlib.import_module(module_name)
+        print("Module: %s (%s)" % (module.__name__,
+                    asset.relative(module.__file__)))
+        for thing in (getattr(module, name) for name in dir(module)):
             if hasattr(thing, 'process'):
                 print("Found thing: %s" % thing)
-                if _module.__name__ in thing.__module__:
+                if module.__name__ in thing.__module__:
                     if thing not in processors:
                         if type(getattr(thing, 'process')) is functype:
                             processors.append(thing)
-        get_processors_from.cache[module] = tuple(processors)
-    return get_processors_from.cache[module] 
+        get_processors_from.cache[module_name] = tuple(processors)
+    return get_processors_from.cache[module_name] 
 
 
 def test():
@@ -277,13 +277,13 @@ def test():
     
     pprint(processors, indent=4)
     
-    # print()
-    # ns = parser.parse_args(['-h'])
-    # print(ns)
-    
     print()
-    ns = parser.parse_args(['instakit.utils.mode.Mode', '--help'])
+    ns = parser.parse_args(['-h'])
     print(ns)
+    
+    # print()
+    # ns = parser.parse_args(['instakit.utils.mode.Mode', '--help'])
+    # print(ns)
     
     print("Success!")
     print()
