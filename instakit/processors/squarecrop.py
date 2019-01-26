@@ -8,18 +8,26 @@ Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 """
 from __future__ import print_function
 
-def histogram_entropy(image):
-    """ Calculate the entropy of an images' histogram.
-        Used for “smart cropping” in easy-thumbnails:
-            https://git.io/fhqxd
-    """
-    from math import log2, fsum
+from PIL import Image
+
+if hasattr(Image.Image, 'entropy'):
+    def histogram_entropy(image):
+        """ Calculate the entropy of an images' histogram. """
+        return image.entropy()
+
+else:
+    def histogram_entropy(image):
+        """ Calculate the entropy of an images' histogram.
+            Used for “smart cropping” in easy-thumbnails:
+                https://git.io/fhqxd
+        """
+        from math import log2, fsum
     
-    histogram = image.histogram()
-    histosum = fsum(histogram)
-    histonorm = (histocol / histosum for histocol in histogram)
+        histogram = image.histogram()
+        histosum = fsum(histogram)
+        histonorm = (histocol / histosum for histocol in histogram)
     
-    return -fsum(p * log2(p) for p in histonorm if p != 0.0)
+        return -fsum(p * log2(p) for p in histonorm if p != 0.0)
 
 def compare_entropy(start_slice, end_slice, slice, difference):
     """ Calculate the entropy of two slices (from the start and end
