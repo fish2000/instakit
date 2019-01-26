@@ -22,11 +22,11 @@ else:
                 https://git.io/fhqxd
         """
         from math import log2, fsum
-    
+        
         histogram = image.histogram()
         histosum = fsum(histogram)
         histonorm = (histocol / histosum for histocol in histogram)
-    
+        
         return -fsum(p * log2(p) for p in histonorm if p != 0.0)
 
 def compare_entropy(start_slice, end_slice, slice, difference):
