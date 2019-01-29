@@ -35,7 +35,10 @@ bump:
 bigbump:
 	bumpversion --verbose minor
 
+check:
+	check-manifest -v
+
 .PHONY: clean-pyc clean-cython clean-build-artifacts
-.PHONY: cython sdist twine-upload bump bigbump
 .PHONY: clean distclean rebuild dist upload bigupload
+.PHONY: cython sdist twine-upload bump bigbump check
 
