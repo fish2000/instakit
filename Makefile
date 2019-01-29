@@ -36,6 +36,7 @@ bigbump:
 	bumpversion --verbose minor
 
 check:
+	python setup.py check -m -s
 	check-manifest -v
 
 .PHONY: clean-pyc clean-cython clean-build-artifacts
