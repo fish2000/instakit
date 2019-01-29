@@ -2,6 +2,7 @@ exclude *.pyc *~ *.so .DS_Store
 recursive-include requirements *.txt
 include __version__.py
 include .bumpversion.cfg
+include .editorconfig
 include .gitignore
 include .travis.yml
 include ABOUT.md
