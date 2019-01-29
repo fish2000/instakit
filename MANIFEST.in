@@ -5,6 +5,7 @@ include .bumpversion.cfg
 include .clang-format
 include .editorconfig
 include .gitignore
+include .landscape.yml
 include .travis.yml
 include ABOUT.md
 include ABOUT.ETC.md
