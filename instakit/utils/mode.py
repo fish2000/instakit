@@ -35,7 +35,7 @@ def split_abbreviations(s):
     abbreviations = []
     current_token = ''
     for char in s:
-        if current_token is '':
+        if current_token == '':
             current_token += char
         elif char.islower():
             current_token += char
@@ -45,7 +45,7 @@ def split_abbreviations(s):
                     abbreviations.append(current_token)
             current_token = ''
             current_token += char
-    if current_token is not '':
+    if current_token != '':
         if current_token not in abbreviations:
             abbreviations.append(current_token)
     return tuple(abbreviations)
@@ -56,11 +56,13 @@ ImageMode.getmode('RGB') # one call must be made to getmode()
 
 junkdrawer.modes = ImageMode._modes
 junkdrawer.types = Image._MODE_CONV
+junkdrawer.ismap = Image._MAPMODES
 
 mode_strings = tuple(junkdrawer.modes.keys())
 dtypes_for_modes = { k : v[0] for k, v in junkdrawer.types.items() }
 
 junkdrawer.idxmode = lambda idx: ImageMode.getmode(mode_strings[idx])
+junkdrawer.is_mapped = lambda mode: mode in junkdrawer.ismap
 
 class ModeAncestor(Enum):
     """
@@ -255,6 +257,10 @@ class Mode(ModeAncestor):
     @property
     def dtype(self):
         return numpy.dtype(self.dtype_code())
+    
+    @property
+    def is_memory_mapped(self):
+        return junkdrawer.is_mapped(self.to_string())
     
     @property
     def label(self):
