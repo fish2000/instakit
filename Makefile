@@ -36,8 +36,9 @@ bigbump:
 	bumpversion --verbose minor
 
 check:
-	python setup.py check -m -s
 	check-manifest -v
+	python setup.py check -m -s
+	travis lint .travis.yml
 
 .PHONY: clean-pyc clean-cython clean-build-artifacts
 .PHONY: clean distclean rebuild dist upload bigupload
