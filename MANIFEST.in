@@ -11,6 +11,7 @@ include .travis.yml
 include ABOUT.md
 include ABOUT.ETC.md
 include appveyor.yml
+include CODE_OF_CONDUCT.md
 include LICENSE.txt
 include Makefile
 include README.md
