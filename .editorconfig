@@ -10,7 +10,7 @@ charset = utf-8
 # Four-space indentation
 indent_size = 4
 indent_style = space
-trim_trailing_whitespace = true
+trim_trailing_whitespace = false
 
 [*.yml]
 # Four-space indentation

@@ -72,13 +72,13 @@ class ModeAncestor(Enum):
      'LAB',  'HSV',   'RGBa',  'LA',    'La',
      'PA',   'I;16',  'I;16L', 'I;16B')
     """
-
+    
     def _generate_next_value_(name,
                               start,
                               count,
                               last_values):
         return junkdrawer.idxmode(count)
-
+    
     @classmethod
     def _missing_(cls, value):
         try:
@@ -86,7 +86,7 @@ class ModeAncestor(Enum):
         except (IndexError, TypeError):
             pass
         return super(ModeAncestor, cls)._missing_(value)
-
+    
     @classmethod
     def is_mode(cls, instance):
         return type(instance) in cls.__mro__
@@ -94,22 +94,22 @@ class ModeAncestor(Enum):
 junkdrawer.or_none = lambda thing, name: getattr(thing, name, None)
 
 class ModeContext(contextlib.AbstractContextManager):
-
+    
     """ An ad-hoc mutable named-tuple-ish context-manager class,
         for keeping track of an image while temporarily converting
         it to a specified mode within the managed context block.
-
+        
         Loosely based on the following Code Review posting:
         • https://codereview.stackexchange.com/q/173045/6293
     """
-
+    
     __slots__ = ('initial_image',
                          'image',
                    'final_image',
                  'original_mode',
                           'mode',
                        'verbose')
-
+    
     def __init__(self, image, mode, **kwargs):
         assert Image.isImageType(image)
         assert Mode.is_mode(mode)
@@ -124,26 +124,26 @@ class ModeContext(contextlib.AbstractContextManager):
         self.final_image = None
         self.original_mode = Mode.of(image)
         self.mode = mode
-
+    
     def __repr__(self):
         return type(self).__name__ + repr(tuple(self))
-
+    
     def __iter__(self):
         for name in self.__slots__:
             yield getattr(self, name)
-
+    
     def __getitem__(self, idx):
         return getattr(self, self.__slots__[idx])
-
+    
     def __len__(self):
         return len(self.__slots__)
-
+    
     def attr_or_none(self, name):
         return junkdrawer.or_none(self, name)
-
+    
     def attr_set(self, name, value):
         setattr(self, name, value)
-
+    
     def __enter__(self):
         initial_image = self.attr_or_none('initial_image')
         mode = self.attr_or_none('mode')
@@ -155,7 +155,7 @@ class ModeContext(contextlib.AbstractContextManager):
             image = mode.process(initial_image)
             self.attr_set('image', image)
         return self
-
+    
     def __exit__(self, exc_type=None, exc_val=None, exc_tb=None):
         image = self.attr_or_none('image')
         original_mode = self.attr_or_none('original_mode')
@@ -171,55 +171,55 @@ class ModeContext(contextlib.AbstractContextManager):
 
 @unique
 class Mode(ModeAncestor):
-
+    
     """ An enumeration class wrapping ImageMode.ModeDescriptor. """
-
+    
     # N.B. this'll have to be manually updated,
     # whenever PIL.ImageMode gets a change pushed.
-
+    
     MONO    = auto() # formerly ‘1’
     L       = auto()
     I       = auto()
     F       = auto()
     P       = auto()
-
+    
     RGB     = auto()
     RGBX    = auto()
     RGBA    = auto()
     CMYK    = auto()
     YCbCr   = auto()
-
+    
     LAB     = auto()
     HSV     = auto()
     RGBa    = auto()
     LA      = auto()
     La      = auto()
-
+    
     PA      = auto()
     I16     = auto() # formerly ‘I;16’
     I16L    = auto() # formerly ‘I;16L’
     I16B    = auto() # formerly ‘I;16B’
-
+    
     @classmethod
     def of(cls, image):
         for mode in cls:
             if mode.check(image):
                 return mode
         raise ValueError("Image has unknown mode %s" % image.mode)
-
+    
     @classmethod
     def for_string(cls, string):
         for mode in cls:
             if mode.to_string() == string:
                 return mode
         raise ValueError("for_string(): unknown mode %s" % string)
-
+    
     def to_string(self):
         return str(self.value)
-
+    
     def __str__(self):
         return self.to_string()
-
+    
     def __repr__(self):
         repr_string = "%s(%s: [%s/%s] ∞ {%s » %s}) @ %s"
         return repr_string % (type(self).__qualname__,
@@ -227,64 +227,64 @@ class Mode(ModeAncestor):
                                    self.basemode, self.basetype,
                                    self.dtype_code(), self.dtype,
                                 id(self))
-
+    
     def __bytes__(self):
         return bytes(self.to_string(), encoding="UTF-8")
-
+    
     def __call__(self, image, **kwargs):
         return ModeContext(image, self, **kwargs)
-
+    
     def dtype_code(self):
         return dtypes_for_modes.get(self.to_string(), None) or \
                                     self.basetype.dtype_code()
-
+    
     @property
     def bands(self):
         return self.value.bands
-
+    
     @property
     def band_count(self):
         return len(self.value.bands)
-
+    
     @property
     def basemode(self):
         return type(self).for_string(self.value.basemode)
-
+    
     @property
     def basetype(self):
         return type(self).for_string(self.value.basetype)
-
+    
     @property
     def dtype(self):
         return numpy.dtype(self.dtype_code())
-
+    
     @property
     def is_memory_mapped(self):
         return junkdrawer.is_mapped(self.to_string())
-
+    
     @property
     def label(self):
         return str(self) == self.name \
                         and self.name \
                         or "%s (%s)" % (self, self.name)
-
+    
     def check(self, image):
         return junkdrawer.imode(image) is self.value
-
+    
     def merge(self, *channels):
         return Image.merge(self.to_string(), channels)
-
+    
     def process(self, image):
         if self.check(image):
             return image
         return image.convert(self.to_string())
-
+    
     def new(self, size, color=0):
         return Image.new(self.to_string(), size, color=color)
-
+    
     def open(self, fileish):
         return self.process(Image.open(fileish))
-
+    
     def frombytes(self, size, data, decoder_name='raw', *args):
         return Image.frombytes(self.to_string(),
                                size, data, decoder_name,
@@ -292,19 +292,19 @@ class Mode(ModeAncestor):
 
 
 def test():
-
+    
     print("«KNOWN IMAGE MODES»")
     print()
-
+    
     for m in Mode:
         print("• %10s\t ∞%5s/%s : %s » %s" % (m.label,
                                               m.basemode,
                                               m.basetype,
                                               m.dtype_code(),
                                               m.dtype))
-
+    
     print()
-
+    
     """
     •   1 (MONO)	 ∞    L/L : |b1 » bool
     •          L	 ∞    L/L : |u1 » uint8
@@ -325,50 +325,50 @@ def test():
     • I;16 (I16)	 ∞    L/L : <u2 » uint16
     • I;16L (I16L)	 ∞    L/L : <u2 » uint16
     • I;16B (I16B)	 ∞    L/L : >u2 » >u2
-
+    
     """
-
+    
     print("«TESTING: split_abbreviations()»")
-
+    
     assert split_abbreviations('RGB') == ('R', 'G', 'B')
     assert split_abbreviations('CMYK') == ('C', 'M', 'Y', 'K')
     assert split_abbreviations('YCbCr') == ('Y', 'Cb', 'Cr')
     assert split_abbreviations('sRGB') == ('R', 'G', 'B')
     assert split_abbreviations('XYZ') == ('X', 'Y', 'Z')
-
+    
     assert split_abbreviations('RGB') == Mode.RGB.bands
     assert split_abbreviations('CMYK') == Mode.CMYK.bands
     assert split_abbreviations('YCbCr') == Mode.YCbCr.bands
     assert split_abbreviations('sRGB') == Mode.RGB.bands
     # assert split_abbreviations('XYZ') == ('X', 'Y', 'Z')
-
+    
     print("«SUCCESS»")
-
+    
     # print(list(Mode))
     # print()
-
+    
     assert Mode(10) == Mode.LAB
-
+    
     print()
-
+    
     print("«TESTING: CONTEXT-MANAGED IMAGE MODES»")
     print()
     from instakit.utils.static import asset
-
+    
     image_paths = list(map(
         lambda image_file: asset.path('img', image_file),
             asset.listfiles('img')))
     image_inputs = list(map(
         lambda image_path: Mode.RGB.open(image_path),
             image_paths))
-
+    
     for image in image_inputs:
         with Mode.L(image, verbose=True) as grayscale:
             assert Mode.of(grayscale.image) is Mode.L
             print(grayscale.image)
             grayscale.image = Mode.MONO.process(grayscale.image)
         print()
-
+    
     print("«SUCCESS»")
     print()
 
