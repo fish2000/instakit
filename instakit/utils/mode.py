@@ -28,13 +28,15 @@ def split_abbreviations(s):
         ('R', 'G', 'B')
         >>> split_abbreviations('XYZZ')
         ('X', 'Y', 'Z')
+        >>> split_abbreviations('I;16B')
+        ('I',)
 
         If you still find this function inscrutable,
         have a look here: https://gist.github.com/4027079
     """
     abbreviations = []
     current_token = ''
-    for char in s:
+    for char in s.split(';')[0]:
         if current_token == '':
             current_token += char
         elif char.islower():
@@ -239,13 +241,15 @@ class Mode(ModeAncestor):
                                     self.basetype.dtype_code()
     
     @property
-    def bands(self):
-        return self.value.bands
-    
-    @property
     def band_count(self):
         return len(self.value.bands)
     
+    @property
+    def bands(self):
+        return self.band_count == 1 \
+          and (self.value.bands,) \
+            or self.value.bands
+        
     @property
     def basemode(self):
         return type(self).for_string(self.value.basemode)
@@ -334,16 +338,20 @@ def test():
     assert split_abbreviations('CMYK') == ('C', 'M', 'Y', 'K')
     assert split_abbreviations('YCbCr') == ('Y', 'Cb', 'Cr')
     assert split_abbreviations('sRGB') == ('R', 'G', 'B')
-    assert split_abbreviations('XYZ') == ('X', 'Y', 'Z')
+    assert split_abbreviations('XYZZ') == ('X', 'Y', 'Z')
+    assert split_abbreviations('I;16L') == ('I',)
     
     assert split_abbreviations('RGB') == Mode.RGB.bands
     assert split_abbreviations('CMYK') == Mode.CMYK.bands
     assert split_abbreviations('YCbCr') == Mode.YCbCr.bands
+    assert split_abbreviations('I;16L') == Mode.I16L.bands
     assert split_abbreviations('sRGB') == Mode.RGB.bands
     # assert split_abbreviations('XYZ') == ('X', 'Y', 'Z')
     
     print("«SUCCESS»")
     
+    # print(Mode.I16L.bands)
+    # print(Mode.RGB.bands)
     # print(list(Mode))
     # print()
     
