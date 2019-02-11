@@ -35,14 +35,14 @@ __dir__ = lambda: list(__all__)
 def test():
     assert os.path.isdir(projectdir)
     assert len(namespaces) == 2
-
+    
     assert os.path.isdir(asset.root)
     assert os.path.isdir(asset.data)
     assert len(asset.listfiles('acv')) > 0
     assert len(asset.listfiles('icc')) > 0
     assert len(asset.listfiles('img')) > 0
     assert len(asset.listfiles('lut')) > 0
-
+    
     assert os.path.isdir(tests.root)
     assert os.path.isdir(tests.data)
     assert len(os.listdir(tests.data)) > 0

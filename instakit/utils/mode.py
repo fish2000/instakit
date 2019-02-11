@@ -17,7 +17,7 @@ junkdrawer.imode = lambda image: ImageMode.getmode(image.mode)
 def split_abbreviations(s):
     """ Split a string into a tuple of its unique constituents,
         based on its internal capitalization -- to wit:
-
+        
         >>> split_abbreviations('RGB')
         ('R', 'G', 'B')
         >>> split_abbreviations('CMYK')
@@ -30,7 +30,7 @@ def split_abbreviations(s):
         ('X', 'Y', 'Z')
         >>> split_abbreviations('I;16B')
         ('I',)
-
+        
         If you still find this function inscrutable,
         have a look here: https://gist.github.com/4027079
     """
