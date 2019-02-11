@@ -183,7 +183,7 @@ class DotScreen(object):
             for x in range(0, image.size[0], self.sample):
                 cropbox = image.crop((x,               y,
                                       x + self.sample, y + self.sample))
-                diameter = (stats.pixel_mean(cropbox) / 255) ** 0.5
+                diameter = (stats.histogram_mean(cropbox) / 255) ** 0.5
                 edge = 0.5 * (1 - diameter)
                 xpos, ypos = (x + edge) * self.scale, (y + edge) * self.scale
                 boxedge = self.sample * diameter * self.scale

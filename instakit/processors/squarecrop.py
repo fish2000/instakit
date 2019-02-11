@@ -8,56 +8,42 @@ Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 """
 from __future__ import print_function
 
-from PIL import Image
-
-def histogram_entropy_py(image):
-    """ Calculate the entropy of an images' histogram.
-        Used for “smart cropping” in easy-thumbnails:
-            https://git.io/fhqxd
-    """
-    from math import log2, fsum
-    
-    histogram = image.histogram()
-    histosum = fsum(histogram)
-    histonorm = (histocol / histosum for histocol in histogram)
-    
-    return -fsum(p * log2(p) for p in histonorm if p != 0.0)
-
-histogram_entropy = hasattr(Image.Image, 'entropy') \
-                        and Image.Image.entropy \
-                        or histogram_entropy_py
-
-def compare_entropy(start_slice, end_slice, slice, difference):
-    """ Calculate the entropy of two slices (from the start and end
-        of an axis), returning a tuple containing the amount that
-        should be added to the start, and removed from the end
-        of that axis.
-        
-        Based on the eponymous function from easy-thumbnails:
-            https://git.io/fhqpT
-    """
-    start_entropy = histogram_entropy(start_slice)
-    end_entropy = histogram_entropy(end_slice)
-
-    if end_entropy and abs(start_entropy / end_entropy - 1) < 0.01:
-        # Less than 1% difference, remove from both sides.
-        if difference >= slice * 2:
-            return slice, slice
-        half_slice = slice // 2
-        return half_slice, slice - half_slice
-    
-    if start_entropy > end_entropy:
-        return 0, slice
-    else:
-        return slice, 0
 
 class SquareCrop(object):
+    
     """ Crop an image to an Instagrammy square, by whittling away
         the parts of the image with the least entropy.
         
         Based on a smart-crop implementation from easy-thumbnails:
             https://git.io/fhqxj
     """
+    
+    @staticmethod
+    def compare_entropy(start_slice, end_slice, slice, difference):
+        """ Calculate the entropy of two slices (from the start and end
+            of an axis), returning a tuple containing the amount that
+            should be added to the start, and removed from the end
+            of that axis.
+        
+            Based on the eponymous function from easy-thumbnails:
+                https://git.io/fhqpT
+        """
+        from instakit.utils.stats import histogram_entropy
+        
+        start_entropy = histogram_entropy(start_slice)
+        end_entropy = histogram_entropy(end_slice)
+        
+        if end_entropy and abs(start_entropy / end_entropy - 1) < 0.01:
+            # Less than 1% difference, remove from both sides.
+            if difference >= slice * 2:
+                return slice, slice
+            half_slice = slice // 2
+            return half_slice, slice - half_slice
+        
+        if start_entropy > end_entropy:
+            return 0, slice
+        else:
+            return slice, 0
     
     def process(self, image):
         source_x, source_y = image.size
@@ -72,7 +58,7 @@ class SquareCrop(object):
             slice = min(diff_x, max(diff_x // 5, 10))
             start = image.crop((left, 0, left + slice, source_y))
             end = image.crop((right - slice, 0, right, source_y))
-            add, remove = compare_entropy(start, end, slice, diff_x)
+            add, remove = self.compare_entropy(start, end, slice, diff_x)
             left += add
             right -= remove
             diff_x = diff_x - add - remove
@@ -81,7 +67,7 @@ class SquareCrop(object):
             slice = min(diff_y, max(diff_y // 5, 10))
             start = image.crop((0, top, source_x, top + slice))
             end = image.crop((0, bottom - slice, source_x, bottom))
-            add, remove = compare_entropy(start, end, slice, diff_y)
+            add, remove = self.compare_entropy(start, end, slice, diff_y)
             top += add
             bottom -= remove
             diff_y = diff_y - add - remove
@@ -106,4 +92,4 @@ if __name__ == '__main__':
         SquareCrop().process(image_input).show()
     
     print(image_paths)
-    
+
