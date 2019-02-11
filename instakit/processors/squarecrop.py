@@ -24,7 +24,7 @@ class SquareCrop(object):
             of an axis), returning a tuple containing the amount that
             should be added to the start, and removed from the end
             of that axis.
-        
+            
             Based on the eponymous function from easy-thumbnails:
                 https://git.io/fhqpT
         """
