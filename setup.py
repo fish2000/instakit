@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#    INSTAKIT -- Instagrammy PIL-based processors and tools
+#    INSTAKIT -- Instagrammy image-processors and tools, based on Pillow and SciPy
 #
 #    Copyright © 2012-2025 Alexander Bohn
 #
@@ -23,15 +23,14 @@
 #    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
 #    SOFTWARE.
 #
-'''Image processors based on PIL/Pillow, SciPy, and scikit-image'''
+''' Image processors for django-imagekit - based on Pillow, SciPy, and scikit-image '''
 
 from __future__ import print_function
-import os, sys
+import os, sys, sysconfig
 
 from psutil import cpu_count
-from setuptools import setup, Extension
+from setuptools import setup
 from Cython.Build import cythonize
-from distutils.sysconfig import get_python_inc
 
 # HOST PYTHON VERSION
 PYTHON_VERSION = float("%s%s%s" % (sys.version_info.major, os.extsep,
@@ -84,6 +83,7 @@ def project_content(filename):
 
 # CYTHON & C-API EXTENSION MODULES
 def cython_module(*args, **kwargs):
+    from Cython.Distutils import Extension
     sources = []
     sources.extend(kwargs.pop('sources', []))
     include_dirs = []
@@ -132,13 +132,13 @@ except:
     __version__ = '0.6.6'
 
 # PROJECT DESCRIPTION
-long_description = project_content('ABOUT.md')
+LONG_DESCRIPTION = project_content('ABOUT.md')
 
-# LICENSE
-license = project_content('LICENSE.txt')
+# SOFTWARE LICENSE
+LICENSE = project_content('LICENSE.txt')
 
-# REQUIRED DEPENDENCIES
-install_requires = [
+# REQUIRED INSTALLATION DEPENDENCIES
+INSTALL_REQUIRES = [
     'Cython>=0.29.0',
     'Pillow>=3.0.0',
     'numpy>=1.7.0',
@@ -146,9 +146,10 @@ install_requires = [
     'scikit-image>=0.12.0']
 
 if PYTHON_VERSION < 3.4:
-    install_requires.append('enum34>=1.1.0')
+    INSTALL_REQUIRES.append('enum34>=1.1.0')
 
-classifiers = [
+# PYPI PROJECT CLASSIFIERS
+CLASSIFIERS = [
     'Development Status :: 5 - Production/Stable',
     'License :: OSI Approved :: MIT License',
     'Operating System :: MacOS',
@@ -157,12 +158,11 @@ classifiers = [
     'Operating System :: POSIX',
     'Operating System :: Unix',
     'Programming Language :: Python :: 2.7',
-    'Programming Language :: Python :: 3.3',
-    'Programming Language :: Python :: 3.4',
     'Programming Language :: Python :: 3.5',
     'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7']
 
+# NUMPY: C-API INCLUDE DIRECTORY
 try:
     import numpy
 except ImportError:
@@ -190,7 +190,7 @@ except ImportError:
             pth = os.path.join(path, item)
             if is_package(pth):
                 if base:
-                    module_name = "%(base)s.%(item)s" % vars()
+                    module_name = "%(base)s.%(item)s" % dict(base=base, item=item)
                 else:
                     module_name = item
                 packages[module_name] = pth
@@ -213,7 +213,7 @@ if 'sdist' in sys.argv:
 hsluv_source = additional_source('utils', 'ext', 'hsluv.c')
 augli_source = additional_source('comparators', 'ext', 'butteraugli.cc')
 include_dirs = [numpy.get_include(),
-                get_python_inc(plat_specific=1)]
+                sysconfig.get_path('include')]
 
 # THE CALL TO `setup(…)`
 setup(
@@ -221,22 +221,22 @@ setup(
     author=AUTHOR_NAME,
     author_email=AUTHOR_EMAIL,
     
-    keywords=" ".join(KEYWORDS),
-    url=PROJECT_GH_URL, download_url=PROJECT_DL_URL,
-    classifiers=classifiers,
-    license=license, platforms=['any'],
-    
     version=__version__,
     description=__doc__,
-    long_description=long_description,
+    long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
+    
+    keywords=" ".join(KEYWORDS),
+    url=PROJECT_GH_URL, download_url=PROJECT_DL_URL,
+    license=LICENSE, platforms=['any'],
+    classifiers=CLASSIFIERS,
     
     packages=find_packages(),
     package_data={ '' : ['*.*'] },
     include_package_data=True,
     zip_safe=False,
     
-    install_requires=install_requires,
+    install_requires=INSTALL_REQUIRES,
     include_dirs=include_dirs,
     
     ext_modules=cythonize([

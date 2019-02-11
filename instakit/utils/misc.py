@@ -125,12 +125,12 @@ class Memoizer(dict):
     
     @original.setter
     def original(self, value):
-        if value is None:
-            value = none_function
-        if callable(value):
-            self.original_function = value
-        else:
+        if not value:
+            self.original_function = none_function
+        elif not callable(value):
             self.original_function = wrap_value(value)
+        else:
+            self.original_function = value
     
     @property
     def __wrapped__(self):
@@ -209,16 +209,18 @@ def suffix_searcher(suffix):
     searcher = re.compile(regex_str, re.IGNORECASE).search
     return lambda searching_for: bool(searcher(searching_for))
 
-def u8encode(source) -> bytes:
+def u8encode(source):
     """ Encode a source as bytes using the UTF-8 codec """
     return bytes(source, encoding=UTF8_ENCODING)
 
-def u8bytes(source) -> bytes:
+def u8bytes(source):
     """ Encode a source as bytes using the UTF-8 codec, guaranteeing
         a proper return value without raising an error
     """
     if type(source) is bytes:
         return source
+    elif type(source) is bytearray:
+        return bytes(source)
     elif type(source) is str:
         return u8encode(source)
     elif isinstance(source, string_types):
