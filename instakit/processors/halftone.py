@@ -175,12 +175,13 @@ class DotScreen(object):
     def process(self, image):
         orig_width, orig_height = image.size
         image = Mode.L.process(image).rotate(self.angle, expand=1)
-        size = image.size[0] * self.scale, image.size[1] * self.scale
-        halftone = Mode.L.new(size)
+        width, height = image.size
+        scaledsize = width * self.scale, height * self.scale
+        halftone = Mode.L.new(scaledsize)
         dotscreen = ImageDraw.Draw(halftone)
         
-        for y in range(0, image.size[1], self.sample):
-            for x in range(0, image.size[0], self.sample):
+        for y in range(0, height, self.sample):
+            for x in range(0, width, self.sample):
                 cropbox = image.crop((x,               y,
                                       x + self.sample, y + self.sample))
                 diameter = (stats.histogram_mean(cropbox) / 255) ** 0.5
@@ -192,11 +193,11 @@ class DotScreen(object):
                                    fill=255)
         
         halftone = halftone.rotate(-self.angle, expand=1)
-        half_width, half_height = halftone.size
-        xx = (half_width - orig_width * self.scale) / 2
-        yy = (half_height - orig_height * self.scale) / 2
-        return halftone.crop((xx, yy, xx + orig_width * self.scale,
-                                      yy + orig_height * self.scale))
+        tone_width, tone_height = halftone.size
+        xx = (tone_width  - orig_width  * self.scale) / 2
+        yy = (tone_height - orig_height * self.scale) / 2
+        return halftone.crop((xx,                           yy,
+                              xx + orig_width * self.scale, yy + orig_height * self.scale))
 
 class CMYKDotScreen(object):
     
@@ -235,12 +236,12 @@ if __name__ == '__main__':
     for image_input in image_inputs:
         # image_input.show()
         
-        Atkinson(threshold=128.0).process(image_input).show()
+        # Atkinson(threshold=128.0).process(image_input).show()
         # FloydSteinberg(threshold=128.0).process(image_input).show()
         # SlowFloydSteinberg(threshold=128.0).process(image_input).show()
         
         # CMYKAtkinson().process(image_input).show()
         # CMYKFloydsterBill().process(image_input).show()
-        # CMYKDotScreen(sample=10, scale=4).process(image_input).show()
+        CMYKDotScreen(sample=10, scale=4).process(image_input).show()
     
     print(image_paths)
