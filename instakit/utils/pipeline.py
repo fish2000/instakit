@@ -139,10 +139,6 @@ class BandFork(Fork):
     
     def process(self, image):
         processed = []
-        # for idx, band in enumerate(self.split(image)):
-        #     label = self.band_label(idx)
-        #     band_processor = self[label]
-        #     processed_bands.append(band_processor.process(band))
         for processor, band in zip(self.iterate(),
                                    self.split(image)):
             processed.append(processor.process(band))
