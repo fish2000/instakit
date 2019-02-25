@@ -3,7 +3,7 @@ from __future__ import print_function
 
 from PIL import ImageOps, ImageChops
 from abc import ABC, abstractmethod as abstract
-from collections import defaultdict, OrderedDict
+from collections import defaultdict
 from enum import Enum as EnumBase, unique
 # from six import add_metaclass
 
@@ -47,7 +47,7 @@ class Container(Processor):
     @abstract
     def __getitem__(self, idx): ...
 
-class Fork(Container, OrderedDict):
+class Fork(Container):
     
     """ Base abstract forking processor. """
     
@@ -56,10 +56,28 @@ class Fork(Container, OrderedDict):
             default_factory = NOOp
         if not callable(default_factory):
             raise AttributeError("Fork() requires a callable default_factory")
-        self.default_factory = default_factory
         
-        Container.__init__(self, *args, **kwargs)
-        OrderedDict.__init__(self, *args, **kwargs)
+        self.default_factory = default_factory
+        self.dict = defaultdict(default_factory, **kwargs)
+        
+        super(Fork, self).__init__(*args, **kwargs)
+    
+    def __len__(self):
+        return len(self.dict)
+    
+    def __contains__(self, value):
+        return value in self.dict
+    
+    def __getitem__(self, idx):
+        return self.dict[idx]
+    
+    def __setitem__(self, idx, value):
+        if value in (None, NOOp):
+            value = NOOp()
+        self.dict[idx] = value
+    
+    def get(self, value, default_value=None):
+        return self.dict.get(value, default_value)
     
     @abstract
     def split(self, image): ...
@@ -91,26 +109,45 @@ class BandFork(Fork):
         if type(value) in string_types:
             value = Mode.for_string(value)
         if type(value) is Mode:
-            self.mode_t = value
+            self.set_mode_t(value)
         else:
             raise TypeError("invalid mode type: %s (%s)" % (type(value), value))
     
+    def set_mode_t(self, value):
+        self.mode_t = value
+    
     @property
-    def bands(self):
+    def band_labels(self):
         return self.mode_t.bands
     
     @property
     def band_count(self):
         return self.mode_t.band_count
     
-    def band(self, idx):
+    def band_label(self, idx):
         return self.mode_t.bands[idx]
+    
+    def iterate(self):
+        for band in self.band_labels:
+            yield self[band]
     
     def split(self, image):
         return self.mode_t.process(image).split()
     
     def compose(self, *bands):
         return self.mode_t.merge(*bands)
+    
+    def process(self, image):
+        processed = []
+        # for idx, band in enumerate(self.split(image)):
+        #     label = self.band_label(idx)
+        #     band_processor = self[label]
+        #     processed_bands.append(band_processor.process(band))
+        for processor, band in zip(self.iterate(),
+                                   self.split(image)):
+            processed.append(processor.process(band))
+        return self.compose(*processed)
+
 
 class Overprint(BandFork):
     pass
@@ -305,7 +342,7 @@ class ChannelOverprinter(ChannelFork, Processor):
 if __name__ == '__main__':
     from pprint import pprint
     from instakit.utils.static import asset
-    # from instakit.processors.halftone import Atkinson
+    from instakit.processors.halftone import Atkinson
     
     image_paths = list(map(
         lambda image_file: asset.path('img', image_file),
@@ -314,41 +351,44 @@ if __name__ == '__main__':
         lambda image_path: Mode.RGB.open(image_path),
             image_paths))
     
-    # for image_input in image_inputs[:2]:
-    #     #ChannelOverprinter(Atkinson).process(image_input).show()
-    #
-    #     print('Creating ChannelOverprinter and ChannelFork with Atkinson ditherer...')
-    #     overatkins = ChannelOverprinter(Atkinson)
-    #     forkatkins = ChannelFork(Atkinson)
-    #
-    #     print('Processing image with ChannelForked Atkinson in default (RGB) mode...')
-    #     forkatkins.process(image_input).show()
-    #     forkatkins.mode = 'CMYK'
-    #     print('Processing image with ChannelForked Atkinson in CMYK mode...')
-    #     forkatkins.process(image_input).show()
-    #     forkatkins.mode = 'RGB'
-    #     print('Processing image with ChannelForked Atkinson in RGB mode...')
-    #     forkatkins.process(image_input).show()
-    #
-    #     overatkins.mode = 'CMYK'
-    #     print('Processing image with ChannelOverprinter-ized Atkinson in CMYK mode...')
-    #     overatkins.process(image_input).show()
-    #
-    #     print('Attempting to reset ChannelOverprinter to RGB mode...')
-    #     import traceback, sys
-    #     try:
-    #         overatkins.mode = 'RGB'
-    #         overatkins.process(image_input).show()
-    #     except:
-    #         print(">>>>>>>>>>>>>>>>>>>>> TRACEBACK <<<<<<<<<<<<<<<<<<<<<")
-    #         traceback.print_exc(file=sys.stdout)
-    #         print("<<<<<<<<<<<<<<<<<<<<< KCABECART >>>>>>>>>>>>>>>>>>>>>")
-    #         print('')
+    for image_input in image_inputs[:2]:
+        ChannelOverprinter(Atkinson).process(image_input).show()
+        
+        print('Creating ChannelOverprinter and ChannelFork with Atkinson ditherer...')
+        overatkins = ChannelOverprinter(Atkinson)
+        # forkatkins = ChannelFork(Atkinson)
+        forkatkins = BandFork(Atkinson)
+        
+        print('Processing image with ChannelForked Atkinson in default (RGB) mode...')
+        forkatkins.process(image_input).show()
+        forkatkins.mode = 'CMYK'
+        print('Processing image with ChannelForked Atkinson in CMYK mode...')
+        forkatkins.process(image_input).show()
+        forkatkins.mode = 'RGB'
+        print('Processing image with ChannelForked Atkinson in RGB mode...')
+        forkatkins.process(image_input).show()
+        
+        overatkins.mode = 'CMYK'
+        print('Processing image with ChannelOverprinter-ized Atkinson in CMYK mode...')
+        overatkins.process(image_input).show()
+        
+        print('Attempting to reset ChannelOverprinter to RGB mode...')
+        import traceback, sys
+        try:
+            overatkins.mode = 'RGB'
+            overatkins.process(image_input).show()
+        except:
+            print(">>>>>>>>>>>>>>>>>>>>> TRACEBACK <<<<<<<<<<<<<<<<<<<<<")
+            traceback.print_exc(file=sys.stdout)
+            print("<<<<<<<<<<<<<<<<<<<<< KCABECART >>>>>>>>>>>>>>>>>>>>>")
+            print('')
     
-    fork = Fork(None)
-    pprint(fork)
+    # fork = Fork(None)
+    # pprint(fork)
     # Processor()
-    Container()
+    # Container()
+    bandfork = BandFork(None)
+    pprint(bandfork)
     
     print(image_paths)
     
