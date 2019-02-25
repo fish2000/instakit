@@ -213,6 +213,8 @@ class VersionInfo(VersionAncestor):
                 return cls.from_string(from_value.decode('UTF-8'))
             elif type(from_value) in dict_types:
                 return cls.from_dict(from_value)
+            elif type(from_value) is cls:
+                return cls.from_dict(from_value.to_dict())
         if cls.UNKNOWN in str(major):
             major = None
         if cls.UNKNOWN in str(minor):
@@ -288,6 +290,7 @@ def test():
     print(version)
     
     assert version  < VersionInfo("9.0.0")
+    assert version == VersionInfo(version)
     assert version == VersionInfo(__version__)
     assert version <= VersionInfo(__version__)
     assert version >= VersionInfo(__version__)
