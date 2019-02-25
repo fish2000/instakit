@@ -102,9 +102,11 @@ def wrap_value(value):
 none_function = wrap_value(None)
 
 string_types = uniquify(type(''),
-                        type(b''),
+                        type(u''),
                         type(r''),
                        *six.string_types)
+
+byte_types = tuplize({ bytes, bytearray } - { str })
 
 class Memoizer(dict):
     
