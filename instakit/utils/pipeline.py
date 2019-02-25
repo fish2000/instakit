@@ -57,10 +57,13 @@ class Fork(Container):
         if not callable(default_factory):
             raise AttributeError("Fork() requires a callable default_factory")
         
-        self.default_factory = default_factory
         self.dict = defaultdict(default_factory, **kwargs)
         
         super(Fork, self).__init__(*args, **kwargs)
+    
+    @property
+    def default_factory(self):
+        return self.dict.default_factory
     
     def __len__(self):
         return len(self.dict)
