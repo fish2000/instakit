@@ -21,6 +21,9 @@ class Processor(ABC):
     
     @abstract
     def process(self, image): ...
+    
+    def __call__(self, image):
+        return self.process(image)
 
 class Enum(EnumBase):
     
@@ -122,13 +125,6 @@ class BandFork(Fork):
     @property
     def band_labels(self):
         return self.mode_t.bands
-    
-    @property
-    def band_count(self):
-        return self.mode_t.band_count
-    
-    def band_label(self, idx):
-        return self.mode_t.bands[idx]
     
     def iterate(self):
         for band in self.band_labels:
