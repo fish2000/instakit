@@ -284,10 +284,9 @@ version = VersionInfo(__version__)
 
 # inline tests:
 def test():
-    # ºª§§†‘“¬…πˆ¨©†§¶•¿”’
-    print(VersionInfo.REG)
-    print(repr(version))
-    print(version)
+    # print(VersionInfo.REG)
+    print("VersionInfo Instance:", repr(version))
+    print("Semantic Version:", version)
     
     assert version  < VersionInfo("9.0.0")
     assert version == VersionInfo(version)
