@@ -125,7 +125,7 @@ def additional_source(*args):
 __version__ = "<undefined>"
 try:
     exec(compile(
-        open(os.path.join(CWD,
+        open(os.path.join(BASE_PATH,
             '__version__.py')).read(),
             '__version__.py', 'exec'))
 except:
@@ -152,12 +152,16 @@ if PYTHON_VERSION < 3.4:
 CLASSIFIERS = [
     'Development Status :: 5 - Production/Stable',
     'License :: OSI Approved :: MIT License',
+    'Intended Audience :: Developers',
     'Operating System :: MacOS',
     'Operating System :: Microsoft :: Windows',
     'Operating System :: OS Independent',
     'Operating System :: POSIX',
     'Operating System :: Unix',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 2',
     'Programming Language :: Python :: 2.7',
+    'Programming Language :: Python :: 3',
     'Programming Language :: Python :: 3.5',
     'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7']

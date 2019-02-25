@@ -1,6 +1,5 @@
 exclude *.pyc *~ *.so .DS_Store
 recursive-include requirements *.txt
-include __version__.py
 include .bumpversion.cfg
 include .clang-format
 include .editorconfig
