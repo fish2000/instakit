@@ -51,6 +51,8 @@ class Container(Processor):
     @abstract
     def __getitem__(self, idx): ...
     
+    # Abstract but optional methods:
+    
     def __setitem__(self, idx, value):
         raise NotImplementedError()
     
