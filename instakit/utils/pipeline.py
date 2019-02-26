@@ -11,7 +11,7 @@ except ImportError:
     pass
 
 from instakit.abc import Enum, Fork, Container, MutableContainer, NOOp
-from instakit.utils.gcr import gcrcore
+from instakit.utils.gcr import BasicGCR
 from instakit.utils.mode import Mode
 from instakit.utils.misc import string_types
 from instakit.processors.adjust import AutoContrast
@@ -251,6 +251,14 @@ class OverprintFork(BandFork):
     
     """ A ChannelFork subclass that rebuilds its output image using
         multiply-mode to simulate CMYK overprinting effects.
+        
+        N.B. While this Fork-based processor operates strictly in CMYK mode,
+        the composite image it eventually returns will be in RGB mode. This is
+        because the CMYK channels are each individually converted to colorized
+        representations in order to simulate monotone ink preparations; the
+        final compositing operation, in which these colorized channel separation
+        images are combined with multiply-mode, is also computed using the RGB
+        color model.
     """
     
     mode_t = Mode.CMYK
@@ -263,7 +271,7 @@ class OverprintFork(BandFork):
         """
         # Store GCR percentage:
         self.contrast = AutoContrast()
-        self.gcr = gcr
+        self.basicgcr = BasicGCR(percentage=gcr)
         
         # Call super():
         super(OverprintFork, self).__init__(default_factory, *args, **kwargs)
@@ -296,14 +304,19 @@ class OverprintFork(BandFork):
             raise AttributeError(
                 "OverprintFork only works in %s mode" % Mode.CMYK.to_string())
     
+    def update(self, iterable=None, **kwargs):
+        """ OverprintFork.update(…) re-applies CMYK ink processors to the
+            updated processing dataflow
+        """
+        super(OverprintFork, self).update(iterable, **kwargs)
+        self.apply_CMYK_inks()
+    
     def split(self, image):
         """ OverprintFork.split(image) uses imagekit.utils.gcr.gcrcore(…) to perform
             gray-component replacement in CMYK-mode images; for more information,
             see the imagekit.utils.gcr module
         """
-        bands = Mode.CMYK.process(image).split()
-        gcrcore(image, self.gcr, bands)
-        return bands
+        return self.basicgcr.process(image).split()
     
     def compose(self, *bands):
         """ OverprintFork.compose(…) uses PIL.ImageChops.multiply() to create
