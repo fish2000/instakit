@@ -71,7 +71,6 @@ class Pipeline(Container):
     def __init__(self, *args):
         self.list = list(*args)
     
-    @wraps(Container.iterate)
     def iterate(self):
         return iter(self.list)
     
@@ -104,6 +103,9 @@ class Pipeline(Container):
     @wraps(list.extend)
     def extend(self, iterable):
         self.list.extend(iterable)
+    
+    def last(self):
+        return self.list[-1]
     
     def process(self, image):
         for p in self.iterate():
@@ -206,7 +208,6 @@ class BandFork(Fork):
     def band_labels(self):
         return self.mode_t.bands
     
-    @wraps(Container.iterate)
     def iterate(self):
         for band in self.band_labels:
             yield self[band]
@@ -223,16 +224,6 @@ class BandFork(Fork):
                                    self.split(image)):
             processed.append(processor.process(band))
         return self.compose(*processed)
-
-
-class OverprintFork(BandFork):
-    pass
-
-class Grid(Fork):
-    pass
-
-class Sequence(Fork):
-    pass
 
 Pipe = Pipeline
 
@@ -299,48 +290,89 @@ class RGBInk(Ink):
     def BGR(cls):
         return (cls.BLUE, cls.GREEN, cls.RED)
 
-class ChannelOverprinter(ChannelFork, Processor):
-    """ A ChannelFork subclass that rebuilds its output image using
-        multiply-mode to simulate CMYK overprinting effects.
-    """
-    default_mode = 'CMYK'
+class OverprintFork(BandFork):
     
-    def _set_mode(self, mode_string):
-        if mode_string != self.default_mode: # CMYK
+    mode_t = Mode.CMYK
+    
+    def __init__(self, default_factory, *args, **kwargs):
+        # Call super():
+        super(OverprintFork, self).__init__(default_factory, *args, **kwargs)
+        
+        # Make each band-processor a Pipeline() ending in
+        # the channel-appropriate CMYKInk enum processor:
+        self.apply_CMYK_inks()
+    
+    def apply_CMYK_inks(self):
+        modestring = self.mode_t.to_string()
+        CMYKLabels = CMYKInk.CMYK()
+        for band in self.band_labels:
+            processor = self[band]
+            idx = modestring.index(band)
+            ink = CMYKInk(CMYKLabels[idx])
+            if hasattr(processor, 'append'):
+                if processor[-1] is not ink:
+                    processor.append(ink)
+                    self[band] = processor
+            else:
+                self[band] = Pipeline([processor, ink])
+    
+    def set_mode_t(self, value):
+        if value is not type(self).mode_t:
             raise AttributeError(
-                "ChannelOverprinter can operate in %s mode only" %
-                    self.default_mode) # CMYK
+                "OverprintFork only works in %s mode" % self.mode_t.to_string())
     
-    def compose(self, *channels):
-        return reduce(ImageChops.multiply, channels)
-    
-    def process(self, image):
-        # Compile the standard CMYK ink values as a dict of processing ops,
-        # keyed with the letter of their channel name (e.g. C, M, Y, and K):
-        inks = zip(self.default_mode, # CMYK
-                  [CMYKInk(ink_label) for ink_label in CMYKInk.CMYK()])
-        
-        # Manually two-phase allocate/initialize a ChannelFork “clone” instance
-        # to run the ChannelOverprinter CMYK composition processing operations:
-        # clone = super(ChannelOverprinter, self).__new__(self.default_factory,
-        #                                                 mode=self.channels.mode)
-        # clone.__init__(self.default_factory,
-        #                mode=self.channels.mode)
-        clone = super(ChannelOverprinter, self).__new__(type(self).__mro__[1],
-                                                             self.default_factory)
-        clone.__init__(self.default_factory)
-        
-        # Create a pipeline for each of the overprinters’ CMYK channel operations,
-        # and install the pipeline in the newly created “clone” ChannelFork:
-        for channel_name, ink in inks:
-            # For each channel, first run the prescribed operations;
-            # and afterward, colorize the output (as per a duotone image) using
-            # the CMYK ink as the colorization value:
-            clone[channel_name] = Pipeline([self[channel_name], ink])
-        
-        # Delegate processing to the “clone” instance:
-        return clone.process(image)
+    def compose(self, *bands):
+        return reduce(ImageChops.multiply, bands)
 
+class Grid(Fork):
+    pass
+
+class Sequence(Fork):
+    pass
+
+# class ChannelOverprinter(ChannelFork, Processor):
+#     """ A ChannelFork subclass that rebuilds its output image using
+#         multiply-mode to simulate CMYK overprinting effects.
+#     """
+#     default_mode = 'CMYK'
+#
+#     def _set_mode(self, mode_string):
+#         if mode_string != self.default_mode: # CMYK
+#             raise AttributeError(
+#                 "ChannelOverprinter can operate in %s mode only" %
+#                     self.default_mode) # CMYK
+#
+#     def compose(self, *channels):
+#         return reduce(ImageChops.multiply, channels)
+#
+#     def process(self, image):
+#         # Compile the standard CMYK ink values as a dict of processing ops,
+#         # keyed with the letter of their channel name (e.g. C, M, Y, and K):
+#         inks = zip(self.default_mode, # CMYK
+#                   [CMYKInk(ink_label) for ink_label in CMYKInk.CMYK()])
+#
+#         # Manually two-phase allocate/initialize a ChannelFork “clone” instance
+#         # to run the ChannelOverprinter CMYK composition processing operations:
+#         # clone = super(ChannelOverprinter, self).__new__(self.default_factory,
+#         #                                                 mode=self.channels.mode)
+#         # clone.__init__(self.default_factory,
+#         #                mode=self.channels.mode)
+#         clone = super(ChannelOverprinter, self).__new__(type(self).__mro__[1],
+#                                                              self.default_factory)
+#         clone.__init__(self.default_factory)
+#
+#         # Create a pipeline for each of the overprinters’ CMYK channel operations,
+#         # and install the pipeline in the newly created “clone” ChannelFork:
+#         for channel_name, ink in inks:
+#             # For each channel, first run the prescribed operations;
+#             # and afterward, colorize the output (as per a duotone image) using
+#             # the CMYK ink as the colorization value:
+#             clone[channel_name] = Pipeline([self[channel_name], ink])
+#
+#         # Delegate processing to the “clone” instance:
+#         return clone.process(image)
+
+ChannelOverprinter = OverprintFork
 
 if __name__ == '__main__':
     from pprint import pprint
@@ -355,10 +387,10 @@ if __name__ == '__main__':
             image_paths))
     
     for image_input in image_inputs[:2]:
-        ChannelOverprinter(Atkinson).process(image_input).show()
+        OverprintFork(Atkinson).process(image_input).show()
         
         print('Creating ChannelOverprinter and ChannelFork with Atkinson ditherer...')
-        overatkins = ChannelOverprinter(Atkinson)
+        overatkins = OverprintFork(Atkinson)
         forkatkins = BandFork(Atkinson)
         
         print('Processing image with ChannelForked Atkinson in default (RGB) mode...')
