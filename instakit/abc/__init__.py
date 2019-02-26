@@ -202,6 +202,9 @@ class NDProcessorBase(Processor):
     """ An image processor ancestor class that represents PIL image
         data in a `numpy.ndarray`. This is the base abstract class,
         specifying necessary methods for subclasses to override.
+        
+        Note that “process(…)” has NOT been implemented yet in the
+        inheritance chain – a subclass will need to furnish it.
     """
     __slots__ = tuple()
     
