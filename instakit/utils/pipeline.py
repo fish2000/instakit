@@ -22,6 +22,7 @@ class Pipe(Container):
         Derived from an ImageKit class:
         imagekit.processors.base.ProcessorPipeline
     """
+    __slots__ = ('tuple',)
     
     @classmethod
     def base_type(cls):
@@ -64,6 +65,7 @@ class Pipeline(MutableContainer):
         Derived from an ImageKit class:
         imagekit.processors.base.ProcessorPipeline
     """
+    __slots__ = ('list',)
     
     @classmethod
     def base_type(cls):
@@ -136,6 +138,7 @@ class BandFork(Fork):
         >>> bfork['G'] = Atkinson()
         >>> bfork.process(my_image)
     """
+    __slots__ = ('mode', 'mode_t')
     
     mode_t = Mode.RGB
     
@@ -260,6 +263,7 @@ class OverprintFork(BandFork):
         images are combined with multiply-mode, is also computed using the RGB
         color model.
     """
+    __slots__ = ('contrast', 'basicgcr')
     
     mode_t = Mode.CMYK
     inks = CMYKInk.CMYK()
@@ -278,7 +282,8 @@ class OverprintFork(BandFork):
         
         # Make each band-processor a Pipeline() ending in
         # the channel-appropriate CMYKInk enum processor:
-        self.apply_CMYK_inks()
+        if default_factory is not None:
+            self.apply_CMYK_inks()
     
     def apply_CMYK_inks(self):
         """ This method ensures that each bands’ processor is set up
@@ -286,15 +291,15 @@ class OverprintFork(BandFork):
             band in question. Calling it multiple times *should* be
             idempotent (but don’t quote me on that)
         """
-        for band, ink in zip(self.band_labels,
-                        type(self).inks):
-            processor = self[band]
+        for band_label, ink in zip(self.band_labels,
+                              type(self).inks):
+            processor = self[band_label]
             if hasattr(processor, 'append'):
                 if processor[-1] is not ink:
                     processor.append(ink)
-                    self[band] = processor
+                    self[band_label] = processor
             else:
-                self[band] = Pipeline([processor, ink])
+                self[band_label] = Pipeline([processor, ink])
     
     def set_mode_t(self, value):
         """ Raise an exception if an attempt is made to set the mode to anything

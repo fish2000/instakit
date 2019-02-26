@@ -33,6 +33,7 @@ def is_in_class(attr, cls):
 class Processor(ABC):
     
     """ Base abstract processor class. """
+    __slots__ = tuple()
     
     @abstract
     def process(self, image):
@@ -54,6 +55,7 @@ class Processor(ABC):
 class Enum(EnumBase):
     
     """ Base abstract processor enum. """
+    __slots__ = tuple()
     
     @abstract
     def process(self, image): ...
@@ -61,6 +63,7 @@ class Enum(EnumBase):
 class Container(Processor):
     
     """ Base abstract processor container. """
+    __slots__ = tuple()
     
     @abstract
     def iterate(self):
@@ -92,6 +95,7 @@ class Container(Processor):
 class MutableContainer(Container):
     
     """ Base abstract processor mutable container. """
+    __slots__ = tuple()
     
     @abstract
     def __setitem__(self, idx, value): ...
@@ -111,6 +115,7 @@ class MutableContainer(Container):
 class NOOp(Processor):
     
     """ A no-op processor. """
+    __slots__ = tuple()
     
     def process(self, image):
         return image
@@ -118,6 +123,7 @@ class NOOp(Processor):
 class Fork(MutableContainer):
     
     """ Base abstract forking processor. """
+    __slots__ = ('dict', '__weakref__')
     
     @classmethod
     def base_type(cls):
@@ -181,6 +187,7 @@ class ThresholdMatrixProcessor(Processor):
     
     """ Abstract base class for a processor using a uint8 threshold matrix """
     # This is used in instakit.processors.halftone
+    __slots__ = ('threshold_matrix',)
     
     LO_TUP = (0,)
     HI_TUP = (255,)
@@ -190,3 +197,65 @@ class ThresholdMatrixProcessor(Processor):
         self.threshold_matrix = int(threshold)  * self.LO_TUP + \
                            (256-int(threshold)) * self.HI_TUP
 
+class NDProcessorBase(Processor):
+    
+    """ An image processor ancestor class that represents PIL image
+        data in a `numpy.ndarray`. This is the base abstract class,
+        specifying necessary methods for subclasses to override.
+    """
+    __slots__ = tuple()
+    
+    @abstract
+    def process_nd(self, ndimage):
+        """ Override NDProcessor.process_nd(…) in subclasses
+            to provide functionality that acts on image data stored
+            in a `numpy.ndarray`.
+        """
+        ...
+    
+    @staticmethod
+    @abstract
+    def compand(ndimage): ...
+    
+    @staticmethod
+    @abstract
+    def uncompand(ndimage): ...
+
+
+def test():
+    
+    class SlowAtkinson(ThresholdMatrixProcessor):
+        __slots__ = tuple()
+        def process(self, image):
+            from instakit.utils.mode import Mode
+            image = Mode.L.process(image)
+            for y in range(image.size[1]):
+                for x in range(image.size[0]):
+                    old = image.getpixel((x, y))
+                    new = self.threshold_matrix[old]
+                    err = (old - new) >> 3 # divide by 8.
+                    image.putpixel((x, y), new)
+                    for nxy in [(x+1, y),
+                                (x+2, y),
+                                (x-1, y+1),
+                                (x, y+1),
+                                (x+1, y+1),
+                                (x, y+2)]:
+                        try:
+                            image.putpixel(nxy, int(
+                            image.getpixel(nxy) + err))
+                        except IndexError:
+                            pass
+            return image
+    
+    from pprint import pprint
+    slow_atkinson = SlowAtkinson()
+    pprint(slow_atkinson)
+    print("DICT?", hasattr(slow_atkinson, '__dict__'))
+    print("SLOTS?", hasattr(slow_atkinson, '__slots__'))
+    pprint(slow_atkinson.__slots__)
+    pprint(slow_atkinson.__class__.__base__.__slots__)
+    print("THRESHOLD_MATRIX:", slow_atkinson.threshold_matrix)
+
+if __name__ == '__main__':
+    test()

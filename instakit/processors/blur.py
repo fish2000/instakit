@@ -7,79 +7,84 @@ Created by FI$H 2000 on 2012-08-23.
 Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 """
 from __future__ import print_function
+
 from PIL import ImageFilter
+from instakit.abc import Processor
 
-
-class ImagingCoreFilterMixin(object):
+class ImagingCoreFilterMixin(Processor):
     """ A mixin furnishing a `process(…)` method to PIL.ImageFilter classes """
+    __slots__ = tuple() # a __dict__ slot exists already
+    
     def process(self, image):
         return image.filter(self)
 
 class Contour(ImageFilter.CONTOUR, ImagingCoreFilterMixin):
     """ Contour-Enhance Filter """
-    pass
+    __slots__ = tuple()
 
 
 class Detail(ImageFilter.DETAIL, ImagingCoreFilterMixin):
     """ Detail-Enhance Filter """
-    pass
+    __slots__ = tuple()
 
 
 class Emboss(ImageFilter.EMBOSS, ImagingCoreFilterMixin):
     """ Emboss-Effect Filter """
-    pass
+    __slots__ = tuple()
 
 
 class FindEdges(ImageFilter.FIND_EDGES, ImagingCoreFilterMixin):
     """ Edge-Finder Filter """
-    pass
+    __slots__ = tuple()
 
 
 class EdgeEnhance(ImageFilter.EDGE_ENHANCE, ImagingCoreFilterMixin):
     """ Edge-Enhance Filter """
-    pass
+    __slots__ = tuple()
 
 
 class EdgeEnhanceMore(ImageFilter.EDGE_ENHANCE_MORE, ImagingCoreFilterMixin):
     """ Edge-Enhance (With Extreme Predjudice) Filter """
-    pass
+    __slots__ = tuple()
 
 
 class Smooth(ImageFilter.SMOOTH, ImagingCoreFilterMixin):
     """ Image-Smoothing Filter """
-    pass
+    __slots__ = tuple()
 
 
 class SmoothMore(ImageFilter.SMOOTH_MORE, ImagingCoreFilterMixin):
     """ Image-Smoothing (With Extreme Prejudice) Filter """
-    pass
+    __slots__ = tuple()
 
 
 class Sharpen(ImageFilter.SHARPEN, ImagingCoreFilterMixin):
     """ Image Sharpener """
-    pass
+    __slots__ = tuple()
 
 
 class UnsharpMask(ImageFilter.UnsharpMask, ImagingCoreFilterMixin):
     """ Unsharp Mask Filter 
         Optionally initialize with params:
             radius (2), percent (150), threshold (3) """
-    pass
+    __slots__ = tuple()
 
 
 class SimpleGaussianBlur(ImageFilter.GaussianBlur, ImagingCoreFilterMixin):
     """ Simple Gaussian Blur Filter 
         Optionally initialize with radius (2) """
-    pass
+    __slots__ = tuple()
 
 
-class GaussianBlur(object):
+class GaussianBlur(Processor):
     """ Gaussian Blur Filter 
         Optionally initialize with params:
             sigmaX (3)
             sigmaY (3; same as sigmaX)
             sigmaZ (0; same as sigmaX)
     """
+    __slots__ = ('sigmaX', 'sigmaY', 'sigmaZ')
+    
     def __init__(self, sigmaX=3, sigmaY=None, sigmaZ=None):
         self.sigmaX = sigmaX
         self.sigmaY = sigmaY or sigmaX

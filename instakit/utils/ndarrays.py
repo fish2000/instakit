@@ -19,6 +19,7 @@ from __future__ import division, print_function
 
 import numpy
 from instakit.utils.mode import Mode
+from instakit.abc import NDProcessorBase
 
 uint8_t = numpy.uint8
 uint32_t = numpy.uint32
@@ -295,13 +296,14 @@ def toimage(array,  high=255,    low=0,
     return image
 
 
-class NDProcessor(object):
+class NDProcessor(NDProcessorBase):
     
     """ An image processor ancestor class that represents PIL image
         data in a `numpy.ndarray`. Subclasses can override the
         `process_nd(…)` method to receive, transform, and return
         the image data using NumPy, SciPy, and the like.
     """
+    __slots__ = tuple()
     
     def process(self, image):
         """ NDProcessor.process(…) converts its PIL image operand
@@ -311,13 +313,6 @@ class NDProcessor(object):
             finally returning it.
         """
         return toimage(self.process_nd(fromimage(image)))
-    
-    def process_nd(self, ndimage):
-        """ Override NDProcessor.process_nd(…) in subclasses
-            to provide functionality that acts on image data stored
-            in a `numpy.ndarray`.
-        """
-        return ndimage
     
     @staticmethod
     def compand(ndimage):

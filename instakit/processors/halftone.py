@@ -24,6 +24,7 @@ class SlowAtkinson(ThresholdMatrixProcessor):
         use this one if at all possible – unless, like, you’re
         being paid by the hour or somesuch. Up to you dogg.
     """
+    __slots__ = tuple()
     
     def process(self, image):
         """ The process call returns a monochrome ('L'-mode) image """
@@ -52,6 +53,7 @@ class SlowFloydSteinberg(ThresholdMatrixProcessor):
     """ A similarly super-slow reference implementation of Floyd-Steinberg.
         Adapted from an RGB version here: https://github.com/trimailov/qwer
     """
+    __slots__ = tuple()
     
     # Precalculate fractional error multipliers:
     SEVEN_FRAC = 7/16
@@ -89,6 +91,9 @@ class Problematic(object):
     def __init__(self):
         raise TypeError("Fast-math version couldn't be imported")
 
+# Register the stub as a “virtual subclass” of instakit.abc.Processor:
+Processor.register(Problematic)
+
 try:
     # My man, fast Bill Atkinson
     from instakit.processors.ext.halftone import Atkinson as FastAtkinson
@@ -112,6 +117,7 @@ class CMYKAtkinson(Processor):
     """ Create a full-color CMYK Atkinson-dithered halftone, with gray-component
         replacement (GCR) at a specified percentage level
     """
+    __slots__ = ('gcr', 'overprinter')
     
     def __init__(self, gcr=20):
         self.gcr = max(min(100, gcr), 0)
@@ -126,6 +132,7 @@ class CMYKFloydsterBill(Processor):
     """ Create a full-color CMYK Atkinson-dithered halftone, with gray-component
         replacement (GCR) and OH SHIT SON WHAT IS THAT ON THE CYAN CHANNEL DOGG
     """
+    __slots__ = ('gcr', 'overprinter')
     
     def __init__(self, gcr=20):
         self.gcr = max(min(100, gcr), 0)
@@ -150,6 +157,7 @@ class DotScreen(Processor):
         GCR implementation currently, at the time of writing – q.v. the
         `instakit.utils.gcr` module. 
     """
+    __slots__ = ('sample', 'scale', 'angle')
     
     def __init__(self, sample=1, scale=2, angle=0):
         self.sample = sample
@@ -189,6 +197,7 @@ class CMYKDotScreen(Processor):
         replacement (GCR), individual rotation angles for each channel’s
         dot-screen, and resampling value controls.
     """
+    __slots__ = ('overprinter',)
     
     def __init__(self,      gcr=20,
                  sample=10, scale=10,
