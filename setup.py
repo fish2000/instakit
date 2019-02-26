@@ -143,7 +143,8 @@ INSTALL_REQUIRES = [
     'Pillow>=3.0.0',
     'numpy>=1.7.0',
     'scipy>=1.1.0',
-    'scikit-image>=0.12.0']
+    'scikit-image>=0.12.0',
+    'six>=1.10.0']
 
 if PYTHON_VERSION < 3.4:
     INSTALL_REQUIRES.append('enum34>=1.1.0')
