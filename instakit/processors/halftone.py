@@ -8,29 +8,12 @@ Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 """
 from __future__ import print_function
 
-from abc import ABC, abstractmethod as abstract
 from PIL import ImageDraw
 
 from instakit.utils import pipeline, stats
 from instakit.utils.gcr import gcr
 from instakit.utils.mode import Mode
 from instakit.abc import ThresholdMatrixProcessor
-
-
-class ThresholdMatrixProcessor(ABC):
-    
-    """ Abstract base class for a processor using a uint8 threshold matrix """
-    
-    LO_TUP = (0,)
-    HI_TUP = (255,)
-    
-    def __init__(self, threshold = 128.0):
-        """ Initialize with a threshold value between 0 and 255 """
-        self.threshold_matrix = int(threshold)  * self.LO_TUP + \
-                           (256-int(threshold)) * self.HI_TUP
-    
-    @abstract
-    def process(self, image): ...
 
 
 class SlowAtkinson(ThresholdMatrixProcessor):
@@ -132,7 +115,7 @@ class CMYKAtkinson(object):
     
     def __init__(self, gcr=20):
         self.gcr = max(min(100, gcr), 0)
-        self.overprinter = pipeline.ChannelFork(Atkinson, mode='CMYK')
+        self.overprinter = pipeline.BandFork(Atkinson, mode='CMYK')
     
     def process(self, image):
         return self.overprinter.process(
@@ -146,7 +129,7 @@ class CMYKFloydsterBill(object):
     
     def __init__(self, gcr=20):
         self.gcr = max(min(100, gcr), 0)
-        self.overprinter = pipeline.ChannelFork(Atkinson, mode='CMYK')
+        self.overprinter = pipeline.BandFork(Atkinson, mode='CMYK')
         self.overprinter.update({ 'C' : SlowFloydSteinberg() })
     
     def process(self, image):
@@ -212,7 +195,7 @@ class CMYKDotScreen(object):
         thetaC=0, thetaM=15, thetaY=30, thetaK=45):
         
         self.gcr = max(min(100, gcr), 0)
-        self.overprinter = pipeline.ChannelFork(DotScreen, mode='CMYK')
+        self.overprinter = pipeline.BandFork(DotScreen, mode='CMYK')
         self.overprinter.update({
             'C': DotScreen(angle=thetaC, sample=sample, scale=scale),
             'M': DotScreen(angle=thetaM, sample=sample, scale=scale),
