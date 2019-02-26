@@ -134,6 +134,22 @@ class Fork(Container):
 
 
 class BandFork(Fork):
+    """ A processor wrapper that, for each image channel:
+        - applies a band-specific processor, or
+        - applies a default processor.
+        
+        * Ex. 1: apply the Atkinson ditherer to each of an images' bands:
+        >>> from instakit.utils.pipeline import BandFork
+        >>> from instakit.processors.halftone import Atkinson
+        >>> BandFork(Atkinson).process(my_image)
+        
+        * Ex. 2: apply the Atkinson ditherer to only one band:
+        >>> from instakit.utils.pipeline import BandFork
+        >>> from instakit.processors.halftone import Atkinson
+        >>> bfork = BandFork(None)
+        >>> bfork['G'] = Atkinson()
+        >>> bfork.process(my_image)
+    """
     
     mode_t = Mode.RGB
     
@@ -195,86 +211,74 @@ class Sequence(Fork):
     pass
 
 
-class Pipe(list, Container):
-    """ A linear pipeline of processors to be applied en masse.
-        Derived from an ImageKit class:
-        imagekit.processors.base.ProcessorPipeline
-    """
-    def iterate(self):
-        return iter(self)
-    
-    def process(self, image):
-        for p in self.iterate():
-            image = p.process(image)
-        return image
+# class Pipe(list, Container):
+#     """ A linear pipeline of processors to be applied en masse.
+#         Derived from an ImageKit class:
+#         imagekit.processors.base.ProcessorPipeline
+#     """
+#     def iterate(self):
+#         return iter(self)
+#
+#     def process(self, image):
+#         for p in self.iterate():
+#             image = p.process(image)
+#         return image
+
+Pipe = Pipeline
 
 class NOOp(Processor):
     """ A no-op processor. """
     def process(self, image):
         return image
 
-class ChannelFork(defaultdict, Processor):
-    """ A processor wrapper that, for each image channel:
-        - applies a channel-specific processor, or
-        - applies a default processor.
-        
-        * Ex. 1: apply the Atkinson ditherer to each of an images' channels:
-        >>> from instakit.utils.pipeline import ChannelFork
-        >>> from instakit.processors.halftone import Atkinson
-        >>> ChannelFork(Atkinson).process(my_image)
-        
-        * Ex. 2: apply the Atkinson ditherer to only one channel:
-        >>> from instakit.utils.pipeline import ChannelFork
-        >>> from instakit.processors.halftone import Atkinson
-        >>> cfork = ChannelFork(None)
-        >>> cfork['G'] = Atkinson()
-        >>> cfork.process(my_image)
-    """
-    
-    default_mode = 'RGB'
-    
-    def __init__(self, default_factory, *args, **kwargs):
-        if default_factory is None:
-            default_factory = NOOp
-        if not callable(default_factory):
-            raise AttributeError(
-                "ChannelFork() requires a callable default_factory")
-        
-        self.channels = Mode.for_string(
-                        kwargs.pop('mode', self.default_mode))
-        
-        super(ChannelFork, self).__init__(default_factory, *args, **kwargs)
-    
-    def __setitem__(self, idx, value):
-        if value in (None, NOOp):
-            value = NOOp()
-        super(ChannelFork, self).__setitem__(idx, value)
-    
-    @property
-    def mode(self):
-        return self.channels.to_string()
-    
-    @mode.setter
-    def mode(self, mode_string):
-        self._set_mode(mode_string)
-    
-    def _set_mode(self, mode_string):
-        self.channels = Mode.for_string(mode_string)
-    
-    def compose(self, *channels):
-        return self.channels.merge(*channels)
-    
-    def process(self, image):
-        # if not self.channels.check(image):
-        #     image = self.channels.process(image)
-        # image = self.channels.process(image)
-        
-        processed_channels = []
-        for idx, channel in enumerate(self.channels.process(image).split()):
-            processed_channels.append(
-                self[self.channels.bands[idx]].process(channel))
-        
-        return self.compose(*processed_channels)
+# class ChannelFork(defaultdict, Processor):
+#
+#     default_mode = 'RGB'
+#
+#     def __init__(self, default_factory, *args, **kwargs):
+#         if default_factory is None:
+#             default_factory = NOOp
+#         if not callable(default_factory):
+#             raise AttributeError(
+#                 "ChannelFork() requires a callable default_factory")
+#
+#         self.channels = Mode.for_string(
+#                         kwargs.pop('mode', self.default_mode))
+#
+#         super(ChannelFork, self).__init__(default_factory, *args, **kwargs)
+#
+#     def __setitem__(self, idx, value):
+#         if value in (None, NOOp):
+#             value = NOOp()
+#         super(ChannelFork, self).__setitem__(idx, value)
+#
+#     @property
+#     def mode(self):
+#         return self.channels.to_string()
+#
+#     @mode.setter
+#     def mode(self, mode_string):
+#         self._set_mode(mode_string)
+#
+#     def _set_mode(self, mode_string):
+#         self.channels = Mode.for_string(mode_string)
+#
+#     def compose(self, *channels):
+#         return self.channels.merge(*channels)
+#
+#     def process(self, image):
+#         # if not self.channels.check(image):
+#         #     image = self.channels.process(image)
+#         # image = self.channels.process(image)
+#
+#         processed_channels = []
+#         for idx, channel in enumerate(self.channels.process(image).split()):
+#             processed_channels.append(
+#                 self[self.channels.bands[idx]].process(channel))
+#
+#         return self.compose(*processed_channels)
+
+ChannelFork = BandFork
 
 ink_values = (
     (255, 255, 255),    # White
