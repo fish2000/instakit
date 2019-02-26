@@ -8,8 +8,9 @@ Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 """
 from __future__ import print_function
 
+from instakit.abc import Processor
 
-class SquareCrop(object):
+class SquareCrop(Processor):
     
     """ Crop an image to an Instagrammy square, by whittling away
         the parts of the image with the least entropy.
@@ -17,6 +18,7 @@ class SquareCrop(object):
         Based on a smart-crop implementation from easy-thumbnails:
             https://git.io/fhqxj
     """
+    __slots__ = tuple()
     
     @staticmethod
     def compare_entropy(start_slice, end_slice, slice, difference):
