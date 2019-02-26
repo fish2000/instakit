@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 # encoding: utf-8
 """
-                                                                               
-                        d8888 888888b.    .d8888b.                             
-      o                d88888 888  "88b  d88P  Y88b                    o       
-     d8b              d88P888 888  .88P  888    888                   d8b      
-    d888b            d88P 888 8888888K.  888        .d8888b          d888b     
-"Y888888888P"       d88P  888 888  "Y88b 888        88K          "Y888888888P" 
-  "Y88888P"        d88P   888 888    888 888    888 "Y8888b.       "Y88888P"   
-  d88P"Y88b       d8888888888 888   d88P Y88b  d88P      X88       d88P"Y88b   
- dP"     "Yb     d88P     888 8888888P"   "Y8888P"   88888P'      dP"     "Yb  
-                                                                               
-                                                                               
+                                                                                
+                        d8888 888888b.    .d8888b.                              
+      o                d88888 888  "88b  d88P  Y88b                    o        
+     d8b              d88P888 888  .88P  888    888                   d8b       
+    d888b            d88P 888 8888888K.  888        .d8888b          d888b      
+"Y888888888P"       d88P  888 888  "Y88b 888        88K          "Y888888888P"  
+  "Y88888P"        d88P   888 888    888 888    888 "Y8888b.       "Y88888P"    
+  d88P"Y88b       d8888888888 888   d88P Y88b  d88P      X88       d88P"Y88b    
+ dP"     "Yb     d88P     888 8888888P"   "Y8888P"   88888P'      dP"     "Yb   
+                                                                                
+                                                                                
 Instakit’s Abstract Base Classes – née ABCs – for processors and data structures
 
 """
