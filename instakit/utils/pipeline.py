@@ -10,7 +10,7 @@ try:
 except ImportError:
     pass
 
-from instakit.utils.gcr import BasicGCR
+from instakit.utils.gcr import gcrcore
 from instakit.utils.mode import Mode
 from instakit.utils.misc import string_types
 from instakit.abc import Enum, Container, NOOp, Fork
@@ -214,11 +214,8 @@ class OverprintFork(BandFork):
             for `default_factory` and any band-appropriate keyword-arguments,
             e.g. `(C=MyProcessor, M=MyOtherProcessor, Y=MyProcessor, K=None)`
         """
-        # Store GCR processor:
-        if gcr is not None:
-            self.gcr = BasicGCR(percentage=gcr)
-        else:
-            self.gcr = type(self).mode_t # q.v. OverprintFork.split(image) sub.
+        # Store GCR percentage:
+        self.gcr = gcr
         
         # Call super():
         super(OverprintFork, self).__init__(default_factory, *args, **kwargs)
@@ -255,12 +252,13 @@ class OverprintFork(BandFork):
                 "OverprintFork only works in %s mode" % type(self).mode_t.to_string())
     
     def split(self, image):
-        """ OverprintFork.split(image) uses imagekit.utils.gcr.BasicGCR to perform
+        """ OverprintFork.split(image) uses imagekit.utils.gcr.gcrcore(…) to perform
             gray-component replacement in CMYK-mode images; for more information,
             see the imagekit.utils.gcr module
         """
-        # BasicGCR().process() returns a CMYK image by default:
-        return self.gcr.process(image).split()
+        bands = super(OverprintFork, self).split(image)
+        gcrcore(image, self.gcr, bands)
+        return bands
     
     def compose(self, *bands):
         """ OverprintFork.compose(…) uses PIL.ImageChops.multiply() to create

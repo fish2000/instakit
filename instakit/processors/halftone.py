@@ -13,7 +13,7 @@ from PIL import ImageDraw
 from instakit.utils import pipeline, stats
 from instakit.utils.gcr import gcr
 from instakit.utils.mode import Mode
-from instakit.abc import ThresholdMatrixProcessor
+from instakit.abc import Processor, ThresholdMatrixProcessor
 
 
 class SlowAtkinson(ThresholdMatrixProcessor):
@@ -107,7 +107,7 @@ except ImportError:
 else:
     FloydSteinberg = FastFloydSteinberg
 
-class CMYKAtkinson(object):
+class CMYKAtkinson(Processor):
     
     """ Create a full-color CMYK Atkinson-dithered halftone, with gray-component
         replacement (GCR) at a specified percentage level
@@ -121,7 +121,7 @@ class CMYKAtkinson(object):
         return self.overprinter.process(
             gcr(image, self.gcr))
 
-class CMYKFloydsterBill(object):
+class CMYKFloydsterBill(Processor):
     
     """ Create a full-color CMYK Atkinson-dithered halftone, with gray-component
         replacement (GCR) and OH SHIT SON WHAT IS THAT ON THE CYAN CHANNEL DOGG
@@ -136,7 +136,7 @@ class CMYKFloydsterBill(object):
         return self.overprinter.process(
             gcr(image, self.gcr))
 
-class DotScreen(object):
+class DotScreen(Processor):
     
     """ This processor creates a monochrome dot-screen halftone pattern
         from an image. While this may be useful on its own, it is far
@@ -183,7 +183,7 @@ class DotScreen(object):
         return halftone.crop((xx,                           yy,
                               xx + orig_width * self.scale, yy + orig_height * self.scale))
 
-class CMYKDotScreen(object):
+class CMYKDotScreen(Processor):
     
     """ Create a full-color CMYK dot-screen halftone, with gray-component
         replacement (GCR), individual rotation angles for each channel’s
