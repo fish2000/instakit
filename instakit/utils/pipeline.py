@@ -269,7 +269,7 @@ class OverprintFork(BandFork):
             for `default_factory` and any band-appropriate keyword-arguments,
             e.g. `(C=MyProcessor, M=MyOtherProcessor, Y=MyProcessor, K=None)`
         """
-        # Store GCR percentage:
+        # Store BasicGCR and AutoContrast processors:
         self.contrast = AutoContrast()
         self.basicgcr = BasicGCR(percentage=gcr)
         
@@ -312,7 +312,7 @@ class OverprintFork(BandFork):
         self.apply_CMYK_inks()
     
     def split(self, image):
-        """ OverprintFork.split(image) uses imagekit.utils.gcr.gcrcore(…) to perform
+        """ OverprintFork.split(image) uses imagekit.utils.gcr.BasicGCR(…) to perform
             gray-component replacement in CMYK-mode images; for more information,
             see the imagekit.utils.gcr module
         """

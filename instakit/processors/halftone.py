@@ -190,16 +190,17 @@ class CMYKDotScreen(Processor):
         dot-screen, and resampling value controls.
     """
     
-    def __init__(self,       gcr=20,
-                  sample=10, scale=10,
-        thetaC=0, thetaM=15, thetaY=30, thetaK=45):
-        
-        self.overprinter = pipeline.OverprintFork(DotScreen, gcr=gcr, **{
-            'C': DotScreen(angle=thetaC, sample=sample, scale=scale),
-            'M': DotScreen(angle=thetaM, sample=sample, scale=scale),
-            'Y': DotScreen(angle=thetaY, sample=sample, scale=scale),
-            'K': DotScreen(angle=thetaK, sample=sample, scale=scale),
-        })
+    def __init__(self,      gcr=20,
+                 sample=10, scale=10,
+                 thetaC=0,  thetaM=15,
+                 thetaY=30, thetaK=45):
+        """ Initialize an internal instakit.utils.pipeline.OverprintFork() """
+        self.overprinter = pipeline.OverprintFork(None, gcr=gcr)
+        self.overprinter['C'] = DotScreen(angle=thetaC, sample=sample, scale=scale)
+        self.overprinter['M'] = DotScreen(angle=thetaM, sample=sample, scale=scale)
+        self.overprinter['Y'] = DotScreen(angle=thetaY, sample=sample, scale=scale)
+        self.overprinter['K'] = DotScreen(angle=thetaK, sample=sample, scale=scale)
+        self.overprinter.apply_CMYK_inks()
     
     def process(self, image):
         return self.overprinter.process(image)
