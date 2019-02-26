@@ -129,8 +129,8 @@ class Fork(MutableContainer):
         if not callable(default_factory):
             raise AttributeError("Fork() requires a callable default_factory")
         
-        self.dict = defaultdict(default_factory, **kwargs)
-        super(Fork, self).__init__(*args, **kwargs)
+        self.dict = defaultdict(default_factory, *args, **kwargs)
+        super(Fork, self).__init__()
     
     @property
     def default_factory(self):
