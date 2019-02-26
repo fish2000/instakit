@@ -5,6 +5,7 @@ from PIL import ImageOps, ImageChops
 from abc import ABC, abstractmethod as abstract
 from collections import defaultdict
 from enum import Enum as EnumBase, unique
+from functools import wraps
 # from six import add_metaclass
 
 try:
@@ -67,6 +68,7 @@ class Pipeline(Container):
     def __init__(self, *args):
         self.list = list(*args)
     
+    @wraps(Container.iterate)
     def iterate(self):
         return iter(self.list)
     
@@ -183,6 +185,7 @@ class BandFork(Fork):
     def band_labels(self):
         return self.mode_t.bands
     
+    @wraps(Container.iterate)
     def iterate(self):
         for band in self.band_labels:
             yield self[band]
@@ -210,73 +213,12 @@ class Grid(Fork):
 class Sequence(Fork):
     pass
 
-
-# class Pipe(list, Container):
-#     """ A linear pipeline of processors to be applied en masse.
-#         Derived from an ImageKit class:
-#         imagekit.processors.base.ProcessorPipeline
-#     """
-#     def iterate(self):
-#         return iter(self)
-#
-#     def process(self, image):
-#         for p in self.iterate():
-#             image = p.process(image)
-#         return image
-
 Pipe = Pipeline
 
 class NOOp(Processor):
     """ A no-op processor. """
     def process(self, image):
         return image
-
-# class ChannelFork(defaultdict, Processor):
-#
-#     default_mode = 'RGB'
-#
-#     def __init__(self, default_factory, *args, **kwargs):
-#         if default_factory is None:
-#             default_factory = NOOp
-#         if not callable(default_factory):
-#             raise AttributeError(
-#                 "ChannelFork() requires a callable default_factory")
-#
-#         self.channels = Mode.for_string(
-#                         kwargs.pop('mode', self.default_mode))
-#
-#         super(ChannelFork, self).__init__(default_factory, *args, **kwargs)
-#
-#     def __setitem__(self, idx, value):
-#         if value in (None, NOOp):
-#             value = NOOp()
-#         super(ChannelFork, self).__setitem__(idx, value)
-#
-#     @property
-#     def mode(self):
-#         return self.channels.to_string()
-#
-#     @mode.setter
-#     def mode(self, mode_string):
-#         self._set_mode(mode_string)
-#
-#     def _set_mode(self, mode_string):
-#         self.channels = Mode.for_string(mode_string)
-#
-#     def compose(self, *channels):
-#         return self.channels.merge(*channels)
-#
-#     def process(self, image):
-#         # if not self.channels.check(image):
-#         #     image = self.channels.process(image)
-#         # image = self.channels.process(image)
-#
-#         processed_channels = []
-#         for idx, channel in enumerate(self.channels.process(image).split()):
-#             processed_channels.append(
-#                 self[self.channels.bands[idx]].process(channel))
-#
-#         return self.compose(*processed_channels)
 
 ChannelFork = BandFork
 
@@ -396,7 +338,6 @@ if __name__ == '__main__':
         
         print('Creating ChannelOverprinter and ChannelFork with Atkinson ditherer...')
         overatkins = ChannelOverprinter(Atkinson)
-        # forkatkins = ChannelFork(Atkinson)
         forkatkins = BandFork(Atkinson)
         
         print('Processing image with ChannelForked Atkinson in default (RGB) mode...')
@@ -423,10 +364,6 @@ if __name__ == '__main__':
             print("<<<<<<<<<<<<<<<<<<<<< KCABECART >>>>>>>>>>>>>>>>>>>>>")
             print('')
     
-    # fork = Fork(None)
-    # pprint(fork)
-    # Processor()
-    # Container()
     bandfork = BandFork(None)
     pprint(bandfork)
     
