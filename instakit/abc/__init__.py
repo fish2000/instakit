@@ -13,7 +13,9 @@ if '__path__' in locals():
 
 __all__ = ('is_in_class',
            'Processor', 'Enum',
-           'Container', 'NOOp', 'Fork')
+           'Container', 'MutableContainer',
+           'NOOp', 'Fork',
+           'ThresholdMatrixProcessor')
 
 __dir__ = lambda: list(__all__)
 
@@ -78,15 +80,32 @@ class Container(Processor):
     @abstract
     def __getitem__(self, idx): ...
     
-    # Abstract but optional methods:
-    
-    def __setitem__(self, idx, value):
+    def index(self, value):
         raise NotImplementedError()
     
     def get(self, idx, default_value):
         raise NotImplementedError()
     
-    def index(self, value):
+    def last(self):
+        raise NotImplementedError()
+
+class MutableContainer(Container):
+    
+    """ Base abstract processor mutable container. """
+    
+    @abstract
+    def __setitem__(self, idx, value): ...
+    
+    @abstract
+    def __delitem__(self, idx, value): ...
+    
+    def append(self, value):
+        raise NotImplementedError()
+    
+    def extend(self, iterable):
+        raise NotImplementedError()
+    
+    def update(self, iterable=None, **kwargs):
         raise NotImplementedError()
 
 class NOOp(Processor):
@@ -96,7 +115,7 @@ class NOOp(Processor):
     def process(self, image):
         return image
 
-class Fork(Container):
+class Fork(MutableContainer):
     
     """ Base abstract forking processor. """
     
@@ -134,6 +153,10 @@ class Fork(Container):
         if value in (None, NOOp):
             value = NOOp()
         self.dict[idx] = value
+    
+    @wraps(defaultdict.__delitem__)
+    def __delitem__(self, idx):
+        del self.dict[idx]
     
     def get(self, idx, default_value=None):
         """ Get a value from the Fork, with an optional default

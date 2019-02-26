@@ -10,15 +10,57 @@ try:
 except ImportError:
     pass
 
+from instakit.abc import Enum, Fork, Container, MutableContainer, NOOp
 from instakit.utils.gcr import gcrcore
 from instakit.utils.mode import Mode
 from instakit.utils.misc import string_types
 from instakit.processors.adjust import AutoContrast
-from instakit.abc import Enum, Container, NOOp, Fork
 
-class Pipeline(Container):
+class Pipe(Container):
     
-    """ A linear pipeline of processors to be applied en masse.
+    """ A static linear pipeline of processors to be applied en masse.
+        Derived from an ImageKit class:
+        imagekit.processors.base.ProcessorPipeline
+    """
+    
+    @classmethod
+    def base_type(cls):
+        return tuple
+    
+    @wraps(tuple.__init__)
+    def __init__(self, *args):
+        self.tuple = tuple(*args)
+    
+    def iterate(self):
+        return iter(self.tuple)
+    
+    @wraps(tuple.__len__)
+    def __len__(self):
+        return len(self.tuple)
+    
+    @wraps(tuple.__contains__)
+    def __contains__(self, value):
+        return value in self.tuple
+    
+    @wraps(tuple.__getitem__)
+    def __getitem__(self, idx):
+        return self.tuple[idx]
+    
+    @wraps(tuple.index)
+    def index(self, value):
+        return self.tuple.index(value)
+    
+    def last(self):
+        return self.tuple[-1]
+    
+    def process(self, image):
+        for p in self.iterate():
+            image = p.process(image)
+        return image
+
+class Pipeline(MutableContainer):
+    
+    """ A mutable linear pipeline of processors to be applied en masse.
         Derived from an ImageKit class:
         imagekit.processors.base.ProcessorPipeline
     """
@@ -51,6 +93,10 @@ class Pipeline(Container):
         if value in (None, NOOp):
             value = NOOp()
         self.list[idx] = value
+    
+    @wraps(list.__delitem__)
+    def __delitem__(self, idx):
+        del self.list[idx]
     
     @wraps(list.index)
     def index(self, value):
@@ -143,7 +189,6 @@ class BandFork(Fork):
             processed.append(processor.process(band))
         return self.compose(*processed)
 
-Pipe = Pipeline
 ChannelFork = BandFork
 
 ink_values = (
