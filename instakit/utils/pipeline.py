@@ -127,20 +127,25 @@ class Fork(Container):
     def default_factory(self):
         return self.dict.default_factory
     
+    @wraps(defaultdict.__len__)
     def __len__(self):
         return len(self.dict)
     
+    @wraps(defaultdict.__contains__)
     def __contains__(self, value):
         return value in self.dict
     
+    @wraps(defaultdict.__getitem__)
     def __getitem__(self, idx):
         return self.dict[idx]
     
+    @wraps(defaultdict.__setitem__)
     def __setitem__(self, idx, value):
         if value in (None, NOOp):
             value = NOOp()
         self.dict[idx] = value
     
+    @wraps(defaultdict.get)
     def get(self, idx, default_value=None):
         return self.dict.get(idx, default_value)
     
