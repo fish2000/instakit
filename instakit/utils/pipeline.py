@@ -15,15 +15,37 @@ except ImportError:
 from instakit.utils.mode import Mode
 from instakit.utils.misc import string_types
 
+def is_in_class(attr, cls):
+    """ Test whether or not a class has a named attribute,
+        regardless of whether the class uses `__slots__` or
+        an internal `__dict__`.
+    """
+    if hasattr(cls, '__dict__'):
+        return attr in cls.__dict__
+    elif hasattr(cls, '__slots__'):
+        return attr in cls.__slots__
+    return False
+
 class Processor(ABC):
     
     """ Base abstract processor class. """
     
     @abstract
-    def process(self, image): ...
+    def process(self, image):
+        """ Process an image instance, per the processor instance,
+            returning the processed image data
+        """
+        ...
     
     def __call__(self, image):
         return self.process(image)
+    
+    @classmethod
+    def __subclasshook__(cls, subclass):
+        if subclass is Processor:
+            if any(is_in_class('process', ancestor) for ancestor in subclass.__mro__):
+                return True
+        return NotImplemented
 
 class Enum(EnumBase):
     
@@ -62,10 +84,12 @@ class Container(Processor):
         raise NotImplementedError()
 
 class Pipeline(Container):
+    
     """ A linear pipeline of processors to be applied en masse.
         Derived from an ImageKit class:
         imagekit.processors.base.ProcessorPipeline
     """
+    
     @wraps(list.__init__)
     def __init__(self, *args):
         self.list = list(*args)
@@ -158,6 +182,7 @@ class Fork(Container):
 
 
 class BandFork(Fork):
+    
     """ A processor wrapper that, for each image channel:
         - applies a band-specific processor, or
         - applies a default processor.
@@ -178,6 +203,10 @@ class BandFork(Fork):
     mode_t = Mode.RGB
     
     def __init__(self, default_factory, *args, **kwargs):
+        """ Initialize a BandFork instance, using the given callable value
+            for `default_factory` and any band-appropriate keyword-arguments,
+            e.g. `(R=MyProcessor, G=MyOtherProcessor, B=None)`
+        """
         if 'mode' in kwargs:
             new_mode = kwargs.pop('mode')
             if type(new_mode) in string_types:
@@ -290,12 +319,18 @@ class RGBInk(Ink):
         return (cls.BLUE, cls.GREEN, cls.RED)
 
 class OverprintFork(BandFork):
+    
     """ A ChannelFork subclass that rebuilds its output image using
         multiply-mode to simulate CMYK overprinting effects.
     """
+    
     mode_t = Mode.CMYK
     
     def __init__(self, default_factory, *args, **kwargs):
+        """ Initialize an OverprintFork instance with the given callable value
+            for `default_factory` and any band-appropriate keyword-arguments,
+            e.g. `(C=MyProcessor, M=MyOtherProcessor, Y=MyProcessor, K=None)`
+        """
         # Call super():
         super(OverprintFork, self).__init__(default_factory, *args, **kwargs)
         
@@ -304,6 +339,11 @@ class OverprintFork(BandFork):
         self.apply_CMYK_inks()
     
     def apply_CMYK_inks(self):
+        """ This method ensures that each bands’ processor is set up
+            as a Pipeline() ending in a CMYKInk corresponding to the
+            band in question. Calling it multiple times *should* be
+            idempotent (but don’t quote me on that)
+        """
         modestring = self.mode_t.to_string()
         CMYKLabels = CMYKInk.CMYK()
         for band in self.band_labels:
@@ -318,11 +358,17 @@ class OverprintFork(BandFork):
                 self[band] = Pipeline([processor, ink])
     
     def set_mode_t(self, value):
+        """ Raise an exception if an attempt is made to set the mode to anything
+            other than CMYK
+        """
         if value is not type(self).mode_t:
             raise AttributeError(
                 "OverprintFork only works in %s mode" % self.mode_t.to_string())
     
     def compose(self, *bands):
+        """ OverprintFork.compose(…) uses PIL.ImageChops.multiply() to create
+            the final composite image output
+        """
         return reduce(ImageChops.multiply, bands)
 
 class Grid(Fork):
