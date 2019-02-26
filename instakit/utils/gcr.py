@@ -12,6 +12,9 @@ cmyk = CMYK.mode
 PERCENT_ADMONISHMENT = "Do you not know how percents work??!"
 
 def gcrcore(image, percent, channels):
+    """ The core of the GCR algorithm (see below).
+        USE AT YOUR OWN RISK. -The Management
+    """
     assert len(channels) == 4
     width, height = image.size
     
@@ -51,21 +54,20 @@ def gcr(image, percentage=20, revert_mode=False):
     original_mode = Mode.of(image)
     cmyk_channels = Mode.CMYK.process(image).split() # no-op for images already in CMYK mode
     
-    # cmyk_image = []
-    # for channel in cmyk_channels:
-    #     cmyk_image.append(channel.load())
-    #
-    # for x in range(image.size[0]):
-    #     for y in range(image.size[1]):
-    #         gray = int(min(cmyk_image[0][x, y],
-    #                        cmyk_image[1][x, y],
-    #                        cmyk_image[2][x, y]) * percent)
-    #         cmyk_image[0][x, y] -= gray
-    #         cmyk_image[1][x, y] -= gray
-    #         cmyk_image[2][x, y] -= gray
-    #         cmyk_image[3][x, y] = gray
+    cmyk_image = []
+    for channel in cmyk_channels:
+        cmyk_image.append(channel.load())
     
-    gcrcore(image, percent, cmyk_channels)
+    for x in range(image.size[0]):
+        for y in range(image.size[1]):
+            gray = int(min(cmyk_image[0][x, y],
+                           cmyk_image[1][x, y],
+                           cmyk_image[2][x, y]) * percent)
+            cmyk_image[0][x, y] -= gray
+            cmyk_image[1][x, y] -= gray
+            cmyk_image[2][x, y] -= gray
+            cmyk_image[3][x, y] = gray
+    
     out = Mode.CMYK.merge(*cmyk_channels)
     
     if revert_mode:
