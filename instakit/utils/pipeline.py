@@ -6,7 +6,6 @@ from abc import ABC, abstractmethod as abstract
 from collections import defaultdict
 from enum import Enum as EnumBase, unique
 from functools import wraps
-# from six import add_metaclass
 
 try:
     from functools import reduce
@@ -347,24 +346,24 @@ if __name__ == '__main__':
     for image_input in image_inputs[:2]:
         OverprintFork(Atkinson).process(image_input).show()
         
-        print('Creating ChannelOverprinter and ChannelFork with Atkinson ditherer...')
+        print('Creating OverprintFork and BandFork with Atkinson ditherer...')
         overatkins = OverprintFork(Atkinson)
         forkatkins = BandFork(Atkinson)
         
-        print('Processing image with ChannelForked Atkinson in default (RGB) mode...')
+        print('Processing image with BandForked Atkinson in default (RGB) mode...')
         forkatkins.process(image_input).show()
         forkatkins.mode = 'CMYK'
-        print('Processing image with ChannelForked Atkinson in CMYK mode...')
+        print('Processing image with BandForked Atkinson in CMYK mode...')
         forkatkins.process(image_input).show()
         forkatkins.mode = 'RGB'
-        print('Processing image with ChannelForked Atkinson in RGB mode...')
+        print('Processing image with BandForked Atkinson in RGB mode...')
         forkatkins.process(image_input).show()
         
         overatkins.mode = 'CMYK'
-        print('Processing image with ChannelOverprinter-ized Atkinson in CMYK mode...')
+        print('Processing image with OverprintFork-ized Atkinson in CMYK mode...')
         overatkins.process(image_input).show()
         
-        print('Attempting to reset ChannelOverprinter to RGB mode...')
+        print('Attempting to reset OverprintFork to RGB mode...')
         import traceback, sys
         try:
             overatkins.mode = 'RGB'
