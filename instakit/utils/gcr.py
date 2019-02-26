@@ -70,7 +70,7 @@ def gcr(image, percentage=20, revert_mode=False):
     
     out = Mode.CMYK.merge(*cmyk_channels)
     
-    if revert_mode:
+    if revert_mode and original_mode is not Mode.CMYK:
         return original_mode.process(out)
     return out
 
