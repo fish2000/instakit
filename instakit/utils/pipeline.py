@@ -249,8 +249,8 @@ class BandFork(Fork):
         return self.mode_t.bands
     
     def iterate(self):
-        for band in self.band_labels:
-            yield self[band]
+        for band_label in self.band_labels:
+            yield self[band_label]
     
     def split(self, image):
         return self.mode_t.process(image).split()
