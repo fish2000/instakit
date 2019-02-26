@@ -290,7 +290,9 @@ class RGBInk(Ink):
         return (cls.BLUE, cls.GREEN, cls.RED)
 
 class OverprintFork(BandFork):
-    
+    """ A ChannelFork subclass that rebuilds its output image using
+        multiply-mode to simulate CMYK overprinting effects.
+    """
     mode_t = Mode.CMYK
     
     def __init__(self, default_factory, *args, **kwargs):
