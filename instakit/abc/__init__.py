@@ -135,9 +135,18 @@ class Fork(Container):
             value = NOOp()
         self.dict[idx] = value
     
-    @wraps(defaultdict.get)
     def get(self, idx, default_value=None):
+        """ Get a value from the Fork, with an optional default
+            value to use should a value not be present for this key.
+            See dict.get(…) for details.
+        """
         return self.dict.get(idx, default_value)
+    
+    def update(self, iterable=None, **kwargs):
+        """ Update the Fork with new dict info.
+            See dict.update(…) for details.
+        """
+        self.dict.update(iterable or tuple(), **kwargs)
     
     @abstract
     def split(self, image): ...
