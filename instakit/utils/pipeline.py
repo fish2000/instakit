@@ -224,7 +224,7 @@ class BandFork(Fork):
             if type(new_mode) in string_types:
                 new_mode = Mode.for_string(new_mode)
             if type(new_mode) is Mode:
-                self.mode_t = new_mode # SHADOW!!
+                self.set_mode_t(new_mode)
         
         super(BandFork, self).__init__(default_factory, *args, **kwargs)
     
@@ -242,7 +242,7 @@ class BandFork(Fork):
             raise TypeError("invalid mode type: %s (%s)" % (type(value), value))
     
     def set_mode_t(self, value):
-        self.mode_t = value
+        self.mode_t = value # SHADOW!!
     
     @property
     def band_labels(self):
