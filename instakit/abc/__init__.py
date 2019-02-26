@@ -144,3 +144,17 @@ class Fork(Container):
     
     @abstract
     def compose(self, *bands): ...
+
+class ThresholdMatrixProcessor(Processor):
+    
+    """ Abstract base class for a processor using a uint8 threshold matrix """
+    # This is used in instakit.processors.halftone
+    
+    LO_TUP = (0,)
+    HI_TUP = (255,)
+    
+    def __init__(self, threshold = 128.0):
+        """ Initialize with a threshold value between 0 and 255 """
+        self.threshold_matrix = int(threshold)  * self.LO_TUP + \
+                           (256-int(threshold)) * self.HI_TUP
+

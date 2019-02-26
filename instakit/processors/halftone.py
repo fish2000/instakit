@@ -14,6 +14,7 @@ from PIL import ImageDraw
 from instakit.utils import pipeline, stats
 from instakit.utils.gcr import gcr
 from instakit.utils.mode import Mode
+from instakit.abc import ThresholdMatrixProcessor
 
 
 class ThresholdMatrixProcessor(ABC):
