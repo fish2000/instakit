@@ -194,8 +194,7 @@ class CMYKDotScreen(object):
                   sample=10, scale=10,
         thetaC=0, thetaM=15, thetaY=30, thetaK=45):
         
-        self.gcr = max(min(100, gcr), 0)
-        self.overprinter = pipeline.BandFork(DotScreen, mode='CMYK')
+        self.overprinter = pipeline.OverprintFork(DotScreen, gcr=gcr)
         self.overprinter.update({
             'C': DotScreen(angle=thetaC, sample=sample, scale=scale),
             'M': DotScreen(angle=thetaM, sample=sample, scale=scale),
@@ -203,8 +202,7 @@ class CMYKDotScreen(object):
             'K': DotScreen(angle=thetaK, sample=sample, scale=scale), })
     
     def process(self, image):
-        return self.overprinter.process(
-            gcr(image, self.gcr))
+        return self.overprinter.process(image)
 
 
 if __name__ == '__main__':

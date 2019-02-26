@@ -10,6 +10,7 @@ try:
 except ImportError:
     pass
 
+from instakit.utils.gcr import BasicGCR
 from instakit.utils.mode import Mode
 from instakit.utils.misc import string_types
 from instakit.abc import Enum, Container, NOOp, Fork
@@ -96,14 +97,11 @@ class BandFork(Fork):
             for `default_factory` and any band-appropriate keyword-arguments,
             e.g. `(R=MyProcessor, G=MyOtherProcessor, B=None)`
         """
+        # Reset mode if a new mode was specified:
         if 'mode' in kwargs:
-            new_mode = kwargs.pop('mode')
-            if type(new_mode) in string_types:
-                new_mode = Mode.for_string(new_mode)
-            if type(new_mode) is Mode:
-                if new_mode is not self.mode_t:
-                    self.set_mode_t(new_mode)
+            self.mode = kwargs.pop('mode')
         
+        # Call super(…):
         super(BandFork, self).__init__(default_factory, *args, **kwargs)
     
     @property
@@ -211,11 +209,17 @@ class OverprintFork(BandFork):
     
     mode_t = Mode.CMYK
     
-    def __init__(self, default_factory, *args, **kwargs):
+    def __init__(self, default_factory, gcr=20, *args, **kwargs):
         """ Initialize an OverprintFork instance with the given callable value
             for `default_factory` and any band-appropriate keyword-arguments,
             e.g. `(C=MyProcessor, M=MyOtherProcessor, Y=MyProcessor, K=None)`
         """
+        # Store GCR processor:
+        if gcr is not None:
+            self.gcr = BasicGCR(percentage=gcr)
+        else:
+            self.gcr = type(self).mode_t # q.v. OverprintFork.split(image) sub.
+        
         # Call super():
         super(OverprintFork, self).__init__(default_factory, *args, **kwargs)
         
@@ -229,7 +233,7 @@ class OverprintFork(BandFork):
             band in question. Calling it multiple times *should* be
             idempotent (but don’t quote me on that)
         """
-        modestring = self.mode_t.to_string()
+        modestring = type(self).mode_t.to_string()
         CMYKLabels = CMYKInk.CMYK()
         for band in self.band_labels:
             processor = self[band]
@@ -248,7 +252,15 @@ class OverprintFork(BandFork):
         """
         if value is not type(self).mode_t:
             raise AttributeError(
-                "OverprintFork only works in %s mode" % self.mode_t.to_string())
+                "OverprintFork only works in %s mode" % type(self).mode_t.to_string())
+    
+    def split(self, image):
+        """ OverprintFork.split(image) uses imagekit.utils.gcr.BasicGCR to perform
+            gray-component replacement in CMYK-mode images; for more information,
+            see the imagekit.utils.gcr module
+        """
+        # BasicGCR().process() returns a CMYK image by default:
+        return self.gcr.process(image).split()
     
     def compose(self, *bands):
         """ OverprintFork.compose(…) uses PIL.ImageChops.multiply() to create

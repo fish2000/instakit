@@ -3,6 +3,7 @@
 from __future__ import print_function
 
 from instakit.utils.mode import Mode
+from instakit.abc import Processor
 
 RGB = Mode.RGB.value
 CMYK = Mode.CMYK.value
@@ -53,7 +54,7 @@ def gcr(image, percentage=20, revert_mode=False):
     return out
 
 
-class BasicGCR(object):
+class BasicGCR(Processor):
     
     __doc__ = gcr.__doc__
     
