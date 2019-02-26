@@ -168,8 +168,8 @@ class DotScreen(Processor):
         orig_width, orig_height = image.size
         image = Mode.L.process(image).rotate(self.angle, expand=1)
         width, height = image.size
-        scaledsize = width * self.scale, height * self.scale
-        halftone = Mode.L.new(scaledsize)
+        halftone = Mode.L.new((width * self.scale,
+                              height * self.scale))
         dotscreen = ImageDraw.Draw(halftone)
         
         for y in range(0, height, self.sample):
