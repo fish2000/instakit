@@ -67,6 +67,7 @@ class Pipeline(Container):
         Derived from an ImageKit class:
         imagekit.processors.base.ProcessorPipeline
     """
+    @wraps(list.__init__)
     def __init__(self, *args):
         self.list = list(*args)
     
@@ -74,22 +75,35 @@ class Pipeline(Container):
     def iterate(self):
         return iter(self.list)
     
+    @wraps(list.__len__)
     def __len__(self):
         return len(self.list)
     
+    @wraps(list.__contains__)
     def __contains__(self, value):
         return value in self.list
     
+    @wraps(list.__getitem__)
     def __getitem__(self, idx):
         return self.list(idx)
     
+    @wraps(list.__setitem__)
     def __setitem__(self, idx, value):
         if value in (None, NOOp):
             value = NOOp()
         self.list[idx] = value
     
+    @wraps(list.index)
     def index(self, value):
         return self.list.index(value)
+    
+    @wraps(list.append)
+    def append(self, value):
+        self.list.append(value)
+    
+    @wraps(list.extend)
+    def extend(self, iterable):
+        self.list.extend(iterable)
     
     def process(self, image):
         for p in self.iterate():
