@@ -1,4 +1,4 @@
-
+# encoding: utf-8
 from __future__ import print_function
 
 from PIL import ImageOps, ImageChops
@@ -14,6 +14,11 @@ except ImportError:
 
 from instakit.utils.mode import Mode
 from instakit.utils.misc import string_types
+
+try:
+    from instakit.abc import Processor, Enum, Container, NOOp, Fork
+except ImportError:
+    pass
 
 def is_in_class(attr, cls):
     """ Test whether or not a class has a named attribute,
@@ -86,6 +91,13 @@ class Container(Processor):
     
     def index(self, value):
         raise NotImplementedError()
+
+class NOOp(Processor):
+    
+    """ A no-op processor. """
+    
+    def process(self, image):
+        return image
 
 class Pipeline(Container):
     
@@ -266,12 +278,6 @@ class BandFork(Fork):
         return self.compose(*processed)
 
 Pipe = Pipeline
-
-class NOOp(Processor):
-    """ A no-op processor. """
-    def process(self, image):
-        return image
-
 ChannelFork = BandFork
 
 ink_values = (
