@@ -101,7 +101,8 @@ class BandFork(Fork):
             if type(new_mode) in string_types:
                 new_mode = Mode.for_string(new_mode)
             if type(new_mode) is Mode:
-                self.set_mode_t(new_mode)
+                if new_mode is not self.mode_t:
+                    self.set_mode_t(new_mode)
         
         super(BandFork, self).__init__(default_factory, *args, **kwargs)
     
@@ -114,7 +115,8 @@ class BandFork(Fork):
         if type(value) in string_types:
             value = Mode.for_string(value)
         if type(value) is Mode:
-            self.set_mode_t(value)
+            if value is not self.mode_t:
+                self.set_mode_t(value)
         else:
             raise TypeError("invalid mode type: %s (%s)" % (type(value), value))
     
