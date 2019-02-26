@@ -49,6 +49,48 @@ class Container(Processor):
     
     @abstract
     def __getitem__(self, idx): ...
+    
+    def __setitem__(self, idx, value):
+        raise NotImplementedError()
+    
+    def get(self, idx, default_value):
+        raise NotImplementedError()
+    
+    def index(self, value):
+        raise NotImplementedError()
+
+class Pipeline(Container):
+    """ A linear pipeline of processors to be applied en masse.
+        Derived from an ImageKit class:
+        imagekit.processors.base.ProcessorPipeline
+    """
+    def __init__(self, *args):
+        self.list = list(*args)
+    
+    def iterate(self):
+        return iter(self.list)
+    
+    def __len__(self):
+        return len(self.list)
+    
+    def __contains__(self, value):
+        return value in self.list
+    
+    def __getitem__(self, idx):
+        return self.list(idx)
+    
+    def __setitem__(self, idx, value):
+        if value in (None, NOOp):
+            value = NOOp()
+        self.list[idx] = value
+    
+    def index(self, value):
+        return self.list.index(value)
+    
+    def process(self, image):
+        for p in self.iterate():
+            image = p.process(image)
+        return image
 
 class Fork(Container):
     
@@ -61,7 +103,6 @@ class Fork(Container):
             raise AttributeError("Fork() requires a callable default_factory")
         
         self.dict = defaultdict(default_factory, **kwargs)
-        
         super(Fork, self).__init__(*args, **kwargs)
     
     @property
@@ -82,8 +123,8 @@ class Fork(Container):
             value = NOOp()
         self.dict[idx] = value
     
-    def get(self, value, default_value=None):
-        return self.dict.get(value, default_value)
+    def get(self, idx, default_value=None):
+        return self.dict.get(idx, default_value)
     
     @abstract
     def split(self, image): ...
@@ -144,7 +185,7 @@ class BandFork(Fork):
         return self.compose(*processed)
 
 
-class Overprint(BandFork):
+class OverprintFork(BandFork):
     pass
 
 class Grid(Fork):
@@ -328,7 +369,7 @@ class ChannelOverprinter(ChannelFork, Processor):
             # For each channel, first run the prescribed operations;
             # and afterward, colorize the output (as per a duotone image) using
             # the CMYK ink as the colorization value:
-            clone[channel_name] = Pipe([self[channel_name], ink])
+            clone[channel_name] = Pipeline([self[channel_name], ink])
         
         # Delegate processing to the “clone” instance:
         return clone.process(image)
