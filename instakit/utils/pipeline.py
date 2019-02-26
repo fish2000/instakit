@@ -63,6 +63,10 @@ class Container(Processor):
         """ Return an ordered iterable of sub-processors. """
         ...
     
+    @classmethod
+    @abstract
+    def base_type(cls): ...
+    
     @abstract
     def __len__(self): ...
     
@@ -89,6 +93,10 @@ class Pipeline(Container):
         Derived from an ImageKit class:
         imagekit.processors.base.ProcessorPipeline
     """
+    
+    @classmethod
+    def base_type(cls):
+        return list
     
     @wraps(list.__init__)
     def __init__(self, *args):
@@ -138,6 +146,10 @@ class Pipeline(Container):
 class Fork(Container):
     
     """ Base abstract forking processor. """
+    
+    @classmethod
+    def base_type(cls):
+        return defaultdict
     
     def __init__(self, default_factory, *args, **kwargs):
         if default_factory in (None, NOOp):
