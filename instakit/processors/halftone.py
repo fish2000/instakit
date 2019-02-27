@@ -87,12 +87,11 @@ class SlowFloydSteinberg(ThresholdMatrixProcessor):
                         pass # it happens, evidently.
         return image
 
+# Register the stub as a instakit.abc.Processor “virtual subclass”:
+@Processor.register
 class Problematic(object):
     def __init__(self):
         raise TypeError("Fast-math version couldn't be imported")
-
-# Register the stub as a “virtual subclass” of instakit.abc.Processor:
-Processor.register(Problematic)
 
 try:
     # My man, fast Bill Atkinson
@@ -101,7 +100,8 @@ except ImportError:
     Atkinson = SlowAtkinson
     FastAtkinson = Problematic
 else:
-    Atkinson = FastAtkinson
+    # Register the Cythonized processor with the ABC:
+    Atkinson = Processor.register(FastAtkinson)
 
 try:
     # THE FLOYDSTER
@@ -110,7 +110,8 @@ except ImportError:
     FloydSteinberg = SlowFloydSteinberg
     FastFloydSteinberg = Problematic
 else:
-    FloydSteinberg = FastFloydSteinberg
+    # Register the Cythonized processor with the ABC:
+    FloydSteinberg = Processor.register(FastFloydSteinberg)
 
 class CMYKAtkinson(Processor):
     

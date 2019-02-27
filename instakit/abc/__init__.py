@@ -21,7 +21,6 @@ from pkgutil import extend_path
 from abc import ABC, abstractmethod as abstract
 from collections import defaultdict
 from enum import Enum as EnumBase
-from functools import wraps
 
 if '__path__' in locals():
     __path__ = extend_path(__path__, __name__)
@@ -158,38 +157,36 @@ class Fork(MutableContainer):
     def default_factory(self):
         return self.dict.default_factory
     
-    @wraps(defaultdict.__len__)
     def __len__(self):
         return len(self.dict)
     
-    @wraps(defaultdict.__contains__)
     def __contains__(self, value):
+        """ True if the dictionary has the specified key, else False.
+            See defaultdict.__contains__(…) for details.
+        """
         return value in self.dict
     
-    @wraps(defaultdict.__getitem__)
     def __getitem__(self, idx):
         return self.dict[idx]
     
-    @wraps(defaultdict.__setitem__)
     def __setitem__(self, idx, value):
         if value in (None, NOOp):
             value = NOOp()
         self.dict[idx] = value
     
-    @wraps(defaultdict.__delitem__)
     def __delitem__(self, idx):
         del self.dict[idx]
     
     def get(self, idx, default_value=None):
         """ Get a value from the Fork, with an optional default
             value to use should a value not be present for this key.
-            See dict.get(…) for details.
+            See defaultdict.get(…) for details.
         """
         return self.dict.get(idx, default_value)
     
     def update(self, iterable=None, **kwargs):
         """ Update the Fork with new dict info.
-            See dict.update(…) for details.
+            See defaultdict.update(…) for details.
         """
         self.dict.update(iterable or tuple(), **kwargs)
     

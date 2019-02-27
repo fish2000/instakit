@@ -122,21 +122,37 @@ class Pipeline(MutableContainer):
 
 class BandFork(Fork):
     
-    """ A processor wrapper that, for each image channel:
-        - applies a band-specific processor, or
-        - applies a default processor.
+    """ BandFork is a processor container -- a processor that applies other
+        processors. BandFork acts selectively on the individual bands of
+        input image data, either:
+        - applying a band-specific processor instance, or
+        - applying a default processor successively across all bands.
         
-        * Ex. 1: apply the Atkinson ditherer to each of an images' bands:
+        BandFork’s interface is closely aligned with Python’s mutable-mapping
+        API‡ -- with which most programmers are no doubt quite familiar:
+        
+        • Ex. 1: apply Atkinson dithering to each of an RGB images’ bands:
         >>> from instakit.utils.pipeline import BandFork
         >>> from instakit.processors.halftone import Atkinson
         >>> BandFork(Atkinson).process(my_image)
         
-        * Ex. 2: apply the Atkinson ditherer to only one band:
+        • Ex. 2: apply Atkinson dithering to only the green band:
         >>> from instakit.utils.pipeline import BandFork
         >>> from instakit.processors.halftone import Atkinson
         >>> bfork = BandFork(None)
         >>> bfork['G'] = Atkinson()
         >>> bfork.process(my_image)
+        
+        BandFork inherits from `instakit.abc.Fork`, which itself is not just
+        an Instakit Processor. The Fork ABC implements the required methods
+        of an Instakit Processor Container†, through which it furnishes an
+        interface to individual bands -- also generally known as channels,
+        per the labeling of the relevant Photoshop UI elements -- of image
+        data. 
+        
+        † q.v. the `instakit.abc` module source code supra.
+        ‡ q.v. the `collections.abc` module, and the `MutableMapping`
+                    abstract base class within, supra.
     """
     __slots__ = ('mode', 'mode_t')
     
