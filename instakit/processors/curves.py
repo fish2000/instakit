@@ -122,6 +122,9 @@ class CurveSet(Processor):
         subsequently the curveset can be rewritten to a new ACV file
         with `mycurveset.write_acv(acv_file_path)`.
     """
+    __slots__ = ('_is_builtin', 'count', 'curves',
+                                'path',  'name',
+                                'interpolation_mode')
     
     acv = 'acv'
     dotacv = '.' + acv
@@ -154,7 +157,6 @@ class CurveSet(Processor):
             return "channel%s" % idx
     
     def __init__(self, path, interpolation_mode=None):
-        object.__init__(self)
         self.count = 0
         self.curves = []
         self._is_builtin = False
