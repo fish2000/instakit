@@ -145,6 +145,22 @@ class Fork(MutableContainer):
         return defaultdict
     
     def __init__(self, default_factory, *args, **kwargs):
+        """ The `Fork` ABC implements the same `__init__(¬)` call signature as
+            its delegate type, `collections.defaultdict`. A “default_factory”
+            callable argument is required to fill in missing values (although
+            one can pass None, which will cause a `NOOp` processor to be used).
+            
+            From the `collections.defaultdict` docstring:
+            
+            “defaultdict(default_factory[, ...]) --> dict with default factory”
+            
+            “The default factory is called without arguments to produce
+            a new value when a key is not present, in __getitem__ only.
+            A defaultdict compares equal to a dict with the same items.
+            All remaining arguments are treated the same as if they were
+            passed to the dict constructor, including keyword arguments.”
+        
+        """
         if default_factory in (None, NOOp):
             default_factory = NOOp
         if not callable(default_factory):
