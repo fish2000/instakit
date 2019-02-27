@@ -242,6 +242,20 @@ class NDProcessorBase(Processor):
 
 
 def test():
+    """ Inline tests for instakit.abc module """
+    import os
+    if os.environ.get('TM_PYTHON'):
+        import sys
+        def print_red(text):
+            print(text, file=sys.stderr)
+    else:
+        import colorama, termcolor
+        colorama.init()
+        def print_red(text):
+            print(termcolor.colored(text, color='red'))
+    
+    import __main__
+    print_red(__main__.__doc__)
     
     class SlowAtkinson(ThresholdMatrixProcessor):
         __slots__ = tuple()
