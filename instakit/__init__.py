@@ -51,7 +51,7 @@ try:
     exec(compile(open('__version__.py')).read(),
                       '__version__.py', 'exec')
 except:
-    __version__ = '0.6.16'
+    __version__ = '0.6.17'
 
 # module exports:
 __all__ = ('__version__', 'version',
