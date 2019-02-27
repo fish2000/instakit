@@ -152,9 +152,9 @@ class Fork(MutableContainer):
             
             From the `collections.defaultdict` docstring:
             
-            “defaultdict(default_factory[, ...]) --> dict with default factory”
+           “defaultdict(default_factory[, ...]) --> dict with default factory”
             
-            “The default factory is called without arguments to produce
+           “The default factory is called without arguments to produce
             a new value when a key is not present, in __getitem__ only.
             A defaultdict compares equal to a dict with the same items.
             All remaining arguments are treated the same as if they were
