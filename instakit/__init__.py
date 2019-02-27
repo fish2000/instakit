@@ -67,9 +67,7 @@ FIELDS = ('major', 'minor', 'patch',
 
 # The `namedtuple` ancestor,
 # from which our VersionInfo struct inherits:
-VersionAncestor = NamedTuple('VersionAncestor',
-                              FIELDS,
-                              defaults=('', 0))
+VersionAncestor = NamedTuple('VersionAncestor', FIELDS)
 
 # sets, for various comparisons and checks:
 fields = frozenset(FIELDS)
