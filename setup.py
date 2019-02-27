@@ -63,6 +63,7 @@ KEYWORDS = ('django',
             'NumPy', 'SciPy', 'scikit-image')
 
 CPPLANGS = ('c++', 'cxx', 'cpp', 'cc', 'mm')
+CPPVERSION = PYTHON_VERSION < 3 and 'c++14' or 'c++17'
 
 # PROJECT DIRECTORY
 CWD = os.path.dirname(__file__)
@@ -99,7 +100,7 @@ def cython_module(*args, **kwargs):
                           '-funroll-loops',
                           '-mtune=native']
     if language in CPPLANGS:
-        extra_compile_args.extend(['-std=c++17',
+        extra_compile_args.extend(['-std=%s' % CPPVERSION,
                                    '-stdlib=libc++',
                                    '-Wno-sign-compare',
                                    '-Wno-unused-private-field'])
