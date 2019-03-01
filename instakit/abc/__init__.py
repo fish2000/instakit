@@ -26,9 +26,9 @@ if '__path__' in locals():
     __path__ = extend_path(__path__, __name__)
 
 __all__ = ('is_in_class',
-           'Processor', 'Enum',
+           'Processor', 'Enum', 'NOOp',
            'Container', 'MutableContainer',
-           'NOOp', 'Fork',
+           'Fork',
            'ThresholdMatrixProcessor',
            'NDProcessorBase')
 
@@ -74,6 +74,14 @@ class Enum(EnumBase):
     
     @abstract
     def process(self, image): ...
+
+class NOOp(Processor):
+    
+    """ A no-op processor. """
+    __slots__ = tuple()
+    
+    def process(self, image):
+        return image
 
 class Container(Processor):
     
@@ -126,14 +134,6 @@ class MutableContainer(Container):
     
     def update(self, iterable=None, **kwargs):
         raise NotImplementedError()
-
-class NOOp(Processor):
-    
-    """ A no-op processor. """
-    __slots__ = tuple()
-    
-    def process(self, image):
-        return image
 
 class Fork(MutableContainer):
     
