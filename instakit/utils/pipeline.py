@@ -55,8 +55,8 @@ class Pipe(Container):
         return self.tuple[-1]
     
     def process(self, image):
-        for p in self.iterate():
-            image = p.process(image)
+        for processor in self.iterate():
+            image = processor.process(image)
         return image
 
 class Pipeline(MutableContainer):
@@ -116,8 +116,8 @@ class Pipeline(MutableContainer):
         return self.list[-1]
     
     def process(self, image):
-        for p in self.iterate():
-            image = p.process(image)
+        for processor in self.iterate():
+            image = processor.process(image)
         return image
 
 class BandFork(Fork):
@@ -154,8 +154,6 @@ class BandFork(Fork):
         ‡ q.v. the `collections.abc` module, and the `MutableMapping`
                     abstract base class within, supra.
     """
-    __slots__ = tuple()
-    
     mode_t = Mode.RGB
     
     def __init__(self, default_factory, *args, **kwargs):
