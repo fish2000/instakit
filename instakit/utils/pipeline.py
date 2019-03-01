@@ -16,6 +16,13 @@ from instakit.utils.mode import Mode
 from instakit.utils.misc import string_types
 from instakit.processors.adjust import AutoContrast
 
+__all__ = ('Pipe', 'Pipeline',
+           'BandFork', 'ChannelFork',
+           'CMYKInk', 'RGBInk',
+           'OverprintFork', 'ChannelOverprinter')
+
+__dir__ = lambda: list(__all__)
+
 class Pipe(Container):
     
     """ A static linear pipeline of processors to be applied en masse.
