@@ -217,6 +217,12 @@ class Fork(MutableMapping):
     def default_factory(self):
         return self.dict.default_factory
     
+    @default_factory.setter
+    def default_factory(self, value):
+        if not callable(value):
+            raise AttributeError("Fork.default_factory requires a callable value")
+        self.dict.default_factory = value
+    
     def __len__(self):
         return len(self.dict)
     
