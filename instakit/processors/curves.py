@@ -156,7 +156,7 @@ class CurveSet(Processor):
         except IndexError:
             return "channel%s" % idx
     
-    def __init__(self, path, interpolation_mode=None):
+    def __init__(self, path, interpolation_mode=InterpolateMode.LAGRANGE):
         self.count = 0
         self.curves = []
         self._is_builtin = False

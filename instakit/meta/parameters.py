@@ -281,9 +281,9 @@ def test():
     ns = parser.parse_args(['-h'])
     print(ns)
     
-    # print()
-    # ns = parser.parse_args(['instakit.utils.mode.Mode', '--help'])
-    # print(ns)
+    print()
+    ns = parser.parse_args(['instakit.utils.mode.Mode', '--help'])
+    print(ns)
     
     print("Success!")
     print()
