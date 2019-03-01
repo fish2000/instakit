@@ -280,8 +280,8 @@ class RGBInk(Ink):
 
 class OverprintFork(BandFork):
     
-    """ A ChannelFork subclass that rebuilds its output image using
-        multiply-mode to simulate CMYK overprinting effects.
+    """ A BandFork subclass that rebuilds its output image using multiply-mode
+        to simulate CMYK overprinting effects.
         
         N.B. While this Fork-based processor operates strictly in CMYK mode,
         the composite image it eventually returns will be in RGB mode. This is
@@ -289,7 +289,8 @@ class OverprintFork(BandFork):
         representations in order to simulate monotone ink preparations; the
         final compositing operation, in which these colorized channel separation
         images are combined with multiply-mode, is also computed using the RGB
-        color model.
+        color model -- q.v. the CMYKInk enum processor supra. and the related
+        PIL/Pillow module function `ImageOps.colorize(…)` supra.
     """
     __slots__ = ('contrast', 'basicgcr')
     
@@ -342,7 +343,8 @@ class OverprintFork(BandFork):
             updated processing dataflow
         """
         super(OverprintFork, self).update(iterable, **kwargs)
-        self.apply_CMYK_inks()
+        if self.default_factory is not None:
+            self.apply_CMYK_inks()
     
     def split(self, image):
         """ OverprintFork.split(image) uses imagekit.utils.gcr.BasicGCR(…) to perform
