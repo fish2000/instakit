@@ -166,6 +166,7 @@ class DotScreen(Processor):
         self.angle = angle
     
     def process(self, image):
+        orig_width, orig_height = image.size
         image = Mode.L.process(image).rotate(self.angle, expand=1)
         width, height = image.size
         halftone = Mode.L.new((width * self.scale,
@@ -190,10 +191,10 @@ class DotScreen(Processor):
         
         halftone = halftone.rotate(-ANGLE, expand=1)
         tone_width, tone_height = halftone.size
-        xx = (tone_width  - width  * SCALE) / 2
-        yy = (tone_height - height * SCALE) / 2
+        xx = (tone_width  - orig_width  * self.scale) / 2
+        yy = (tone_height - orig_height * self.scale) / 2
         return halftone.crop((xx,                      yy,
-                              xx + width * SCALE, yy + height * SCALE))
+                              xx + orig_width * SCALE, yy + orig_height * SCALE))
 
 class CMYKDotScreen(Processor):
     
