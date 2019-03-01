@@ -10,9 +10,10 @@ from __future__ import print_function
 
 from PIL import ImageDraw
 
-from instakit.utils import pipeline, stats
+from instakit.utils import pipeline
 from instakit.utils.gcr import gcr
 from instakit.utils.mode import Mode
+from instakit.utils.stats import histogram_mean
 from instakit.abc import Processor, ThresholdMatrixProcessor
 
 
@@ -181,7 +182,7 @@ class DotScreen(Processor):
             for x in range(0, width, SAMPLE):
                 cropbox = image.crop((x,          y,
                                       x + SAMPLE, y + SAMPLE))
-                diameter = (stats.histogram_mean(cropbox) / 255) ** 0.5
+                diameter = (histogram_mean(cropbox) / 255) ** 0.5
                 edge = 0.5 * (1 - diameter)
                 xpos, ypos = (x + edge) * SCALE, (y + edge) * SCALE
                 boxedge = SAMPLE * diameter * SCALE
