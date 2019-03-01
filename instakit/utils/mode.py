@@ -359,6 +359,7 @@ def test():
     # print()
     
     assert Mode(10) == Mode.LAB
+    assert hasattr(Mode.RGB, '__slots__')
     
     print()
     

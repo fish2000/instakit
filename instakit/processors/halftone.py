@@ -149,14 +149,14 @@ class DotScreen(Processor):
     """ This processor creates a monochrome dot-screen halftone pattern
         from an image. While this may be useful on its own, it is far
         more useful when used across all channels of a CMYK image in
-        a ChannelFork or ChannelOverprinter processor operation (q.v.
-        `instakit.utils.pipeline.ChannelFork` et al. supra.) serially
+        a BandFork or OverprintFork processor operation (q.v. sources
+        of `instakit.utils.pipeline.BandFork` et al. supra.) serially,
         with either a gray-component replacement (GCR) or an under-color
         replacement (UCR) function.
         
         Regarding the latter two operations, instakit only has a basic
         GCR implementation currently, at the time of writing – q.v. the
-        `instakit.utils.gcr` module. 
+        `instakit.utils.gcr` module sub.
     """
     __slots__ = ('sample', 'scale', 'angle')
     
@@ -237,7 +237,7 @@ if __name__ == '__main__':
         # FloydSteinberg(threshold=128.0).process(image_input).show()
         # SlowFloydSteinberg(threshold=128.0).process(image_input).show()
         
-        # CMYKAtkinson().process(image_input).show()
+        CMYKAtkinson().process(image_input).show()
         # CMYKFloydsterBill().process(image_input).show()
         CMYKDotScreen(sample=10, scale=4).process(image_input).show()
     
