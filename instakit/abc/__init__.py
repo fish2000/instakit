@@ -25,7 +25,7 @@ from enum import Enum as EnumBase
 if '__path__' in locals():
     __path__ = extend_path(__path__, __name__)
 
-__all__ = ('is_in_class',
+__all__ = ('is_in_class', 'subclasshook',
            'Processor', 'Enum', 'NOOp',
            'Container', 'MutableContainer',
            'Fork',
