@@ -10,7 +10,7 @@ try:
 except ImportError:
     pass
 
-from instakit.abc import Enum, Fork, Container, MutableContainer, NOOp
+from instakit.abc import Enum, Fork, NOOp, Sequence, MutableSequence
 from instakit.utils.gcr import BasicGCR
 from instakit.utils.mode import Mode
 from instakit.utils.misc import string_types
@@ -23,7 +23,7 @@ __all__ = ('Pipe', 'Pipeline',
 
 __dir__ = lambda: list(__all__)
 
-class Pipe(Container):
+class Pipe(Sequence):
     
     """ A static linear pipeline of processors to be applied en masse.
         Derived from an ImageKit class:
@@ -59,6 +59,8 @@ class Pipe(Container):
         return self.tuple.index(value)
     
     def last(self):
+        if not bool(self):
+            raise IndexError("pipeline is empty")
         return self.tuple[-1]
     
     def process(self, image):
@@ -66,7 +68,7 @@ class Pipe(Container):
             image = processor.process(image)
         return image
 
-class Pipeline(MutableContainer):
+class Pipeline(MutableSequence):
     
     """ A mutable linear pipeline of processors to be applied en masse.
         Derived from an ImageKit class:
@@ -120,6 +122,8 @@ class Pipeline(MutableContainer):
         self.list.extend(iterable)
     
     def last(self):
+        if not bool(self):
+            raise IndexError("pipeline is empty")
         return self.list[-1]
     
     def process(self, image):

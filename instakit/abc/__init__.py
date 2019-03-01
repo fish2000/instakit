@@ -45,6 +45,13 @@ def is_in_class(attr, cls):
         return attr in cls.__slots__
     return False
 
+def subclasshook(cls, subclass):
+    """ A subclass hook function for both Processor and Enum """
+    if subclass in (Processor, Enum):
+        if any(is_in_class('process', ancestor) for ancestor in subclass.__mro__):
+            return True
+    return NotImplemented
+
 class Processor(ABC):
     
     """ Base abstract processor class. """
@@ -62,10 +69,7 @@ class Processor(ABC):
     
     @classmethod
     def __subclasshook__(cls, subclass):
-        if subclass is Processor:
-            if any(is_in_class('process', ancestor) for ancestor in subclass.__mro__):
-                return True
-        return NotImplemented
+        return subclasshook(cls, subclass)
 
 class Enum(EnumBase):
     
@@ -73,7 +77,15 @@ class Enum(EnumBase):
     __slots__ = tuple()
     
     @abstract
-    def process(self, image): ...
+    def process(self, image):
+        """ Process an image instance, per the processor enum instance,
+            returning the processed image data
+        """
+        ...
+    
+    @classmethod
+    def __subclasshook__(cls, subclass):
+        return subclasshook(cls, subclass)
 
 class NOOp(Processor):
     
@@ -81,6 +93,7 @@ class NOOp(Processor):
     __slots__ = tuple()
     
     def process(self, image):
+        """ Return the image instance, unchanged """
         return image
 
 class Container(Processor):
@@ -106,14 +119,28 @@ class Container(Processor):
     @abstract
     def __getitem__(self, idx): ...
     
-    def index(self, value):
-        raise NotImplementedError()
+    def __bool__(self):
+        """ A processor container is considered Truthy if it contains values,
+            and Falsey if it is empty.
+        """
+        return len(self) == 0
+
+class Mapping(Container):
     
-    def get(self, idx, default_value):
-        raise NotImplementedError()
+    __slots__ = tuple()
     
-    def last(self):
-        raise NotImplementedError()
+    @abstract
+    def get(self, idx, default_value): ...
+
+class Sequence(Container):
+    
+    __slots__ = tuple()
+    
+    @abstract
+    def index(self, value): ...
+    
+    @abstract
+    def last(self): ...
 
 class MutableContainer(Container):
     
@@ -125,17 +152,34 @@ class MutableContainer(Container):
     
     @abstract
     def __delitem__(self, idx, value): ...
-    
-    def append(self, value):
-        raise NotImplementedError()
-    
-    def extend(self, iterable):
-        raise NotImplementedError()
-    
-    def update(self, iterable=None, **kwargs):
-        raise NotImplementedError()
 
-class Fork(MutableContainer):
+class MutableMapping(MutableContainer):
+    
+    __slots__ = tuple()
+    
+    @abstract
+    def get(self, idx, default_value): ...
+    
+    @abstract
+    def update(self, iterable=None, **kwargs): ...
+
+class MutableSequence(MutableContainer):
+    
+    __slots__ = tuple()
+    
+    @abstract
+    def index(self, value): ...
+    
+    @abstract
+    def last(self): ...
+    
+    @abstract
+    def append(self, value): ...
+    
+    @abstract
+    def extend(self, iterable): ...
+
+class Fork(MutableMapping):
     
     """ Base abstract forking processor. """
     __slots__ = ('dict', '__weakref__')

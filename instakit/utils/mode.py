@@ -7,8 +7,9 @@ import numpy
 import os
 
 from PIL import Image, ImageMode
-from enum import Enum, auto, unique
+from enum import auto, unique
 
+from instakit.abc import Enum
 from instakit.utils import misc
 
 junkdrawer = misc.Namespace()
