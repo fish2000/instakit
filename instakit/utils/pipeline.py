@@ -154,7 +154,7 @@ class BandFork(Fork):
         ‡ q.v. the `collections.abc` module, and the `MutableMapping`
                     abstract base class within, supra.
     """
-    __slots__ = ('mode', 'mode_t')
+    __slots__ = tuple()
     
     mode_t = Mode.RGB
     

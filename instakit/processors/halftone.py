@@ -166,31 +166,34 @@ class DotScreen(Processor):
         self.angle = angle
     
     def process(self, image):
-        orig_width, orig_height = image.size
         image = Mode.L.process(image).rotate(self.angle, expand=1)
         width, height = image.size
         halftone = Mode.L.new((width * self.scale,
                               height * self.scale))
         dotscreen = ImageDraw.Draw(halftone)
         
-        for y in range(0, height, self.sample):
-            for x in range(0, width, self.sample):
-                cropbox = image.crop((x,               y,
-                                      x + self.sample, y + self.sample))
+        SAMPLE = self.sample
+        SCALE = self.scale
+        ANGLE = self.angle
+        
+        for y in range(0, height, SAMPLE):
+            for x in range(0, width, SAMPLE):
+                cropbox = image.crop((x,          y,
+                                      x + SAMPLE, y + SAMPLE))
                 diameter = (stats.histogram_mean(cropbox) / 255) ** 0.5
                 edge = 0.5 * (1 - diameter)
-                xpos, ypos = (x + edge) * self.scale, (y + edge) * self.scale
-                boxedge = self.sample * diameter * self.scale
+                xpos, ypos = (x + edge) * SCALE, (y + edge) * SCALE
+                boxedge = SAMPLE * diameter * SCALE
                 dotscreen.ellipse((xpos,           ypos,
                                    xpos + boxedge, ypos + boxedge),
                                    fill=255)
         
-        halftone = halftone.rotate(-self.angle, expand=1)
+        halftone = halftone.rotate(-ANGLE, expand=1)
         tone_width, tone_height = halftone.size
-        xx = (tone_width  - orig_width  * self.scale) / 2
-        yy = (tone_height - orig_height * self.scale) / 2
-        return halftone.crop((xx,                           yy,
-                              xx + orig_width * self.scale, yy + orig_height * self.scale))
+        xx = (tone_width  - width  * SCALE) / 2
+        yy = (tone_height - height * SCALE) / 2
+        return halftone.crop((xx,                      yy,
+                              xx + width * SCALE, yy + height * SCALE))
 
 class CMYKDotScreen(Processor):
     
