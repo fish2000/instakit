@@ -75,6 +75,7 @@ class ModeAncestor(Enum):
      'LAB',  'HSV',   'RGBa',  'LA',    'La',
      'PA',   'I;16',  'I;16L', 'I;16B')
     """
+    __slots__ = tuple()
     
     def _generate_next_value_(name,
                               start,
@@ -174,6 +175,7 @@ class ModeContext(contextlib.AbstractContextManager):
 
 @unique
 class Mode(ModeAncestor):
+    __slots__ = tuple()
     
     """ An enumeration class wrapping ImageMode.ModeDescriptor. """
     

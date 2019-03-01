@@ -174,7 +174,7 @@ class BandFork(Fork):
         """
         # Reset mode if a new mode was specified:
         if 'mode' in kwargs:
-            self.mode = kwargs.pop('mode')
+            self.mode = kwargs.pop('mode', Mode.RGB)
         
         # Call super(…):
         super(BandFork, self).__init__(default_factory, *args, **kwargs)
@@ -231,6 +231,7 @@ ink_values = (
 )
 
 class Ink(Enum):
+    __slots__ = tuple()
     
     def rgb(self):
         return ink_values[self.value]
@@ -243,6 +244,7 @@ class Ink(Enum):
 
 @unique
 class CMYKInk(Ink):
+    __slots__ = tuple()
     
     WHITE = 0
     CYAN = 1
@@ -260,6 +262,7 @@ class CMYKInk(Ink):
 
 @unique
 class RGBInk(Ink):
+    __slots__ = tuple()
     
     WHITE = 0
     RED = 5
