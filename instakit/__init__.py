@@ -29,6 +29,8 @@ import re
 
 from collections import OrderedDict, namedtuple as NamedTuple
 from functools import wraps
+from pkg_resources import parse_version as pkg_resources_parse_version
+from pkg_resources.extern.packaging.version import Version as PkgResourcesVersion
 from pkgutil import extend_path
 
 if '__path__' in locals():
@@ -190,6 +192,7 @@ class VersionInfo(VersionAncestor):
         return out
     
     def to_dict(self):
+        """ Really an OrderedDict but who’s counting? """
         out = OrderedDict()
         for field in FIELDS:
             if getattr(self, field, None) is not None:
@@ -197,8 +200,13 @@ class VersionInfo(VersionAncestor):
         return out
     
     def to_tuple(self):
+        """ Return a complete tuple (as in, including “pre” and “build” fields) """
         return (self.major, self.minor, self.patch,
                 self.pre, self.build)
+    
+    def to_packaging_version(self):
+        """ aka an instance of `pkg_resources.extern.packaging.version.Version` """
+        return pkg_resources_parse_version(self.to_string())
     
     def __new__(cls, from_value=None, major='‽', minor='‽',
                                       patch='‽', pre='‽',
@@ -207,6 +215,8 @@ class VersionInfo(VersionAncestor):
         if from_value is not None:
             if type(from_value) in string_types:
                 return cls.from_string(from_value)
+            elif type(from_value) is PkgResourcesVersion:
+                return cls.from_string(str(from_value))
             elif type(from_value) in byte_types:
                 return cls.from_string(from_value.decode('UTF-8'))
             elif type(from_value) in dict_types:
@@ -289,6 +299,8 @@ def test():
     assert version  < VersionInfo("9.0.0")
     assert version == VersionInfo(version)
     assert version == VersionInfo(__version__)
+    assert version == VersionInfo(PkgResourcesVersion(__version__))
+    assert version == VersionInfo(str(PkgResourcesVersion(__version__)))
     assert version <= VersionInfo(__version__)
     assert version >= VersionInfo(__version__)
     assert version  > VersionInfo(b'0.1.0')
