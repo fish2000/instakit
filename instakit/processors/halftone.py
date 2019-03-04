@@ -157,6 +157,9 @@ class DotScreen(Processor):
         Regarding the latter two operations, instakit only has a basic
         GCR implementation currently, at the time of writing – q.v. the
         `instakit.utils.gcr` module sub.
+        
+        Adapted originally from this sample code:
+            https://stackoverflow.com/a/10575940/298171
     """
     __slots__ = ('sample', 'scale', 'angle')
     
