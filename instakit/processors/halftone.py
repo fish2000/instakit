@@ -143,8 +143,6 @@ class CMYKFloydsterBill(Processor):
     def process(self, image):
         return pipeline.Pipe(gcr.BasicGCR(self.gcr),
                                           self.overprinter).process(image)
-        # return self.overprinter.process(
-        #     gcr.gcr(image, self.gcr))
 
 class DotScreen(Processor):
     
