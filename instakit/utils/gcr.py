@@ -77,6 +77,7 @@ def gcr(image, percentage=20, revert_mode=False):
 
 class BasicGCR(Processor):
     
+    __slots__ = ('percentage', 'revert_mode')
     __doc__ = gcr.__doc__
     
     def __init__(self, percentage=20, revert_mode=False):

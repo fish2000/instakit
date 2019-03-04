@@ -203,19 +203,49 @@ class CMYKDotScreen(Processor):
         replacement (GCR), individual rotation angles for each channel’s
         dot-screen, and resampling value controls.
     """
-    __slots__ = ('overprinter',)
+    __slots__ = ('overprinter', 'sample', 'scale')
     
     def __init__(self,      gcr=20,
                  sample=10, scale=10,
-                 thetaC=0,  thetaM=15,
-                 thetaY=30, thetaK=45):
+                  thetaC=0, thetaM=15, thetaY=30, thetaK=45):
         """ Initialize an internal instakit.utils.pipeline.OverprintFork() """
+        self.sample = sample
+        self.scale = scale
         self.overprinter = pipeline.OverprintFork(None, gcr=gcr)
         self.overprinter['C'] = DotScreen(angle=thetaC, sample=sample, scale=scale)
         self.overprinter['M'] = DotScreen(angle=thetaM, sample=sample, scale=scale)
         self.overprinter['Y'] = DotScreen(angle=thetaY, sample=sample, scale=scale)
         self.overprinter['K'] = DotScreen(angle=thetaK, sample=sample, scale=scale)
         self.overprinter.apply_CMYK_inks()
+    
+    @property
+    def gcr_percentage(self):
+        return self.overprinter.basicgcr.percentage
+    
+    def angle(self, band_label):
+        if band_label not in self.band_labels:
+            raise ValueError('invalid band label')
+        return self.overprinter[band_label].angle
+    
+    @property
+    def thetaC(self):
+        """ Return the C-band halftone screen’s rotation """
+        return self.angle('C')
+    
+    @property
+    def thetaM(self):
+        """ Return the M-band halftone screen’s rotation """
+        return self.angle('M')
+    
+    @property
+    def thetaY(self):
+        """ Return the Y-band halftone screen’s rotation """
+        return self.angle('Y')
+    
+    @property
+    def thetaK(self):
+        """ Return the K-band halftone screen’s rotation """
+        return self.angle('K')
     
     def process(self, image):
         return self.overprinter.process(image)

@@ -195,7 +195,7 @@ class CurveSet(Processor):
     
     def read_acv(self, acv_path, interpolation_mode):
         if not self.file_exists:
-            raise IOError("Can't read nonexistent ACV file: %s" % self.path)
+            raise IOError("Can't read nonexistant ACV file: %s" % self.path)
         with open(acv_path, "rb") as acv_file:
             _, self.count = struct.unpack("!hh", acv_file.read(4))
             for idx in range(self.count):
@@ -219,14 +219,13 @@ class CurveSet(Processor):
         elif mode is not Mode.RGB:
             return Image.eval(Mode.L.process(image),
                               self.curves[0])
-        # has to be RGB at this point -- but we'll use the
-        # mode of the operand image for future-proofiness:
-        adjusted_channels = []
-        for idx, channel in enumerate(image.split()):
-            adjusted_channels.append(
-                Image.eval(channel,
+        # The image to be RGB-modes at this point:
+        adjusted_bands = []
+        for idx, band in enumerate(image.split()):
+            adjusted_bands.append(
+                Image.eval(band,
                            lambda v: self.curves[idx+1](v)))
-        return Mode.RGB.merge(*adjusted_channels)
+        return Mode.RGB.merge(*adjusted_bands)
     
     def add(self, curve):
         self.curves.append(curve)

@@ -60,7 +60,7 @@ class Processor(ABC):
     @abstract
     def process(self, image):
         """ Process an image instance, per the processor instance,
-            returning the processed image data
+            returning the processed image data.
         """
         ...
     
@@ -79,7 +79,7 @@ class Enum(EnumBase):
     @abstract
     def process(self, image):
         """ Process an image instance, per the processor enum instance,
-            returning the processed image data
+            returning the processed image data.
         """
         ...
     
@@ -101,14 +101,18 @@ class Container(Processor):
     """ Base abstract processor container. """
     __slots__ = tuple()
     
+    @classmethod
+    @abstract
+    def base_type(cls):
+        """ Return the internal type upon which this instakit.abc.Container
+            subclass is based.
+        """
+        ...
+    
     @abstract
     def iterate(self):
         """ Return an ordered iterable of sub-processors. """
         ...
-    
-    @classmethod
-    @abstract
-    def base_type(cls): ...
     
     @abstract
     def __len__(self): ...
@@ -123,7 +127,7 @@ class Container(Processor):
         """ A processor container is considered Truthy if it contains values,
             and Falsey if it is empty.
         """
-        return len(self) == 0
+        return len(self) > 0
 
 class Mapping(Container):
     
@@ -215,6 +219,7 @@ class Fork(MutableMapping):
     
     @property
     def default_factory(self):
+        """ The default factory for the dictionary. """
         return self.dict.default_factory
     
     @default_factory.setter
@@ -224,6 +229,9 @@ class Fork(MutableMapping):
         self.dict.default_factory = value
     
     def __len__(self):
+        """ The number of entries in the dictionary.
+            See defaultdict.__len__(…) for details.
+        """
         return len(self.dict)
     
     def __contains__(self, value):
@@ -233,25 +241,37 @@ class Fork(MutableMapping):
         return value in self.dict
     
     def __getitem__(self, idx):
+        """ Get a value from the dictionary, or if no value is present,
+            the return value of `default_factory()`.
+            See defaultdict.__getitem__(…) for details.
+        """
         return self.dict[idx]
     
     def __setitem__(self, idx, value):
+        """ Set the value in the dictionary corresponding to the specified
+            key to the value passed, or if a value of “None” was passed,
+            set the value to `instakit.abc.NOOp()` -- the no-op processor.
+        """
         if value in (None, NOOp):
             value = NOOp()
         self.dict[idx] = value
     
     def __delitem__(self, idx):
+        """ Delete a value from the dictionary corresponding to the specified
+            key, if one is present.
+            See defaultdict.__delitem__(…) for details.
+        """
         del self.dict[idx]
     
     def get(self, idx, default_value=None):
-        """ Get a value from the Fork, with an optional default
+        """ Get a value from the dictionary, with an optional default
             value to use should a value not be present for this key.
             See defaultdict.get(…) for details.
         """
         return self.dict.get(idx, default_value)
     
     def update(self, iterable=None, **kwargs):
-        """ Update the Fork with new dict info.
+        """ Update the dictionary with new key-value pairs.
             See defaultdict.update(…) for details.
         """
         self.dict.update(iterable or tuple(), **kwargs)

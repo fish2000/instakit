@@ -174,7 +174,7 @@ class BandFork(Fork):
         """
         # Reset mode if a new mode was specified:
         if 'mode' in kwargs:
-            self.mode = kwargs.pop('mode', Mode.RGB)
+            self.mode = kwargs.pop('mode')
         
         # Call super(…):
         super(BandFork, self).__init__(default_factory, *args, **kwargs)
