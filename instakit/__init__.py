@@ -33,8 +33,16 @@ from pkg_resources import parse_version as pkg_resources_parse_version
 from pkg_resources.extern.packaging.version import Version as PkgResourcesVersion
 from pkgutil import extend_path
 
+# module exports:
+__all__ = ('__version__', 'version', 'FIELDS', 'VersionInfo',
+           '__title__', '__author__', '__maintainer__',
+           '__license__', '__copyright__')
+
+__dir__ = lambda: list(__all__)
+
 if '__path__' in locals():
     __path__ = extend_path(__path__, __name__)
+    __all__ += ('__path__',)
 
 if not hasattr(__builtins__, 'cmp'):
     def cmp(a, b):
@@ -54,15 +62,6 @@ try:
                       '__version__.py', 'exec')
 except:
     __version__ = '0.6.24'
-
-# module exports:
-__all__ = ('__version__', 'version',
-           '__title__', '__author__', '__maintainer__',
-           '__license__',
-           '__copyright__',
-           '__path__', 'FIELDS', 'VersionInfo')
-
-__dir__ = lambda: list(__all__)
 
 FIELDS = ('major', 'minor', 'patch',
           'pre',   'build')
@@ -171,8 +170,8 @@ class VersionInfo(VersionAncestor):
         """ Instantiate a VersionInfo with a dict of related values
             (q.v. FIELD string names supra.)
         """
-        assert 'major' in version_dict
-        assert 'minor' in version_dict
+        for field in FIELDS[:2]: # major, minor
+            assert field in version_dict
         assert frozenset(version_dict.keys()).issubset(fields)
         return cls(**version_dict)
     
