@@ -68,6 +68,10 @@ class Processor(ABC):
         return self.process(image)
     
     @classmethod
+    def apply(cls, processor, image):
+        return processor.process(image)
+    
+    @classmethod
     def __subclasshook__(cls, subclass):
         return subclasshook(cls, subclass)
 
@@ -165,6 +169,9 @@ class MutableMapping(MutableContainer):
     def get(self, idx, default_value): ...
     
     @abstract
+    def pop(self, idx, default_value): ...
+    
+    @abstract
     def update(self, iterable=None, **kwargs): ...
 
 class MutableSequence(MutableContainer):
@@ -182,6 +189,9 @@ class MutableSequence(MutableContainer):
     
     @abstract
     def extend(self, iterable): ...
+    
+    @abstract
+    def pop(self, idx=-1): ...
 
 class Fork(MutableMapping):
     
@@ -214,7 +224,7 @@ class Fork(MutableMapping):
         if not callable(default_factory):
             raise AttributeError("Fork() requires a callable default_factory")
         
-        self.dict = defaultdict(default_factory, *args, **kwargs)
+        self.dict = type(self).base_type()(default_factory, *args, **kwargs)
         super(Fork, self).__init__()
     
     @property
@@ -234,11 +244,11 @@ class Fork(MutableMapping):
         """
         return len(self.dict)
     
-    def __contains__(self, value):
-        """ True if the dictionary has the specified key, else False.
+    def __contains__(self, idx):
+        """ True if the dictionary has the specified `idx`, else False.
             See defaultdict.__contains__(…) for details.
         """
-        return value in self.dict
+        return idx in self.dict
     
     def __getitem__(self, idx):
         """ Get a value from the dictionary, or if no value is present,
@@ -249,7 +259,7 @@ class Fork(MutableMapping):
     
     def __setitem__(self, idx, value):
         """ Set the value in the dictionary corresponding to the specified
-            key to the value passed, or if a value of “None” was passed,
+           `idx` to the value passed, or if a value of “None” was passed,
             set the value to `instakit.abc.NOOp()` -- the no-op processor.
         """
         if value in (None, NOOp):
@@ -258,17 +268,24 @@ class Fork(MutableMapping):
     
     def __delitem__(self, idx):
         """ Delete a value from the dictionary corresponding to the specified
-            key, if one is present.
+           `idx`, if one is present.
             See defaultdict.__delitem__(…) for details.
         """
         del self.dict[idx]
     
     def get(self, idx, default_value=None):
         """ Get a value from the dictionary, with an optional default
-            value to use should a value not be present for this key.
+            value to use should a value not be present for this `idx`.
             See defaultdict.get(…) for details.
         """
         return self.dict.get(idx, default_value)
+    
+    def pop(self, idx, default_value=None):
+        """ D.pop(idx[,d]) -> v, remove specified `idx` and return the corresponding value.
+            If `idx` is not found, d is returned if given, otherwise `KeyError` is raised.
+            See defaultdict.pop(…) for details.
+        """
+        return self.dict.pop(idx, default_value)
     
     def update(self, iterable=None, **kwargs):
         """ Update the dictionary with new key-value pairs.

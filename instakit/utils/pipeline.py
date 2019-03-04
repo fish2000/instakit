@@ -2,6 +2,8 @@
 from __future__ import print_function
 
 from PIL import ImageOps, ImageChops
+from collections import defaultdict, OrderedDict
+from copy import copy
 from enum import unique
 from functools import wraps
 
@@ -13,7 +15,7 @@ except ImportError:
 from instakit.abc import Enum, Fork, NOOp, Sequence, MutableSequence
 from instakit.utils.gcr import BasicGCR
 from instakit.utils.mode import Mode
-from instakit.utils.misc import string_types
+from instakit.utils.misc import string_types, tuplize
 from instakit.processors.adjust import AutoContrast
 
 __all__ = ('Pipe', 'Pipeline',
@@ -26,8 +28,8 @@ __dir__ = lambda: list(__all__)
 class Pipe(Sequence):
     
     """ A static linear pipeline of processors to be applied en masse.
-        Derived from an ImageKit class:
-        imagekit.processors.base.ProcessorPipeline
+        Derived from a `pilkit` class:
+            `pilkit.processors.base.ProcessorPipeline`
     """
     __slots__ = ('tuple',)
     
@@ -37,7 +39,7 @@ class Pipe(Sequence):
     
     @wraps(tuple.__init__)
     def __init__(self, *args):
-        self.tuple = tuple(*args)
+        self.tuple = tuplize(*args)
     
     def iterate(self):
         return iter(self.tuple)
@@ -71,8 +73,8 @@ class Pipe(Sequence):
 class Pipeline(MutableSequence):
     
     """ A mutable linear pipeline of processors to be applied en masse.
-        Derived from an ImageKit class:
-        imagekit.processors.base.ProcessorPipeline
+        Derived from a `pilkit` class:
+            `pilkit.processors.base.ProcessorPipeline`
     """
     __slots__ = ('list',)
     
@@ -82,7 +84,25 @@ class Pipeline(MutableSequence):
     
     @wraps(list.__init__)
     def __init__(self, *args):
-        self.list = list(*args)
+        base_type = type(self).base_type()
+        if len(args) == 0:
+            self.list = base_type()
+        if len(args) == 1:
+            target = args[0]
+            if type(target) is type(self):
+                self.list = copy(target.list)
+            elif type(target) is base_type:
+                self.list = copy(target)
+            elif type(target) in (tuple, set, frozenset):
+                self.list = base_type([*target])
+            elif type(target) in (dict, defaultdict, OrderedDict):
+                self.list = base_type([*sorted(target).values()])
+            elif hasattr(target, '__iter__'):
+                self.list = base_type([*target])
+            else:
+                self.list = base_type([target])
+        else:
+            self.list = base_type([*args])
     
     def iterate(self):
         return iter(self.list)
@@ -121,9 +141,16 @@ class Pipeline(MutableSequence):
     def extend(self, iterable):
         self.list.extend(iterable)
     
+    def pop(self, idx=-1):
+        """ Remove and return item at `idx` (default last).
+            Raises IndexError if list is empty or `idx` is out of range.
+            See list.pop(…) for details.
+        """
+        self.list.pop(idx)
+    
     def last(self):
         if not bool(self):
-            raise IndexError("pipeline is empty")
+            raise IndexError("pipe is empty")
         return self.list[-1]
     
     def process(self, image):
@@ -327,8 +354,11 @@ class OverprintFork(BandFork):
                 if processor[-1] is not ink:
                     processor.append(ink)
                     self[band_label] = processor
+            elif hasattr(processor, 'iterate'):
+                if processor.last() is not ink:
+                    self[band_label] = Pipe(processor.iterate(), ink)
             else:
-                self[band_label] = Pipeline([processor, ink])
+                self[band_label] = Pipe(processor, ink)
     
     def set_mode_t(self, value):
         """ Raise an exception if an attempt is made to set the mode to anything

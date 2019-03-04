@@ -10,8 +10,7 @@ from __future__ import print_function
 
 from PIL import ImageDraw
 
-from instakit.utils import pipeline
-from instakit.utils.gcr import gcr
+from instakit.utils import pipeline, gcr
 from instakit.utils.mode import Mode
 from instakit.utils.stats import histogram_mean
 from instakit.abc import Processor, ThresholdMatrixProcessor
@@ -126,8 +125,8 @@ class CMYKAtkinson(Processor):
         self.overprinter = pipeline.BandFork(Atkinson, mode='CMYK')
     
     def process(self, image):
-        return self.overprinter.process(
-            gcr(image, self.gcr))
+        return pipeline.Pipe(gcr.BasicGCR(self.gcr),
+                                          self.overprinter).process(image)
 
 class CMYKFloydsterBill(Processor):
     
@@ -142,8 +141,10 @@ class CMYKFloydsterBill(Processor):
         self.overprinter.update({ 'C' : SlowFloydSteinberg() })
     
     def process(self, image):
-        return self.overprinter.process(
-            gcr(image, self.gcr))
+        return pipeline.Pipe(gcr.BasicGCR(self.gcr),
+                                          self.overprinter).process(image)
+        # return self.overprinter.process(
+        #     gcr.gcr(image, self.gcr))
 
 class DotScreen(Processor):
     
