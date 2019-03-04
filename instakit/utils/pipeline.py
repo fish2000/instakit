@@ -62,7 +62,7 @@ class Pipe(Sequence):
     
     def last(self):
         if not bool(self):
-            raise IndexError("pipeline is empty")
+            raise IndexError("pipe is empty")
         return self.tuple[-1]
     
     def process(self, image):
