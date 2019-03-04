@@ -223,7 +223,7 @@ class CMYKDotScreen(Processor):
         return self.overprinter.basicgcr.percentage
     
     def angle(self, band_label):
-        if band_label not in self.band_labels:
+        if band_label not in self.overprinter.band_labels:
             raise ValueError('invalid band label')
         return self.overprinter[band_label].angle
     
