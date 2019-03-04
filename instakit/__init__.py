@@ -52,9 +52,9 @@ if not hasattr(__builtins__, 'cmp'):
 __version__ = "‽.‽.‽"
 __title__ = 'instakit'
 __author__ = 'Alexander Böhn'
-__maintainer__ = 'Alexander Böhn'
+__maintainer__ = __author__
 __license__ = 'MIT'
-__copyright__ = '© 2012-2025 Alexander Böhn'
+__copyright__ = '© 2012-2025 %s' % __author__
 
 # get the project version tag without importing:
 try:
