@@ -29,13 +29,14 @@ def gcr(image, percentage=20, revert_mode=False):
     
     original_mode = Mode.of(image)
     cmyk_channels = Mode.CMYK.process(image).split()
+    width, height = image.size
     
     cmyk_image = []
     for channel in cmyk_channels:
         cmyk_image.append(channel.load())
     
-    for x in range(image.size[0]):
-        for y in range(image.size[1]):
+    for x in range(width):
+        for y in range(height):
             gray = int(min(cmyk_image[0][x, y],
                            cmyk_image[1][x, y],
                            cmyk_image[2][x, y]) * percent)
@@ -96,7 +97,7 @@ def ucr(image, revert_mode=False):
                  >  RGB(1.0, 0.7304607400903537, 0.008568125618069307)
                  >  CMY(0.0, 0.26953925990964633, 0.9914318743819307)
         
-        rgb() > RGB() > CMY() > CMYK(41, 100, 255, 0) >> (0, 59, 214, 41).
+        rgb() > RGB() > CMY() > CMYK(41, 100, 255, 0) >> cmyk(0, 59, 214, 41).
         
     {*} This is the default behavior – to return an image of the same mode as that
         of which was originally provided, pass the value for the (optional) keyword
