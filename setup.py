@@ -70,17 +70,17 @@ CWD = os.path.dirname(__file__)
 BASE_PATH = os.path.join(
             os.path.abspath(CWD), PROJECT_NAME)
 
-def project_content(filename):
+def project_content(*filenames):
     import io
-    filepath = os.path.join(CWD, filename)
+    filepath = os.path.join(CWD, *filenames)
     if not os.path.isfile(filepath):
         raise IOError("""File %s doesn't exist""" % filepath)
     out = ''
     with io.open(filepath, 'r') as handle:
         out += handle.read()
     if not out:
-        raise ValueError("""File %s couldn't be read""" % filename)
-    return out
+        raise ValueError("""File %s couldn't be read""" % os.path.sep.join(filenames))
+    return out.strip()
 
 # CYTHON & C-API EXTENSION MODULES
 def cython_module(*args, **kwargs):
@@ -139,16 +139,7 @@ LONG_DESCRIPTION = project_content('ABOUT.md')
 LICENSE = 'MIT'
 
 # REQUIRED INSTALLATION DEPENDENCIES
-INSTALL_REQUIRES = [
-    'Cython>=0.29.0',
-    'Pillow>=3.0.0',
-    'numpy>=1.7.0',
-    'scipy>=1.1.0',
-    'scikit-image>=0.12.0',
-    'six>=1.10.0']
-
-if PYTHON_VERSION < 3.4:
-    INSTALL_REQUIRES.append('enum34>=1.1.0')
+INSTALL_REQUIRES = project_content('requirements', 'install.txt').splitlines()
 
 # PYPI PROJECT CLASSIFIERS
 CLASSIFIERS = [
@@ -228,7 +219,7 @@ setup(
     author_email=AUTHOR_EMAIL,
     
     version=__version__,
-    description=__doc__,
+    description=__doc__.strip(),
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
     
