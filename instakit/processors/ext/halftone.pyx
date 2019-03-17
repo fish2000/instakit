@@ -21,6 +21,7 @@ FLOAT32 = numpy.float32
 
 ctypedef numpy.int_t int_t
 ctypedef numpy.uint8_t uint8_t
+ctypedef numpy.uint32_t uint32_t
 ctypedef numpy.float32_t float32_t
 
 cdef bint threshold_matrix_allocated = False
@@ -109,14 +110,19 @@ cdef class Atkinson:
         global threshold_matrix_allocated
         cdef uint8_t idx
         if not threshold_matrix_allocated:
-            for idx in range(255):
-                threshold_matrix[idx] = <unsigned char>(<uint8_t>(<float32_t>idx / threshold) * 255)
+            with nogil:
+                for idx in range(255):
+                    threshold_matrix[idx] = <unsigned char>(<uint8_t>(<float32_t>idx / threshold) * 255)
             threshold_matrix_allocated = True
     
     def process(self, image not None):
         input_array = ndarrays.fromimage(image.convert('L')).astype(UINT8)
-        cdef uint8_t[:, :] input_view = input_array
-        atkinson_dither(input_view, image.size[0], image.size[1])
+        cdef uint32_t width = image.size[0]
+        cdef uint32_t height = image.size[1]
+        cdef uint8_t[:, :] input_view
+        with nogil:
+            input_view = input_array
+            atkinson_dither(input_view, width, height)
         output_array = numpy.asarray(input_view.base)
         return ndarrays.toimage(output_array)
 
@@ -129,13 +135,18 @@ cdef class FloydSteinberg:
         global threshold_matrix_allocated
         cdef uint8_t idx
         if not threshold_matrix_allocated:
-            for idx in range(255):
-                threshold_matrix[idx] = <unsigned char>(<uint8_t>(<float32_t>idx / threshold) * 255)
+            with nogil:
+                for idx in range(255):
+                    threshold_matrix[idx] = <unsigned char>(<uint8_t>(<float32_t>idx / threshold) * 255)
             threshold_matrix_allocated = True
     
     def process(self, image not None):
         input_array = ndarrays.fromimage(image.convert('L')).astype(UINT8)
-        cdef uint8_t[:, :] input_view = input_array
-        floyd_steinberg_dither(input_view, image.size[0], image.size[1])
+        cdef uint32_t width = image.size[0]
+        cdef uint32_t height = image.size[1]
+        cdef uint8_t[:, :] input_view
+        with nogil:
+            input_view = input_array
+            floyd_steinberg_dither(input_view, width, height)
         output_array = numpy.asarray(input_view.base)
         return ndarrays.toimage(output_array)
