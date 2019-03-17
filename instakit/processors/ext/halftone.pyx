@@ -5,9 +5,10 @@
 
 from __future__ import division
 
+ctypedef unsigned char byte_t
+
 cdef extern from "halftone.h" nogil:
-    unsigned char atkinson_add_error(int b, int e)
-    unsigned char* threshold_matrix
+    byte_t atkinson_add_error(int b, int e)
 
 import numpy
 cimport numpy
@@ -24,9 +25,9 @@ ctypedef numpy.uint8_t uint8_t
 ctypedef numpy.uint32_t uint32_t
 ctypedef numpy.float32_t float32_t
 
-cdef bint threshold_matrix_allocated = False
-
-cdef void atkinson_dither(uint8_t[:, :] input_view, int_t w, int_t h) nogil:
+cdef void atkinson_dither(uint8_t[:, :] input_view,
+                          int_t w, int_t h,
+                          byte_t* threshold_matrix_ptr) nogil:
     
     cdef int_t y, x, err
     cdef uint8_t oldpx, newpx
@@ -34,7 +35,7 @@ cdef void atkinson_dither(uint8_t[:, :] input_view, int_t w, int_t h) nogil:
     for y in range(h):
         for x in range(w):
             oldpx = input_view[y, x]
-            newpx = <uint8_t>threshold_matrix[oldpx]
+            newpx = <uint8_t>threshold_matrix_ptr[oldpx]
             err = (<int_t>oldpx - <int_t>newpx) >> 3
             
             input_view[y, x] = newpx
@@ -77,7 +78,9 @@ cdef inline uint8_t floyd_steinberg_add_error_ALONE(uint8_t base,
     cdef int_t something = <int_t>base + err * 1 / 16
     return <uint8_t>max(min(255, something), 0)
 
-cdef void floyd_steinberg_dither(uint8_t[:, :] input_view, int_t w, int_t h) nogil:
+cdef void floyd_steinberg_dither(uint8_t[:, :] input_view,
+                                 int_t w, int_t h,
+                                 byte_t* threshold_matrix_ptr) nogil:
     
     cdef int_t y, x, err
     cdef uint8_t oldpx, newpx
@@ -85,7 +88,7 @@ cdef void floyd_steinberg_dither(uint8_t[:, :] input_view, int_t w, int_t h) nog
     for y in range(h):
         for x in range(w):
             oldpx = input_view[y, x]
-            newpx = <uint8_t>threshold_matrix[oldpx]
+            newpx = <uint8_t>threshold_matrix_ptr[oldpx]
             input_view[y, x] = newpx
             err = <int_t>oldpx - <int_t>newpx
             
@@ -101,20 +104,24 @@ cdef void floyd_steinberg_dither(uint8_t[:, :] input_view, int_t w, int_t h) nog
             if (y + 1 < h) and (x + 1 < w):
                 input_view[y+1, x+1] = floyd_steinberg_add_error_ALONE(input_view[y+1, x+1], err)
 
-@cython.freelist(4)
-cdef class Atkinson:
+@cython.freelist(16)
+cdef class Ditherer:
+    
+    """ Base ditherer image processor class """
+    
+    cdef:
+        byte_t threshold_matrix[256]
+    
+    def __cinit__(self, float32_t threshold = 128.0):
+        cdef uint8_t idx
+        with nogil:
+            for idx in range(255):
+                self.threshold_matrix[idx] = <unsigned char>(<uint8_t>(<float32_t>idx / threshold) * 255)
+
+cdef class Atkinson(Ditherer):
     
     """ Fast cythonized Atkinson-dither halftone image processor """
     
-    def __cinit__(self, float32_t threshold = 128.0):
-        global threshold_matrix_allocated
-        cdef uint8_t idx
-        if not threshold_matrix_allocated:
-            with nogil:
-                for idx in range(255):
-                    threshold_matrix[idx] = <unsigned char>(<uint8_t>(<float32_t>idx / threshold) * 255)
-            threshold_matrix_allocated = True
-    
     def process(self, image not None):
         input_array = ndarrays.fromimage(image.convert('L')).astype(UINT8)
         cdef uint32_t width = image.size[0]
@@ -122,23 +129,13 @@ cdef class Atkinson:
         cdef uint8_t[:, :] input_view
         with nogil:
             input_view = input_array
-            atkinson_dither(input_view, width, height)
+            atkinson_dither(input_view, width, height, self.threshold_matrix)
         output_array = numpy.asarray(input_view.base)
         return ndarrays.toimage(output_array)
 
-@cython.freelist(4)
-cdef class FloydSteinberg:
+cdef class FloydSteinberg(Ditherer):
     
     """ Fast cythonized Floyd-Steinberg-dither halftone image processor """
-    
-    def __cinit__(self, float32_t threshold = 128.0):
-        global threshold_matrix_allocated
-        cdef uint8_t idx
-        if not threshold_matrix_allocated:
-            with nogil:
-                for idx in range(255):
-                    threshold_matrix[idx] = <unsigned char>(<uint8_t>(<float32_t>idx / threshold) * 255)
-            threshold_matrix_allocated = True
     
     def process(self, image not None):
         input_array = ndarrays.fromimage(image.convert('L')).astype(UINT8)
@@ -147,6 +144,6 @@ cdef class FloydSteinberg:
         cdef uint8_t[:, :] input_view
         with nogil:
             input_view = input_array
-            floyd_steinberg_dither(input_view, width, height)
+            floyd_steinberg_dither(input_view, width, height, self.threshold_matrix)
         output_array = numpy.asarray(input_view.base)
         return ndarrays.toimage(output_array)

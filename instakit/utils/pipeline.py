@@ -353,7 +353,7 @@ class OverprintFork(BandFork):
             processor = self[band_label]
             if processor is None:
                 self[band_label] = Pipe(ink)
-            if hasattr(processor, 'append'):
+            elif hasattr(processor, 'append'):
                 if processor[-1] is not ink:
                     processor.append(ink)
                     self[band_label] = processor
