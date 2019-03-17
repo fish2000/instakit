@@ -26,36 +26,36 @@ ctypedef numpy.uint32_t uint32_t
 ctypedef numpy.float32_t float32_t
 
 cdef void atkinson_dither(uint8_t[:, :] input_view,
-                          int_t w, int_t h,
+                          int_t width, int_t height,
                           byte_t* threshold_matrix_ptr) nogil:
     
     cdef int_t y, x, err
     cdef uint8_t oldpx, newpx
     
-    for y in range(h):
-        for x in range(w):
+    for y in range(height):
+        for x in range(width):
             oldpx = input_view[y, x]
             newpx = <uint8_t>threshold_matrix_ptr[oldpx]
             err = (<int_t>oldpx - <int_t>newpx) >> 3
             
             input_view[y, x] = newpx
             
-            if y + 1 < h:
+            if y + 1 < height:
                 input_view[y+1, x] = atkinson_add_error(input_view[y+1, x], err)
             
-            if y + 2 < h:
+            if y + 2 < height:
                 input_view[y+2, x] = atkinson_add_error(input_view[y+2, x], err)
             
-            if (y > 0) and (x + 1 < w):
+            if (y > 0) and (x + 1 < width):
                 input_view[y-1, x+1] = atkinson_add_error(input_view[y-1, x+1], err)
             
-            if x + 1 < w:
+            if x + 1 < width:
                 input_view[y, x+1] = atkinson_add_error(input_view[y, x+1], err)
             
-            if (y + 1 < h) and (x + 1 < w):
+            if (y + 1 < height) and (x + 1 < width):
                 input_view[y+1, x+1] = atkinson_add_error(input_view[y+1, x+1], err)
             
-            if x + 2 < w:
+            if x + 2 < width:
                 input_view[y, x+2] = atkinson_add_error(input_view[y, x+2], err)
 
 cdef inline uint8_t floyd_steinberg_add_error_SEVEN(uint8_t base,
@@ -79,29 +79,29 @@ cdef inline uint8_t floyd_steinberg_add_error_ALONE(uint8_t base,
     return <uint8_t>max(min(255, something), 0)
 
 cdef void floyd_steinberg_dither(uint8_t[:, :] input_view,
-                                 int_t w, int_t h,
+                                 int_t width, int_t height,
                                  byte_t* threshold_matrix_ptr) nogil:
     
     cdef int_t y, x, err
     cdef uint8_t oldpx, newpx
     
-    for y in range(h):
-        for x in range(w):
+    for y in range(height):
+        for x in range(width):
             oldpx = input_view[y, x]
             newpx = <uint8_t>threshold_matrix_ptr[oldpx]
             input_view[y, x] = newpx
             err = <int_t>oldpx - <int_t>newpx
             
-            if (x + 1 < w):
+            if (x + 1 < width):
                 input_view[y, x+1] = floyd_steinberg_add_error_SEVEN(input_view[y, x+1], err)
             
-            if (y + 1 < h) and (x > 0):
+            if (y + 1 < height) and (x > 0):
                 input_view[y+1, x-1] = floyd_steinberg_add_error_THREE(input_view[y+1, x-1], err)
             
-            if (y + 1 < h):
+            if (y + 1 < height):
                 input_view[y+1, x] = floyd_steinberg_add_error_CINCO(input_view[y+1, x], err)
             
-            if (y + 1 < h) and (x + 1 < w):
+            if (y + 1 < height) and (x + 1 < width):
                 input_view[y+1, x+1] = floyd_steinberg_add_error_ALONE(input_view[y+1, x+1], err)
 
 @cython.freelist(16)

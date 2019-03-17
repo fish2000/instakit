@@ -2627,11 +2627,11 @@ static PyObject *__pyx_codeobj__38;
  * ctypedef numpy.float32_t float32_t
  * 
  * cdef void atkinson_dither(uint8_t[:, :] input_view,             # <<<<<<<<<<<<<<
- *                           int_t w, int_t h,
+ *                           int_t width, int_t height,
  *                           byte_t* threshold_matrix_ptr) nogil:
  */
 
-static void __pyx_f_8instakit_10processors_3ext_8halftone_atkinson_dither(__Pyx_memviewslice __pyx_v_input_view, __pyx_t_8instakit_10processors_3ext_8halftone_int_t __pyx_v_w, __pyx_t_8instakit_10processors_3ext_8halftone_int_t __pyx_v_h, __pyx_t_8instakit_10processors_3ext_8halftone_byte_t *__pyx_v_threshold_matrix_ptr) {
+static void __pyx_f_8instakit_10processors_3ext_8halftone_atkinson_dither(__Pyx_memviewslice __pyx_v_input_view, __pyx_t_8instakit_10processors_3ext_8halftone_int_t __pyx_v_width, __pyx_t_8instakit_10processors_3ext_8halftone_int_t __pyx_v_height, __pyx_t_8instakit_10processors_3ext_8halftone_byte_t *__pyx_v_threshold_matrix_ptr) {
   __pyx_t_8instakit_10processors_3ext_8halftone_int_t __pyx_v_y;
   __pyx_t_8instakit_10processors_3ext_8halftone_int_t __pyx_v_x;
   __pyx_t_8instakit_10processors_3ext_8halftone_int_t __pyx_v_err;
@@ -2677,30 +2677,30 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_atkinson_dither(__Pyx_
   /* "instakit/processors/ext/halftone.pyx":35
  *     cdef uint8_t oldpx, newpx
  * 
- *     for y in range(h):             # <<<<<<<<<<<<<<
- *         for x in range(w):
+ *     for y in range(height):             # <<<<<<<<<<<<<<
+ *         for x in range(width):
  *             oldpx = input_view[y, x]
  */
-  __pyx_t_1 = __pyx_v_h;
+  __pyx_t_1 = __pyx_v_height;
   __pyx_t_2 = __pyx_t_1;
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_y = __pyx_t_3;
 
     /* "instakit/processors/ext/halftone.pyx":36
  * 
- *     for y in range(h):
- *         for x in range(w):             # <<<<<<<<<<<<<<
+ *     for y in range(height):
+ *         for x in range(width):             # <<<<<<<<<<<<<<
  *             oldpx = input_view[y, x]
  *             newpx = <uint8_t>threshold_matrix_ptr[oldpx]
  */
-    __pyx_t_4 = __pyx_v_w;
+    __pyx_t_4 = __pyx_v_width;
     __pyx_t_5 = __pyx_t_4;
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_x = __pyx_t_6;
 
       /* "instakit/processors/ext/halftone.pyx":37
- *     for y in range(h):
- *         for x in range(w):
+ *     for y in range(height):
+ *         for x in range(width):
  *             oldpx = input_view[y, x]             # <<<<<<<<<<<<<<
  *             newpx = <uint8_t>threshold_matrix_ptr[oldpx]
  *             err = (<int_t>oldpx - <int_t>newpx) >> 3
@@ -2710,7 +2710,7 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_atkinson_dither(__Pyx_
       __pyx_v_oldpx = (*((__pyx_t_8instakit_10processors_3ext_8halftone_uint8_t *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_input_view.data + __pyx_t_7 * __pyx_v_input_view.strides[0]) ) + __pyx_t_8 * __pyx_v_input_view.strides[1]) )));
 
       /* "instakit/processors/ext/halftone.pyx":38
- *         for x in range(w):
+ *         for x in range(width):
  *             oldpx = input_view[y, x]
  *             newpx = <uint8_t>threshold_matrix_ptr[oldpx]             # <<<<<<<<<<<<<<
  *             err = (<int_t>oldpx - <int_t>newpx) >> 3
@@ -2732,7 +2732,7 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_atkinson_dither(__Pyx_
  * 
  *             input_view[y, x] = newpx             # <<<<<<<<<<<<<<
  * 
- *             if y + 1 < h:
+ *             if y + 1 < height:
  */
       __pyx_t_9 = __pyx_v_y;
       __pyx_t_10 = __pyx_v_x;
@@ -2741,19 +2741,19 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_atkinson_dither(__Pyx_
       /* "instakit/processors/ext/halftone.pyx":43
  *             input_view[y, x] = newpx
  * 
- *             if y + 1 < h:             # <<<<<<<<<<<<<<
+ *             if y + 1 < height:             # <<<<<<<<<<<<<<
  *                 input_view[y+1, x] = atkinson_add_error(input_view[y+1, x], err)
  * 
  */
-      __pyx_t_11 = (((__pyx_v_y + 1) < __pyx_v_h) != 0);
+      __pyx_t_11 = (((__pyx_v_y + 1) < __pyx_v_height) != 0);
       if (__pyx_t_11) {
 
         /* "instakit/processors/ext/halftone.pyx":44
  * 
- *             if y + 1 < h:
+ *             if y + 1 < height:
  *                 input_view[y+1, x] = atkinson_add_error(input_view[y+1, x], err)             # <<<<<<<<<<<<<<
  * 
- *             if y + 2 < h:
+ *             if y + 2 < height:
  */
         __pyx_t_12 = (__pyx_v_y + 1);
         __pyx_t_13 = __pyx_v_x;
@@ -2764,7 +2764,7 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_atkinson_dither(__Pyx_
         /* "instakit/processors/ext/halftone.pyx":43
  *             input_view[y, x] = newpx
  * 
- *             if y + 1 < h:             # <<<<<<<<<<<<<<
+ *             if y + 1 < height:             # <<<<<<<<<<<<<<
  *                 input_view[y+1, x] = atkinson_add_error(input_view[y+1, x], err)
  * 
  */
@@ -2773,19 +2773,19 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_atkinson_dither(__Pyx_
       /* "instakit/processors/ext/halftone.pyx":46
  *                 input_view[y+1, x] = atkinson_add_error(input_view[y+1, x], err)
  * 
- *             if y + 2 < h:             # <<<<<<<<<<<<<<
+ *             if y + 2 < height:             # <<<<<<<<<<<<<<
  *                 input_view[y+2, x] = atkinson_add_error(input_view[y+2, x], err)
  * 
  */
-      __pyx_t_11 = (((__pyx_v_y + 2) < __pyx_v_h) != 0);
+      __pyx_t_11 = (((__pyx_v_y + 2) < __pyx_v_height) != 0);
       if (__pyx_t_11) {
 
         /* "instakit/processors/ext/halftone.pyx":47
  * 
- *             if y + 2 < h:
+ *             if y + 2 < height:
  *                 input_view[y+2, x] = atkinson_add_error(input_view[y+2, x], err)             # <<<<<<<<<<<<<<
  * 
- *             if (y > 0) and (x + 1 < w):
+ *             if (y > 0) and (x + 1 < width):
  */
         __pyx_t_16 = (__pyx_v_y + 2);
         __pyx_t_17 = __pyx_v_x;
@@ -2796,7 +2796,7 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_atkinson_dither(__Pyx_
         /* "instakit/processors/ext/halftone.pyx":46
  *                 input_view[y+1, x] = atkinson_add_error(input_view[y+1, x], err)
  * 
- *             if y + 2 < h:             # <<<<<<<<<<<<<<
+ *             if y + 2 < height:             # <<<<<<<<<<<<<<
  *                 input_view[y+2, x] = atkinson_add_error(input_view[y+2, x], err)
  * 
  */
@@ -2805,7 +2805,7 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_atkinson_dither(__Pyx_
       /* "instakit/processors/ext/halftone.pyx":49
  *                 input_view[y+2, x] = atkinson_add_error(input_view[y+2, x], err)
  * 
- *             if (y > 0) and (x + 1 < w):             # <<<<<<<<<<<<<<
+ *             if (y > 0) and (x + 1 < width):             # <<<<<<<<<<<<<<
  *                 input_view[y-1, x+1] = atkinson_add_error(input_view[y-1, x+1], err)
  * 
  */
@@ -2815,17 +2815,17 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_atkinson_dither(__Pyx_
         __pyx_t_11 = __pyx_t_20;
         goto __pyx_L10_bool_binop_done;
       }
-      __pyx_t_20 = (((__pyx_v_x + 1) < __pyx_v_w) != 0);
+      __pyx_t_20 = (((__pyx_v_x + 1) < __pyx_v_width) != 0);
       __pyx_t_11 = __pyx_t_20;
       __pyx_L10_bool_binop_done:;
       if (__pyx_t_11) {
 
         /* "instakit/processors/ext/halftone.pyx":50
  * 
- *             if (y > 0) and (x + 1 < w):
+ *             if (y > 0) and (x + 1 < width):
  *                 input_view[y-1, x+1] = atkinson_add_error(input_view[y-1, x+1], err)             # <<<<<<<<<<<<<<
  * 
- *             if x + 1 < w:
+ *             if x + 1 < width:
  */
         __pyx_t_21 = (__pyx_v_y - 1);
         __pyx_t_22 = (__pyx_v_x + 1);
@@ -2836,7 +2836,7 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_atkinson_dither(__Pyx_
         /* "instakit/processors/ext/halftone.pyx":49
  *                 input_view[y+2, x] = atkinson_add_error(input_view[y+2, x], err)
  * 
- *             if (y > 0) and (x + 1 < w):             # <<<<<<<<<<<<<<
+ *             if (y > 0) and (x + 1 < width):             # <<<<<<<<<<<<<<
  *                 input_view[y-1, x+1] = atkinson_add_error(input_view[y-1, x+1], err)
  * 
  */
@@ -2845,19 +2845,19 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_atkinson_dither(__Pyx_
       /* "instakit/processors/ext/halftone.pyx":52
  *                 input_view[y-1, x+1] = atkinson_add_error(input_view[y-1, x+1], err)
  * 
- *             if x + 1 < w:             # <<<<<<<<<<<<<<
+ *             if x + 1 < width:             # <<<<<<<<<<<<<<
  *                 input_view[y, x+1] = atkinson_add_error(input_view[y, x+1], err)
  * 
  */
-      __pyx_t_11 = (((__pyx_v_x + 1) < __pyx_v_w) != 0);
+      __pyx_t_11 = (((__pyx_v_x + 1) < __pyx_v_width) != 0);
       if (__pyx_t_11) {
 
         /* "instakit/processors/ext/halftone.pyx":53
  * 
- *             if x + 1 < w:
+ *             if x + 1 < width:
  *                 input_view[y, x+1] = atkinson_add_error(input_view[y, x+1], err)             # <<<<<<<<<<<<<<
  * 
- *             if (y + 1 < h) and (x + 1 < w):
+ *             if (y + 1 < height) and (x + 1 < width):
  */
         __pyx_t_25 = __pyx_v_y;
         __pyx_t_26 = (__pyx_v_x + 1);
@@ -2868,7 +2868,7 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_atkinson_dither(__Pyx_
         /* "instakit/processors/ext/halftone.pyx":52
  *                 input_view[y-1, x+1] = atkinson_add_error(input_view[y-1, x+1], err)
  * 
- *             if x + 1 < w:             # <<<<<<<<<<<<<<
+ *             if x + 1 < width:             # <<<<<<<<<<<<<<
  *                 input_view[y, x+1] = atkinson_add_error(input_view[y, x+1], err)
  * 
  */
@@ -2877,27 +2877,27 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_atkinson_dither(__Pyx_
       /* "instakit/processors/ext/halftone.pyx":55
  *                 input_view[y, x+1] = atkinson_add_error(input_view[y, x+1], err)
  * 
- *             if (y + 1 < h) and (x + 1 < w):             # <<<<<<<<<<<<<<
+ *             if (y + 1 < height) and (x + 1 < width):             # <<<<<<<<<<<<<<
  *                 input_view[y+1, x+1] = atkinson_add_error(input_view[y+1, x+1], err)
  * 
  */
-      __pyx_t_20 = (((__pyx_v_y + 1) < __pyx_v_h) != 0);
+      __pyx_t_20 = (((__pyx_v_y + 1) < __pyx_v_height) != 0);
       if (__pyx_t_20) {
       } else {
         __pyx_t_11 = __pyx_t_20;
         goto __pyx_L14_bool_binop_done;
       }
-      __pyx_t_20 = (((__pyx_v_x + 1) < __pyx_v_w) != 0);
+      __pyx_t_20 = (((__pyx_v_x + 1) < __pyx_v_width) != 0);
       __pyx_t_11 = __pyx_t_20;
       __pyx_L14_bool_binop_done:;
       if (__pyx_t_11) {
 
         /* "instakit/processors/ext/halftone.pyx":56
  * 
- *             if (y + 1 < h) and (x + 1 < w):
+ *             if (y + 1 < height) and (x + 1 < width):
  *                 input_view[y+1, x+1] = atkinson_add_error(input_view[y+1, x+1], err)             # <<<<<<<<<<<<<<
  * 
- *             if x + 2 < w:
+ *             if x + 2 < width:
  */
         __pyx_t_29 = (__pyx_v_y + 1);
         __pyx_t_30 = (__pyx_v_x + 1);
@@ -2908,7 +2908,7 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_atkinson_dither(__Pyx_
         /* "instakit/processors/ext/halftone.pyx":55
  *                 input_view[y, x+1] = atkinson_add_error(input_view[y, x+1], err)
  * 
- *             if (y + 1 < h) and (x + 1 < w):             # <<<<<<<<<<<<<<
+ *             if (y + 1 < height) and (x + 1 < width):             # <<<<<<<<<<<<<<
  *                 input_view[y+1, x+1] = atkinson_add_error(input_view[y+1, x+1], err)
  * 
  */
@@ -2917,16 +2917,16 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_atkinson_dither(__Pyx_
       /* "instakit/processors/ext/halftone.pyx":58
  *                 input_view[y+1, x+1] = atkinson_add_error(input_view[y+1, x+1], err)
  * 
- *             if x + 2 < w:             # <<<<<<<<<<<<<<
+ *             if x + 2 < width:             # <<<<<<<<<<<<<<
  *                 input_view[y, x+2] = atkinson_add_error(input_view[y, x+2], err)
  * 
  */
-      __pyx_t_11 = (((__pyx_v_x + 2) < __pyx_v_w) != 0);
+      __pyx_t_11 = (((__pyx_v_x + 2) < __pyx_v_width) != 0);
       if (__pyx_t_11) {
 
         /* "instakit/processors/ext/halftone.pyx":59
  * 
- *             if x + 2 < w:
+ *             if x + 2 < width:
  *                 input_view[y, x+2] = atkinson_add_error(input_view[y, x+2], err)             # <<<<<<<<<<<<<<
  * 
  * cdef inline uint8_t floyd_steinberg_add_error_SEVEN(uint8_t base,
@@ -2940,7 +2940,7 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_atkinson_dither(__Pyx_
         /* "instakit/processors/ext/halftone.pyx":58
  *                 input_view[y+1, x+1] = atkinson_add_error(input_view[y+1, x+1], err)
  * 
- *             if x + 2 < w:             # <<<<<<<<<<<<<<
+ *             if x + 2 < width:             # <<<<<<<<<<<<<<
  *                 input_view[y, x+2] = atkinson_add_error(input_view[y, x+2], err)
  * 
  */
@@ -2952,7 +2952,7 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_atkinson_dither(__Pyx_
  * ctypedef numpy.float32_t float32_t
  * 
  * cdef void atkinson_dither(uint8_t[:, :] input_view,             # <<<<<<<<<<<<<<
- *                           int_t w, int_t h,
+ *                           int_t width, int_t height,
  *                           byte_t* threshold_matrix_ptr) nogil:
  */
 
@@ -3211,11 +3211,11 @@ static CYTHON_INLINE __pyx_t_8instakit_10processors_3ext_8halftone_uint8_t __pyx
  *     return <uint8_t>max(min(255, something), 0)
  * 
  * cdef void floyd_steinberg_dither(uint8_t[:, :] input_view,             # <<<<<<<<<<<<<<
- *                                  int_t w, int_t h,
+ *                                  int_t width, int_t height,
  *                                  byte_t* threshold_matrix_ptr) nogil:
  */
 
-static void __pyx_f_8instakit_10processors_3ext_8halftone_floyd_steinberg_dither(__Pyx_memviewslice __pyx_v_input_view, __pyx_t_8instakit_10processors_3ext_8halftone_int_t __pyx_v_w, __pyx_t_8instakit_10processors_3ext_8halftone_int_t __pyx_v_h, __pyx_t_8instakit_10processors_3ext_8halftone_byte_t *__pyx_v_threshold_matrix_ptr) {
+static void __pyx_f_8instakit_10processors_3ext_8halftone_floyd_steinberg_dither(__Pyx_memviewslice __pyx_v_input_view, __pyx_t_8instakit_10processors_3ext_8halftone_int_t __pyx_v_width, __pyx_t_8instakit_10processors_3ext_8halftone_int_t __pyx_v_height, __pyx_t_8instakit_10processors_3ext_8halftone_byte_t *__pyx_v_threshold_matrix_ptr) {
   __pyx_t_8instakit_10processors_3ext_8halftone_int_t __pyx_v_y;
   __pyx_t_8instakit_10processors_3ext_8halftone_int_t __pyx_v_x;
   __pyx_t_8instakit_10processors_3ext_8halftone_int_t __pyx_v_err;
@@ -3253,30 +3253,30 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_floyd_steinberg_dither
   /* "instakit/processors/ext/halftone.pyx":88
  *     cdef uint8_t oldpx, newpx
  * 
- *     for y in range(h):             # <<<<<<<<<<<<<<
- *         for x in range(w):
+ *     for y in range(height):             # <<<<<<<<<<<<<<
+ *         for x in range(width):
  *             oldpx = input_view[y, x]
  */
-  __pyx_t_1 = __pyx_v_h;
+  __pyx_t_1 = __pyx_v_height;
   __pyx_t_2 = __pyx_t_1;
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_y = __pyx_t_3;
 
     /* "instakit/processors/ext/halftone.pyx":89
  * 
- *     for y in range(h):
- *         for x in range(w):             # <<<<<<<<<<<<<<
+ *     for y in range(height):
+ *         for x in range(width):             # <<<<<<<<<<<<<<
  *             oldpx = input_view[y, x]
  *             newpx = <uint8_t>threshold_matrix_ptr[oldpx]
  */
-    __pyx_t_4 = __pyx_v_w;
+    __pyx_t_4 = __pyx_v_width;
     __pyx_t_5 = __pyx_t_4;
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_x = __pyx_t_6;
 
       /* "instakit/processors/ext/halftone.pyx":90
- *     for y in range(h):
- *         for x in range(w):
+ *     for y in range(height):
+ *         for x in range(width):
  *             oldpx = input_view[y, x]             # <<<<<<<<<<<<<<
  *             newpx = <uint8_t>threshold_matrix_ptr[oldpx]
  *             input_view[y, x] = newpx
@@ -3286,7 +3286,7 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_floyd_steinberg_dither
       __pyx_v_oldpx = (*((__pyx_t_8instakit_10processors_3ext_8halftone_uint8_t *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_input_view.data + __pyx_t_7 * __pyx_v_input_view.strides[0]) ) + __pyx_t_8 * __pyx_v_input_view.strides[1]) )));
 
       /* "instakit/processors/ext/halftone.pyx":91
- *         for x in range(w):
+ *         for x in range(width):
  *             oldpx = input_view[y, x]
  *             newpx = <uint8_t>threshold_matrix_ptr[oldpx]             # <<<<<<<<<<<<<<
  *             input_view[y, x] = newpx
@@ -3310,26 +3310,26 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_floyd_steinberg_dither
  *             input_view[y, x] = newpx
  *             err = <int_t>oldpx - <int_t>newpx             # <<<<<<<<<<<<<<
  * 
- *             if (x + 1 < w):
+ *             if (x + 1 < width):
  */
       __pyx_v_err = (((__pyx_t_8instakit_10processors_3ext_8halftone_int_t)__pyx_v_oldpx) - ((__pyx_t_8instakit_10processors_3ext_8halftone_int_t)__pyx_v_newpx));
 
       /* "instakit/processors/ext/halftone.pyx":95
  *             err = <int_t>oldpx - <int_t>newpx
  * 
- *             if (x + 1 < w):             # <<<<<<<<<<<<<<
+ *             if (x + 1 < width):             # <<<<<<<<<<<<<<
  *                 input_view[y, x+1] = floyd_steinberg_add_error_SEVEN(input_view[y, x+1], err)
  * 
  */
-      __pyx_t_11 = (((__pyx_v_x + 1) < __pyx_v_w) != 0);
+      __pyx_t_11 = (((__pyx_v_x + 1) < __pyx_v_width) != 0);
       if (__pyx_t_11) {
 
         /* "instakit/processors/ext/halftone.pyx":96
  * 
- *             if (x + 1 < w):
+ *             if (x + 1 < width):
  *                 input_view[y, x+1] = floyd_steinberg_add_error_SEVEN(input_view[y, x+1], err)             # <<<<<<<<<<<<<<
  * 
- *             if (y + 1 < h) and (x > 0):
+ *             if (y + 1 < height) and (x > 0):
  */
         __pyx_t_12 = __pyx_v_y;
         __pyx_t_13 = (__pyx_v_x + 1);
@@ -3340,7 +3340,7 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_floyd_steinberg_dither
         /* "instakit/processors/ext/halftone.pyx":95
  *             err = <int_t>oldpx - <int_t>newpx
  * 
- *             if (x + 1 < w):             # <<<<<<<<<<<<<<
+ *             if (x + 1 < width):             # <<<<<<<<<<<<<<
  *                 input_view[y, x+1] = floyd_steinberg_add_error_SEVEN(input_view[y, x+1], err)
  * 
  */
@@ -3349,11 +3349,11 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_floyd_steinberg_dither
       /* "instakit/processors/ext/halftone.pyx":98
  *                 input_view[y, x+1] = floyd_steinberg_add_error_SEVEN(input_view[y, x+1], err)
  * 
- *             if (y + 1 < h) and (x > 0):             # <<<<<<<<<<<<<<
+ *             if (y + 1 < height) and (x > 0):             # <<<<<<<<<<<<<<
  *                 input_view[y+1, x-1] = floyd_steinberg_add_error_THREE(input_view[y+1, x-1], err)
  * 
  */
-      __pyx_t_16 = (((__pyx_v_y + 1) < __pyx_v_h) != 0);
+      __pyx_t_16 = (((__pyx_v_y + 1) < __pyx_v_height) != 0);
       if (__pyx_t_16) {
       } else {
         __pyx_t_11 = __pyx_t_16;
@@ -3366,10 +3366,10 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_floyd_steinberg_dither
 
         /* "instakit/processors/ext/halftone.pyx":99
  * 
- *             if (y + 1 < h) and (x > 0):
+ *             if (y + 1 < height) and (x > 0):
  *                 input_view[y+1, x-1] = floyd_steinberg_add_error_THREE(input_view[y+1, x-1], err)             # <<<<<<<<<<<<<<
  * 
- *             if (y + 1 < h):
+ *             if (y + 1 < height):
  */
         __pyx_t_17 = (__pyx_v_y + 1);
         __pyx_t_18 = (__pyx_v_x - 1);
@@ -3380,7 +3380,7 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_floyd_steinberg_dither
         /* "instakit/processors/ext/halftone.pyx":98
  *                 input_view[y, x+1] = floyd_steinberg_add_error_SEVEN(input_view[y, x+1], err)
  * 
- *             if (y + 1 < h) and (x > 0):             # <<<<<<<<<<<<<<
+ *             if (y + 1 < height) and (x > 0):             # <<<<<<<<<<<<<<
  *                 input_view[y+1, x-1] = floyd_steinberg_add_error_THREE(input_view[y+1, x-1], err)
  * 
  */
@@ -3389,19 +3389,19 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_floyd_steinberg_dither
       /* "instakit/processors/ext/halftone.pyx":101
  *                 input_view[y+1, x-1] = floyd_steinberg_add_error_THREE(input_view[y+1, x-1], err)
  * 
- *             if (y + 1 < h):             # <<<<<<<<<<<<<<
+ *             if (y + 1 < height):             # <<<<<<<<<<<<<<
  *                 input_view[y+1, x] = floyd_steinberg_add_error_CINCO(input_view[y+1, x], err)
  * 
  */
-      __pyx_t_11 = (((__pyx_v_y + 1) < __pyx_v_h) != 0);
+      __pyx_t_11 = (((__pyx_v_y + 1) < __pyx_v_height) != 0);
       if (__pyx_t_11) {
 
         /* "instakit/processors/ext/halftone.pyx":102
  * 
- *             if (y + 1 < h):
+ *             if (y + 1 < height):
  *                 input_view[y+1, x] = floyd_steinberg_add_error_CINCO(input_view[y+1, x], err)             # <<<<<<<<<<<<<<
  * 
- *             if (y + 1 < h) and (x + 1 < w):
+ *             if (y + 1 < height) and (x + 1 < width):
  */
         __pyx_t_21 = (__pyx_v_y + 1);
         __pyx_t_22 = __pyx_v_x;
@@ -3412,7 +3412,7 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_floyd_steinberg_dither
         /* "instakit/processors/ext/halftone.pyx":101
  *                 input_view[y+1, x-1] = floyd_steinberg_add_error_THREE(input_view[y+1, x-1], err)
  * 
- *             if (y + 1 < h):             # <<<<<<<<<<<<<<
+ *             if (y + 1 < height):             # <<<<<<<<<<<<<<
  *                 input_view[y+1, x] = floyd_steinberg_add_error_CINCO(input_view[y+1, x], err)
  * 
  */
@@ -3421,24 +3421,24 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_floyd_steinberg_dither
       /* "instakit/processors/ext/halftone.pyx":104
  *                 input_view[y+1, x] = floyd_steinberg_add_error_CINCO(input_view[y+1, x], err)
  * 
- *             if (y + 1 < h) and (x + 1 < w):             # <<<<<<<<<<<<<<
+ *             if (y + 1 < height) and (x + 1 < width):             # <<<<<<<<<<<<<<
  *                 input_view[y+1, x+1] = floyd_steinberg_add_error_ALONE(input_view[y+1, x+1], err)
  * 
  */
-      __pyx_t_16 = (((__pyx_v_y + 1) < __pyx_v_h) != 0);
+      __pyx_t_16 = (((__pyx_v_y + 1) < __pyx_v_height) != 0);
       if (__pyx_t_16) {
       } else {
         __pyx_t_11 = __pyx_t_16;
         goto __pyx_L13_bool_binop_done;
       }
-      __pyx_t_16 = (((__pyx_v_x + 1) < __pyx_v_w) != 0);
+      __pyx_t_16 = (((__pyx_v_x + 1) < __pyx_v_width) != 0);
       __pyx_t_11 = __pyx_t_16;
       __pyx_L13_bool_binop_done:;
       if (__pyx_t_11) {
 
         /* "instakit/processors/ext/halftone.pyx":105
  * 
- *             if (y + 1 < h) and (x + 1 < w):
+ *             if (y + 1 < height) and (x + 1 < width):
  *                 input_view[y+1, x+1] = floyd_steinberg_add_error_ALONE(input_view[y+1, x+1], err)             # <<<<<<<<<<<<<<
  * 
  * @cython.freelist(16)
@@ -3452,7 +3452,7 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_floyd_steinberg_dither
         /* "instakit/processors/ext/halftone.pyx":104
  *                 input_view[y+1, x] = floyd_steinberg_add_error_CINCO(input_view[y+1, x], err)
  * 
- *             if (y + 1 < h) and (x + 1 < w):             # <<<<<<<<<<<<<<
+ *             if (y + 1 < height) and (x + 1 < width):             # <<<<<<<<<<<<<<
  *                 input_view[y+1, x+1] = floyd_steinberg_add_error_ALONE(input_view[y+1, x+1], err)
  * 
  */
@@ -3464,7 +3464,7 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_floyd_steinberg_dither
  *     return <uint8_t>max(min(255, something), 0)
  * 
  * cdef void floyd_steinberg_dither(uint8_t[:, :] input_view,             # <<<<<<<<<<<<<<
- *                                  int_t w, int_t h,
+ *                                  int_t width, int_t height,
  *                                  byte_t* threshold_matrix_ptr) nogil:
  */
 
