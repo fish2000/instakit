@@ -279,16 +279,21 @@ class Mode(ModeAncestor):
     def merge(self, *channels):
         return Image.merge(self.to_string(), channels)
     
-    def process(self, image):
+    def render(self, image, *args, **kwargs):
         if self.check(image):
             return image
-        return image.convert(self.to_string())
+        return image.convert(self.to_string(),
+                            *args,
+                           **kwargs)
+    
+    def process(self, image):
+        return self.render(image)
     
     def new(self, size, color=0):
         return Image.new(self.to_string(), size, color=color)
     
     def open(self, fileish):
-        return self.process(Image.open(fileish))
+        return self.render(Image.open(fileish))
     
     def frombytes(self, size, data, decoder_name='raw', *args):
         return Image.frombytes(self.to_string(),

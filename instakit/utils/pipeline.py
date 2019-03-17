@@ -97,6 +97,8 @@ class Pipeline(MutableSequence):
                 self.list = base_type([*target])
             elif type(target) in (dict, defaultdict, OrderedDict):
                 self.list = base_type([*sorted(target).values()])
+            elif hasattr(target, 'iterate'):
+                self.list = base_type([*target.iterate()])
             elif hasattr(target, '__iter__'):
                 self.list = base_type([*target])
             else:
