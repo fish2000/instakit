@@ -166,7 +166,7 @@ class BandFork(Fork):
         processors. BandFork acts selectively on the individual bands of
         input image data, either:
         - applying a band-specific processor instance, or
-        - applying a default processor successively across all bands.
+        - applying a default processor factory successively across all bands.
         
         BandFork’s interface is closely aligned with Python’s mutable-mapping
         API‡ -- with which most programmers are no doubt quite familiar:
@@ -187,7 +187,7 @@ class BandFork(Fork):
         an Instakit Processor. The Fork ABC implements the required methods
         of an Instakit Processor Container†, through which it furnishes an
         interface to individual bands -- also generally known as channels,
-        per the labeling of the relevant Photoshop UI elements -- of image
+        per the language of the relevant Photoshop UI elements -- of image
         data. 
         
         † q.v. the `instakit.abc` module source code supra.
@@ -196,17 +196,17 @@ class BandFork(Fork):
     """
     mode_t = Mode.RGB
     
-    def __init__(self, default_factory, *args, **kwargs):
+    def __init__(self, processor_factory, *args, **kwargs):
         """ Initialize a BandFork instance, using the given callable value
-            for `default_factory` and any band-appropriate keyword-arguments,
+            for `processor_factory` and any band-appropriate keyword-arguments,
             e.g. `(R=MyProcessor, G=MyOtherProcessor, B=None)`
         """
-        # Reset mode if a new mode was specified:
+        # Reset `self.mode` if a new mode was specified:
         if 'mode' in kwargs:
             self.mode = kwargs.pop('mode')
         
-        # Call super(…):
-        super(BandFork, self).__init__(default_factory, *args, **kwargs)
+        # Call `super(…)`, passing `processor_factory`:
+        super(BandFork, self).__init__(processor_factory, *args, **kwargs)
     
     @property
     def mode(self):
@@ -223,7 +223,7 @@ class BandFork(Fork):
             raise TypeError("invalid mode type: %s (%s)" % (type(value), value))
     
     def set_mode_t(self, value):
-        self.mode_t = value # SHADOW!!
+        self.mode_t = value # DOUBLE SHADOW!!
     
     @property
     def band_labels(self):
@@ -326,21 +326,21 @@ class OverprintFork(BandFork):
     mode_t = Mode.CMYK
     inks = CMYKInk.CMYK()
     
-    def __init__(self, default_factory, gcr=20, *args, **kwargs):
+    def __init__(self, processor_factory, gcr=20, *args, **kwargs):
         """ Initialize an OverprintFork instance with the given callable value
-            for `default_factory` and any band-appropriate keyword-arguments,
+            for `processor_factory` and any band-appropriate keyword-arguments,
             e.g. `(C=MyProcessor, M=MyOtherProcessor, Y=MyProcessor, K=None)`
         """
         # Store BasicGCR and AutoContrast processors:
         self.contrast = AutoContrast()
         self.basicgcr = BasicGCR(percentage=gcr)
         
-        # Call super():
-        super(OverprintFork, self).__init__(default_factory, *args, **kwargs)
+        # Call `super(…)`, passing `processor_factory`:
+        super(OverprintFork, self).__init__(processor_factory, *args, **kwargs)
         
         # Make each band-processor a Pipeline() ending in
         # the channel-appropriate CMYKInk enum processor:
-        if default_factory is not None:
+        if self.default_factory is not None:
             self.apply_CMYK_inks()
     
     def apply_CMYK_inks(self):
@@ -356,7 +356,7 @@ class OverprintFork(BandFork):
                 if processor[-1] is not ink:
                     processor.append(ink)
                     self[band_label] = processor
-            elif hasattr(processor, 'iterate'):
+            elif hasattr(processor, 'last'):
                 if processor.last() is not ink:
                     self[band_label] = Pipe(processor.iterate(), ink)
             else:
