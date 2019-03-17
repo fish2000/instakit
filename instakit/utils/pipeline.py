@@ -340,25 +340,26 @@ class OverprintFork(BandFork):
         
         # Make each band-processor a Pipeline() ending in
         # the channel-appropriate CMYKInk enum processor:
-        if self.default_factory is not None:
-            self.apply_CMYK_inks()
+        self.apply_CMYK_inks()
     
     def apply_CMYK_inks(self):
         """ This method ensures that each bands’ processor is set up
-            as a Pipeline() ending in a CMYKInk corresponding to the
-            band in question. Calling it multiple times *should* be
-            idempotent (but don’t quote me on that)
+            as a Pipe() or Pipeline() ending in a CMYKInk corresponding
+            to the band in question. Calling it multiple times *should*
+            be idempotent (but don’t quote me on that)
         """
         for band_label, ink in zip(self.band_labels,
                               type(self).inks):
             processor = self[band_label]
+            if processor is None:
+                self[band_label] = Pipe(ink)
             if hasattr(processor, 'append'):
                 if processor[-1] is not ink:
                     processor.append(ink)
                     self[band_label] = processor
             elif hasattr(processor, 'last'):
                 if processor.last() is not ink:
-                    self[band_label] = Pipe(processor.iterate(), ink)
+                    self[band_label] = Pipe(*processor.iterate(), ink)
             else:
                 self[band_label] = Pipe(processor, ink)
     
@@ -375,8 +376,7 @@ class OverprintFork(BandFork):
             updated processing dataflow
         """
         super(OverprintFork, self).update(iterable, **kwargs)
-        if self.default_factory is not None:
-            self.apply_CMYK_inks()
+        self.apply_CMYK_inks()
     
     def split(self, image):
         """ OverprintFork.split(image) uses imagekit.utils.gcr.BasicGCR(…) to perform
