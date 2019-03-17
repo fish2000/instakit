@@ -101,7 +101,7 @@ cdef void floyd_steinberg_dither(uint8_t[:, :] input_view,
                 input_view[y+1, x+1] = floyd_steinberg_add_error_ALONE(input_view[y+1, x+1], err)
 
 @cython.freelist(16)
-cdef class Ditherer:
+cdef class ThresholdMatrixDitherer:
     
     """ Base ditherer image processor class """
     
@@ -114,7 +114,7 @@ cdef class Ditherer:
             for idx in range(255):
                 self.threshold_matrix[idx] = <unsigned char>(<uint8_t>(<float32_t>idx / threshold) * 255)
 
-cdef class Atkinson(Ditherer):
+cdef class Atkinson(ThresholdMatrixDitherer):
     
     """ Fast cythonized Atkinson-dither halftone image processor """
     
@@ -128,7 +128,7 @@ cdef class Atkinson(Ditherer):
         output_array = numpy.asarray(input_view.base)
         return ndarrays.toimage(output_array)
 
-cdef class FloydSteinberg(Ditherer):
+cdef class FloydSteinberg(ThresholdMatrixDitherer):
     
     """ Fast cythonized Floyd-Steinberg-dither halftone image processor """
     

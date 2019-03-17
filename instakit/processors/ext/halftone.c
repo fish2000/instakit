@@ -1231,7 +1231,7 @@ static CYTHON_INLINE __pyx_t_double_complex __pyx_t_double_complex_from_parts(do
 
 
 /*--- Type declarations ---*/
-struct __pyx_obj_8instakit_10processors_3ext_8halftone_Ditherer;
+struct __pyx_obj_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer;
 struct __pyx_obj_8instakit_10processors_3ext_8halftone_Atkinson;
 struct __pyx_obj_8instakit_10processors_3ext_8halftone_FloydSteinberg;
 struct __pyx_array_obj;
@@ -1278,11 +1278,11 @@ typedef npy_cdouble __pyx_t_5numpy_complex_t;
 /* "instakit/processors/ext/halftone.pyx":104
  * 
  * @cython.freelist(16)
- * cdef class Ditherer:             # <<<<<<<<<<<<<<
+ * cdef class ThresholdMatrixDitherer:             # <<<<<<<<<<<<<<
  * 
  *     """ Base ditherer image processor class """
  */
-struct __pyx_obj_8instakit_10processors_3ext_8halftone_Ditherer {
+struct __pyx_obj_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer {
   PyObject_HEAD
   __pyx_t_8instakit_10processors_3ext_8halftone_byte_t threshold_matrix[0x100];
 };
@@ -1291,24 +1291,24 @@ struct __pyx_obj_8instakit_10processors_3ext_8halftone_Ditherer {
 /* "instakit/processors/ext/halftone.pyx":117
  *                 self.threshold_matrix[idx] = <unsigned char>(<uint8_t>(<float32_t>idx / threshold) * 255)
  * 
- * cdef class Atkinson(Ditherer):             # <<<<<<<<<<<<<<
+ * cdef class Atkinson(ThresholdMatrixDitherer):             # <<<<<<<<<<<<<<
  * 
  *     """ Fast cythonized Atkinson-dither halftone image processor """
  */
 struct __pyx_obj_8instakit_10processors_3ext_8halftone_Atkinson {
-  struct __pyx_obj_8instakit_10processors_3ext_8halftone_Ditherer __pyx_base;
+  struct __pyx_obj_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer __pyx_base;
 };
 
 
 /* "instakit/processors/ext/halftone.pyx":131
  *         return ndarrays.toimage(output_array)
  * 
- * cdef class FloydSteinberg(Ditherer):             # <<<<<<<<<<<<<<
+ * cdef class FloydSteinberg(ThresholdMatrixDitherer):             # <<<<<<<<<<<<<<
  * 
  *     """ Fast cythonized Floyd-Steinberg-dither halftone image processor """
  */
 struct __pyx_obj_8instakit_10processors_3ext_8halftone_FloydSteinberg {
-  struct __pyx_obj_8instakit_10processors_3ext_8halftone_Ditherer __pyx_base;
+  struct __pyx_obj_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer __pyx_base;
 };
 
 
@@ -2222,7 +2222,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *, cha
 /* Module declarations from 'cython' */
 
 /* Module declarations from 'instakit.processors.ext.halftone' */
-static PyTypeObject *__pyx_ptype_8instakit_10processors_3ext_8halftone_Ditherer = 0;
+static PyTypeObject *__pyx_ptype_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer = 0;
 static PyTypeObject *__pyx_ptype_8instakit_10processors_3ext_8halftone_Atkinson = 0;
 static PyTypeObject *__pyx_ptype_8instakit_10processors_3ext_8halftone_FloydSteinberg = 0;
 static PyTypeObject *__pyx_array_type = 0;
@@ -2333,7 +2333,6 @@ static const char __pyx_k_fortran[] = "fortran";
 static const char __pyx_k_memview[] = "memview";
 static const char __pyx_k_toimage[] = "toimage";
 static const char __pyx_k_Atkinson[] = "Atkinson";
-static const char __pyx_k_Ditherer[] = "Ditherer";
 static const char __pyx_k_Ellipsis[] = "Ellipsis";
 static const char __pyx_k_getstate[] = "__getstate__";
 static const char __pyx_k_itemsize[] = "itemsize";
@@ -2372,6 +2371,7 @@ static const char __pyx_k_strided_and_indirect[] = "<strided and indirect>";
 static const char __pyx_k_contiguous_and_direct[] = "<contiguous and direct>";
 static const char __pyx_k_MemoryView_of_r_object[] = "<MemoryView of %r object>";
 static const char __pyx_k_MemoryView_of_r_at_0x_x[] = "<MemoryView of %r at 0x%x>";
+static const char __pyx_k_ThresholdMatrixDitherer[] = "ThresholdMatrixDitherer";
 static const char __pyx_k_contiguous_and_indirect[] = "<contiguous and indirect>";
 static const char __pyx_k_Cannot_index_with_type_s[] = "Cannot index with type '%s'";
 static const char __pyx_k_Invalid_shape_in_axis_d_d[] = "Invalid shape in axis %d: %d.";
@@ -2406,7 +2406,6 @@ static PyObject *__pyx_kp_s_Can_only_create_a_buffer_that_is;
 static PyObject *__pyx_kp_s_Cannot_assign_to_read_only_memor;
 static PyObject *__pyx_kp_s_Cannot_create_writable_memory_vi;
 static PyObject *__pyx_kp_s_Cannot_index_with_type_s;
-static PyObject *__pyx_n_s_Ditherer;
 static PyObject *__pyx_n_s_Ellipsis;
 static PyObject *__pyx_kp_s_Empty_shape_tuple_for_cython_arr;
 static PyObject *__pyx_n_s_FloydSteinberg;
@@ -2427,6 +2426,7 @@ static PyObject *__pyx_n_b_O;
 static PyObject *__pyx_kp_s_Out_of_bounds_on_buffer_access_a;
 static PyObject *__pyx_n_s_PickleError;
 static PyObject *__pyx_n_s_RuntimeError;
+static PyObject *__pyx_n_s_ThresholdMatrixDitherer;
 static PyObject *__pyx_n_s_TypeError;
 static PyObject *__pyx_kp_s_Unable_to_convert_item_to_object;
 static PyObject *__pyx_n_s_ValueError;
@@ -2509,9 +2509,9 @@ static PyObject *__pyx_kp_s_unable_to_allocate_shape_and_str;
 static PyObject *__pyx_kp_u_unknown_dtype_code_in_numpy_pxd;
 static PyObject *__pyx_n_s_unpack;
 static PyObject *__pyx_n_s_update;
-static int __pyx_pf_8instakit_10processors_3ext_8halftone_8Ditherer___cinit__(struct __pyx_obj_8instakit_10processors_3ext_8halftone_Ditherer *__pyx_v_self, __pyx_t_8instakit_10processors_3ext_8halftone_float32_t __pyx_v_threshold); /* proto */
-static PyObject *__pyx_pf_8instakit_10processors_3ext_8halftone_8Ditherer_2__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_8instakit_10processors_3ext_8halftone_Ditherer *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_8instakit_10processors_3ext_8halftone_8Ditherer_4__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_8instakit_10processors_3ext_8halftone_Ditherer *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
+static int __pyx_pf_8instakit_10processors_3ext_8halftone_23ThresholdMatrixDitherer___cinit__(struct __pyx_obj_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer *__pyx_v_self, __pyx_t_8instakit_10processors_3ext_8halftone_float32_t __pyx_v_threshold); /* proto */
+static PyObject *__pyx_pf_8instakit_10processors_3ext_8halftone_23ThresholdMatrixDitherer_2__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_8instakit_10processors_3ext_8halftone_23ThresholdMatrixDitherer_4__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
 static PyObject *__pyx_pf_8instakit_10processors_3ext_8halftone_8Atkinson_process(struct __pyx_obj_8instakit_10processors_3ext_8halftone_Atkinson *__pyx_v_self, PyObject *__pyx_v_image); /* proto */
 static PyObject *__pyx_pf_8instakit_10processors_3ext_8halftone_8Atkinson_2__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_8instakit_10processors_3ext_8halftone_Atkinson *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_8instakit_10processors_3ext_8halftone_8Atkinson_4__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_8instakit_10processors_3ext_8halftone_Atkinson *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
@@ -2562,7 +2562,7 @@ static PyObject *__pyx_pf_15View_dot_MemoryView_16_memoryviewslice_4base___get__
 static PyObject *__pyx_pf___pyx_memoryviewslice___reduce_cython__(CYTHON_UNUSED struct __pyx_memoryviewslice_obj *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf___pyx_memoryviewslice_2__setstate_cython__(CYTHON_UNUSED struct __pyx_memoryviewslice_obj *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
 static PyObject *__pyx_pf_15View_dot_MemoryView___pyx_unpickle_Enum(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v___pyx_type, long __pyx_v___pyx_checksum, PyObject *__pyx_v___pyx_state); /* proto */
-static PyObject *__pyx_tp_new_8instakit_10processors_3ext_8halftone_Ditherer(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
+static PyObject *__pyx_tp_new_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_8instakit_10processors_3ext_8halftone_Atkinson(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_8instakit_10processors_3ext_8halftone_FloydSteinberg(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_array(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
@@ -3470,8 +3470,8 @@ static void __pyx_f_8instakit_10processors_3ext_8halftone_floyd_steinberg_dither
  */
 
 /* Python wrapper */
-static int __pyx_pw_8instakit_10processors_3ext_8halftone_8Ditherer_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static int __pyx_pw_8instakit_10processors_3ext_8halftone_8Ditherer_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static int __pyx_pw_8instakit_10processors_3ext_8halftone_23ThresholdMatrixDitherer_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static int __pyx_pw_8instakit_10processors_3ext_8halftone_23ThresholdMatrixDitherer_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   __pyx_t_8instakit_10processors_3ext_8halftone_float32_t __pyx_v_threshold;
   int __pyx_r;
   __Pyx_RefNannyDeclarations
@@ -3517,18 +3517,18 @@ static int __pyx_pw_8instakit_10processors_3ext_8halftone_8Ditherer_1__cinit__(P
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("__cinit__", 0, 0, 1, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 111, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("instakit.processors.ext.halftone.Ditherer.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("instakit.processors.ext.halftone.ThresholdMatrixDitherer.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_8instakit_10processors_3ext_8halftone_8Ditherer___cinit__(((struct __pyx_obj_8instakit_10processors_3ext_8halftone_Ditherer *)__pyx_v_self), __pyx_v_threshold);
+  __pyx_r = __pyx_pf_8instakit_10processors_3ext_8halftone_23ThresholdMatrixDitherer___cinit__(((struct __pyx_obj_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer *)__pyx_v_self), __pyx_v_threshold);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static int __pyx_pf_8instakit_10processors_3ext_8halftone_8Ditherer___cinit__(struct __pyx_obj_8instakit_10processors_3ext_8halftone_Ditherer *__pyx_v_self, __pyx_t_8instakit_10processors_3ext_8halftone_float32_t __pyx_v_threshold) {
+static int __pyx_pf_8instakit_10processors_3ext_8halftone_23ThresholdMatrixDitherer___cinit__(struct __pyx_obj_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer *__pyx_v_self, __pyx_t_8instakit_10processors_3ext_8halftone_float32_t __pyx_v_threshold) {
   __pyx_t_8instakit_10processors_3ext_8halftone_uint8_t __pyx_v_idx;
   int __pyx_r;
   __Pyx_RefNannyDeclarations
@@ -3565,7 +3565,7 @@ static int __pyx_pf_8instakit_10processors_3ext_8halftone_8Ditherer___cinit__(st
  *             for idx in range(255):
  *                 self.threshold_matrix[idx] = <unsigned char>(<uint8_t>(<float32_t>idx / threshold) * 255)             # <<<<<<<<<<<<<<
  * 
- * cdef class Atkinson(Ditherer):
+ * cdef class Atkinson(ThresholdMatrixDitherer):
  */
           (__pyx_v_self->threshold_matrix[__pyx_v_idx]) = ((unsigned char)(((__pyx_t_8instakit_10processors_3ext_8halftone_uint8_t)(((__pyx_t_8instakit_10processors_3ext_8halftone_float32_t)__pyx_v_idx) / __pyx_v_threshold)) * 0xFF));
         }
@@ -3611,20 +3611,20 @@ static int __pyx_pf_8instakit_10processors_3ext_8halftone_8Ditherer___cinit__(st
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8instakit_10processors_3ext_8halftone_8Ditherer_3__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
-static char __pyx_doc_8instakit_10processors_3ext_8halftone_8Ditherer_2__reduce_cython__[] = "Ditherer.__reduce_cython__(self)";
-static PyObject *__pyx_pw_8instakit_10processors_3ext_8halftone_8Ditherer_3__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
+static PyObject *__pyx_pw_8instakit_10processors_3ext_8halftone_23ThresholdMatrixDitherer_3__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+static char __pyx_doc_8instakit_10processors_3ext_8halftone_23ThresholdMatrixDitherer_2__reduce_cython__[] = "ThresholdMatrixDitherer.__reduce_cython__(self)";
+static PyObject *__pyx_pw_8instakit_10processors_3ext_8halftone_23ThresholdMatrixDitherer_3__reduce_cython__(PyObject *__pyx_v_self, CYTHON_UNUSED PyObject *unused) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__reduce_cython__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_8instakit_10processors_3ext_8halftone_8Ditherer_2__reduce_cython__(((struct __pyx_obj_8instakit_10processors_3ext_8halftone_Ditherer *)__pyx_v_self));
+  __pyx_r = __pyx_pf_8instakit_10processors_3ext_8halftone_23ThresholdMatrixDitherer_2__reduce_cython__(((struct __pyx_obj_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8instakit_10processors_3ext_8halftone_8Ditherer_2__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_8instakit_10processors_3ext_8halftone_Ditherer *__pyx_v_self) {
+static PyObject *__pyx_pf_8instakit_10processors_3ext_8halftone_23ThresholdMatrixDitherer_2__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -3651,7 +3651,7 @@ static PyObject *__pyx_pf_8instakit_10processors_3ext_8halftone_8Ditherer_2__red
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("instakit.processors.ext.halftone.Ditherer.__reduce_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("instakit.processors.ext.halftone.ThresholdMatrixDitherer.__reduce_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
@@ -3666,20 +3666,20 @@ static PyObject *__pyx_pf_8instakit_10processors_3ext_8halftone_8Ditherer_2__red
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8instakit_10processors_3ext_8halftone_8Ditherer_5__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state); /*proto*/
-static char __pyx_doc_8instakit_10processors_3ext_8halftone_8Ditherer_4__setstate_cython__[] = "Ditherer.__setstate_cython__(self, __pyx_state)";
-static PyObject *__pyx_pw_8instakit_10processors_3ext_8halftone_8Ditherer_5__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state) {
+static PyObject *__pyx_pw_8instakit_10processors_3ext_8halftone_23ThresholdMatrixDitherer_5__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state); /*proto*/
+static char __pyx_doc_8instakit_10processors_3ext_8halftone_23ThresholdMatrixDitherer_4__setstate_cython__[] = "ThresholdMatrixDitherer.__setstate_cython__(self, __pyx_state)";
+static PyObject *__pyx_pw_8instakit_10processors_3ext_8halftone_23ThresholdMatrixDitherer_5__setstate_cython__(PyObject *__pyx_v_self, PyObject *__pyx_v___pyx_state) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__setstate_cython__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_8instakit_10processors_3ext_8halftone_8Ditherer_4__setstate_cython__(((struct __pyx_obj_8instakit_10processors_3ext_8halftone_Ditherer *)__pyx_v_self), ((PyObject *)__pyx_v___pyx_state));
+  __pyx_r = __pyx_pf_8instakit_10processors_3ext_8halftone_23ThresholdMatrixDitherer_4__setstate_cython__(((struct __pyx_obj_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer *)__pyx_v_self), ((PyObject *)__pyx_v___pyx_state));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8instakit_10processors_3ext_8halftone_8Ditherer_4__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_8instakit_10processors_3ext_8halftone_Ditherer *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state) {
+static PyObject *__pyx_pf_8instakit_10processors_3ext_8halftone_23ThresholdMatrixDitherer_4__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -3706,7 +3706,7 @@ static PyObject *__pyx_pf_8instakit_10processors_3ext_8halftone_8Ditherer_4__set
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("instakit.processors.ext.halftone.Ditherer.__setstate_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("instakit.processors.ext.halftone.ThresholdMatrixDitherer.__setstate_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
@@ -3961,7 +3961,7 @@ static PyObject *__pyx_pf_8instakit_10processors_3ext_8halftone_8Atkinson_proces
  *         output_array = numpy.asarray(input_view.base)
  *         return ndarrays.toimage(output_array)             # <<<<<<<<<<<<<<
  * 
- * cdef class FloydSteinberg(Ditherer):
+ * cdef class FloydSteinberg(ThresholdMatrixDitherer):
  */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_ndarrays); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 129, __pyx_L1_error)
@@ -19608,14 +19608,14 @@ static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *__
   return __pyx_r;
 }
 
-static struct __pyx_obj_8instakit_10processors_3ext_8halftone_Ditherer *__pyx_freelist_8instakit_10processors_3ext_8halftone_Ditherer[16];
-static int __pyx_freecount_8instakit_10processors_3ext_8halftone_Ditherer = 0;
+static struct __pyx_obj_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer *__pyx_freelist_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer[16];
+static int __pyx_freecount_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer = 0;
 
-static PyObject *__pyx_tp_new_8instakit_10processors_3ext_8halftone_Ditherer(PyTypeObject *t, PyObject *a, PyObject *k) {
+static PyObject *__pyx_tp_new_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer(PyTypeObject *t, PyObject *a, PyObject *k) {
   PyObject *o;
-  if (CYTHON_COMPILING_IN_CPYTHON && likely((__pyx_freecount_8instakit_10processors_3ext_8halftone_Ditherer > 0) & (t->tp_basicsize == sizeof(struct __pyx_obj_8instakit_10processors_3ext_8halftone_Ditherer)) & ((t->tp_flags & (Py_TPFLAGS_IS_ABSTRACT | Py_TPFLAGS_HEAPTYPE)) == 0))) {
-    o = (PyObject*)__pyx_freelist_8instakit_10processors_3ext_8halftone_Ditherer[--__pyx_freecount_8instakit_10processors_3ext_8halftone_Ditherer];
-    memset(o, 0, sizeof(struct __pyx_obj_8instakit_10processors_3ext_8halftone_Ditherer));
+  if (CYTHON_COMPILING_IN_CPYTHON && likely((__pyx_freecount_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer > 0) & (t->tp_basicsize == sizeof(struct __pyx_obj_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer)) & ((t->tp_flags & (Py_TPFLAGS_IS_ABSTRACT | Py_TPFLAGS_HEAPTYPE)) == 0))) {
+    o = (PyObject*)__pyx_freelist_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer[--__pyx_freecount_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer];
+    memset(o, 0, sizeof(struct __pyx_obj_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer));
     (void) PyObject_INIT(o, t);
   } else {
     if (likely((t->tp_flags & Py_TPFLAGS_IS_ABSTRACT) == 0)) {
@@ -19625,38 +19625,38 @@ static PyObject *__pyx_tp_new_8instakit_10processors_3ext_8halftone_Ditherer(PyT
     }
     if (unlikely(!o)) return 0;
   }
-  if (unlikely(__pyx_pw_8instakit_10processors_3ext_8halftone_8Ditherer_1__cinit__(o, a, k) < 0)) goto bad;
+  if (unlikely(__pyx_pw_8instakit_10processors_3ext_8halftone_23ThresholdMatrixDitherer_1__cinit__(o, a, k) < 0)) goto bad;
   return o;
   bad:
   Py_DECREF(o); o = 0;
   return NULL;
 }
 
-static void __pyx_tp_dealloc_8instakit_10processors_3ext_8halftone_Ditherer(PyObject *o) {
+static void __pyx_tp_dealloc_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer(PyObject *o) {
   #if CYTHON_USE_TP_FINALIZE
   if (unlikely(PyType_HasFeature(Py_TYPE(o), Py_TPFLAGS_HAVE_FINALIZE) && Py_TYPE(o)->tp_finalize) && (!PyType_IS_GC(Py_TYPE(o)) || !_PyGC_FINALIZED(o))) {
     if (PyObject_CallFinalizerFromDealloc(o)) return;
   }
   #endif
-  if (CYTHON_COMPILING_IN_CPYTHON && ((__pyx_freecount_8instakit_10processors_3ext_8halftone_Ditherer < 16) & (Py_TYPE(o)->tp_basicsize == sizeof(struct __pyx_obj_8instakit_10processors_3ext_8halftone_Ditherer)) & ((Py_TYPE(o)->tp_flags & (Py_TPFLAGS_IS_ABSTRACT | Py_TPFLAGS_HEAPTYPE)) == 0))) {
-    __pyx_freelist_8instakit_10processors_3ext_8halftone_Ditherer[__pyx_freecount_8instakit_10processors_3ext_8halftone_Ditherer++] = ((struct __pyx_obj_8instakit_10processors_3ext_8halftone_Ditherer *)o);
+  if (CYTHON_COMPILING_IN_CPYTHON && ((__pyx_freecount_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer < 16) & (Py_TYPE(o)->tp_basicsize == sizeof(struct __pyx_obj_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer)) & ((Py_TYPE(o)->tp_flags & (Py_TPFLAGS_IS_ABSTRACT | Py_TPFLAGS_HEAPTYPE)) == 0))) {
+    __pyx_freelist_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer[__pyx_freecount_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer++] = ((struct __pyx_obj_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer *)o);
   } else {
     (*Py_TYPE(o)->tp_free)(o);
   }
 }
 
-static PyMethodDef __pyx_methods_8instakit_10processors_3ext_8halftone_Ditherer[] = {
-  {"__reduce_cython__", (PyCFunction)__pyx_pw_8instakit_10processors_3ext_8halftone_8Ditherer_3__reduce_cython__, METH_NOARGS, __pyx_doc_8instakit_10processors_3ext_8halftone_8Ditherer_2__reduce_cython__},
-  {"__setstate_cython__", (PyCFunction)__pyx_pw_8instakit_10processors_3ext_8halftone_8Ditherer_5__setstate_cython__, METH_O, __pyx_doc_8instakit_10processors_3ext_8halftone_8Ditherer_4__setstate_cython__},
+static PyMethodDef __pyx_methods_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer[] = {
+  {"__reduce_cython__", (PyCFunction)__pyx_pw_8instakit_10processors_3ext_8halftone_23ThresholdMatrixDitherer_3__reduce_cython__, METH_NOARGS, __pyx_doc_8instakit_10processors_3ext_8halftone_23ThresholdMatrixDitherer_2__reduce_cython__},
+  {"__setstate_cython__", (PyCFunction)__pyx_pw_8instakit_10processors_3ext_8halftone_23ThresholdMatrixDitherer_5__setstate_cython__, METH_O, __pyx_doc_8instakit_10processors_3ext_8halftone_23ThresholdMatrixDitherer_4__setstate_cython__},
   {0, 0, 0, 0}
 };
 
-static PyTypeObject __pyx_type_8instakit_10processors_3ext_8halftone_Ditherer = {
+static PyTypeObject __pyx_type_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer = {
   PyVarObject_HEAD_INIT(0, 0)
-  "instakit.processors.ext.halftone.Ditherer", /*tp_name*/
-  sizeof(struct __pyx_obj_8instakit_10processors_3ext_8halftone_Ditherer), /*tp_basicsize*/
+  "instakit.processors.ext.halftone.ThresholdMatrixDitherer", /*tp_name*/
+  sizeof(struct __pyx_obj_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer), /*tp_basicsize*/
   0, /*tp_itemsize*/
-  __pyx_tp_dealloc_8instakit_10processors_3ext_8halftone_Ditherer, /*tp_dealloc*/
+  __pyx_tp_dealloc_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer, /*tp_dealloc*/
   0, /*tp_print*/
   0, /*tp_getattr*/
   0, /*tp_setattr*/
@@ -19684,7 +19684,7 @@ static PyTypeObject __pyx_type_8instakit_10processors_3ext_8halftone_Ditherer = 
   0, /*tp_weaklistoffset*/
   0, /*tp_iter*/
   0, /*tp_iternext*/
-  __pyx_methods_8instakit_10processors_3ext_8halftone_Ditherer, /*tp_methods*/
+  __pyx_methods_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer, /*tp_methods*/
   0, /*tp_members*/
   0, /*tp_getset*/
   0, /*tp_base*/
@@ -19694,7 +19694,7 @@ static PyTypeObject __pyx_type_8instakit_10processors_3ext_8halftone_Ditherer = 
   0, /*tp_dictoffset*/
   0, /*tp_init*/
   0, /*tp_alloc*/
-  __pyx_tp_new_8instakit_10processors_3ext_8halftone_Ditherer, /*tp_new*/
+  __pyx_tp_new_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer, /*tp_new*/
   0, /*tp_free*/
   0, /*tp_is_gc*/
   0, /*tp_bases*/
@@ -19710,7 +19710,7 @@ static PyTypeObject __pyx_type_8instakit_10processors_3ext_8halftone_Ditherer = 
 };
 
 static PyObject *__pyx_tp_new_8instakit_10processors_3ext_8halftone_Atkinson(PyTypeObject *t, PyObject *a, PyObject *k) {
-  PyObject *o = __pyx_tp_new_8instakit_10processors_3ext_8halftone_Ditherer(t, a, k);
+  PyObject *o = __pyx_tp_new_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer(t, a, k);
   if (unlikely(!o)) return 0;
   return o;
 }
@@ -19727,7 +19727,7 @@ static PyTypeObject __pyx_type_8instakit_10processors_3ext_8halftone_Atkinson = 
   "instakit.processors.ext.halftone.Atkinson", /*tp_name*/
   sizeof(struct __pyx_obj_8instakit_10processors_3ext_8halftone_Atkinson), /*tp_basicsize*/
   0, /*tp_itemsize*/
-  __pyx_tp_dealloc_8instakit_10processors_3ext_8halftone_Ditherer, /*tp_dealloc*/
+  __pyx_tp_dealloc_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer, /*tp_dealloc*/
   0, /*tp_print*/
   0, /*tp_getattr*/
   0, /*tp_setattr*/
@@ -19781,7 +19781,7 @@ static PyTypeObject __pyx_type_8instakit_10processors_3ext_8halftone_Atkinson = 
 };
 
 static PyObject *__pyx_tp_new_8instakit_10processors_3ext_8halftone_FloydSteinberg(PyTypeObject *t, PyObject *a, PyObject *k) {
-  PyObject *o = __pyx_tp_new_8instakit_10processors_3ext_8halftone_Ditherer(t, a, k);
+  PyObject *o = __pyx_tp_new_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer(t, a, k);
   if (unlikely(!o)) return 0;
   return o;
 }
@@ -19798,7 +19798,7 @@ static PyTypeObject __pyx_type_8instakit_10processors_3ext_8halftone_FloydSteinb
   "instakit.processors.ext.halftone.FloydSteinberg", /*tp_name*/
   sizeof(struct __pyx_obj_8instakit_10processors_3ext_8halftone_FloydSteinberg), /*tp_basicsize*/
   0, /*tp_itemsize*/
-  __pyx_tp_dealloc_8instakit_10processors_3ext_8halftone_Ditherer, /*tp_dealloc*/
+  __pyx_tp_dealloc_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer, /*tp_dealloc*/
   0, /*tp_print*/
   0, /*tp_getattr*/
   0, /*tp_setattr*/
@@ -20575,7 +20575,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_s_Cannot_assign_to_read_only_memor, __pyx_k_Cannot_assign_to_read_only_memor, sizeof(__pyx_k_Cannot_assign_to_read_only_memor), 0, 0, 1, 0},
   {&__pyx_kp_s_Cannot_create_writable_memory_vi, __pyx_k_Cannot_create_writable_memory_vi, sizeof(__pyx_k_Cannot_create_writable_memory_vi), 0, 0, 1, 0},
   {&__pyx_kp_s_Cannot_index_with_type_s, __pyx_k_Cannot_index_with_type_s, sizeof(__pyx_k_Cannot_index_with_type_s), 0, 0, 1, 0},
-  {&__pyx_n_s_Ditherer, __pyx_k_Ditherer, sizeof(__pyx_k_Ditherer), 0, 0, 1, 1},
   {&__pyx_n_s_Ellipsis, __pyx_k_Ellipsis, sizeof(__pyx_k_Ellipsis), 0, 0, 1, 1},
   {&__pyx_kp_s_Empty_shape_tuple_for_cython_arr, __pyx_k_Empty_shape_tuple_for_cython_arr, sizeof(__pyx_k_Empty_shape_tuple_for_cython_arr), 0, 0, 1, 0},
   {&__pyx_n_s_FloydSteinberg, __pyx_k_FloydSteinberg, sizeof(__pyx_k_FloydSteinberg), 0, 0, 1, 1},
@@ -20596,6 +20595,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_s_Out_of_bounds_on_buffer_access_a, __pyx_k_Out_of_bounds_on_buffer_access_a, sizeof(__pyx_k_Out_of_bounds_on_buffer_access_a), 0, 0, 1, 0},
   {&__pyx_n_s_PickleError, __pyx_k_PickleError, sizeof(__pyx_k_PickleError), 0, 0, 1, 1},
   {&__pyx_n_s_RuntimeError, __pyx_k_RuntimeError, sizeof(__pyx_k_RuntimeError), 0, 0, 1, 1},
+  {&__pyx_n_s_ThresholdMatrixDitherer, __pyx_k_ThresholdMatrixDitherer, sizeof(__pyx_k_ThresholdMatrixDitherer), 0, 0, 1, 1},
   {&__pyx_n_s_TypeError, __pyx_k_TypeError, sizeof(__pyx_k_TypeError), 0, 0, 1, 1},
   {&__pyx_kp_s_Unable_to_convert_item_to_object, __pyx_k_Unable_to_convert_item_to_object, sizeof(__pyx_k_Unable_to_convert_item_to_object), 0, 0, 1, 0},
   {&__pyx_n_s_ValueError, __pyx_k_ValueError, sizeof(__pyx_k_ValueError), 0, 0, 1, 1},
@@ -21149,15 +21149,15 @@ static int __Pyx_modinit_type_init_code(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_modinit_type_init_code", 0);
   /*--- Type init code ---*/
-  if (PyType_Ready(&__pyx_type_8instakit_10processors_3ext_8halftone_Ditherer) < 0) __PYX_ERR(0, 104, __pyx_L1_error)
-  __pyx_type_8instakit_10processors_3ext_8halftone_Ditherer.tp_print = 0;
-  if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_8instakit_10processors_3ext_8halftone_Ditherer.tp_dictoffset && __pyx_type_8instakit_10processors_3ext_8halftone_Ditherer.tp_getattro == PyObject_GenericGetAttr)) {
-    __pyx_type_8instakit_10processors_3ext_8halftone_Ditherer.tp_getattro = __Pyx_PyObject_GenericGetAttr;
+  if (PyType_Ready(&__pyx_type_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer) < 0) __PYX_ERR(0, 104, __pyx_L1_error)
+  __pyx_type_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer.tp_print = 0;
+  if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer.tp_dictoffset && __pyx_type_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer.tp_getattro == PyObject_GenericGetAttr)) {
+    __pyx_type_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer.tp_getattro = __Pyx_PyObject_GenericGetAttr;
   }
-  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_Ditherer, (PyObject *)&__pyx_type_8instakit_10processors_3ext_8halftone_Ditherer) < 0) __PYX_ERR(0, 104, __pyx_L1_error)
-  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_8instakit_10processors_3ext_8halftone_Ditherer) < 0) __PYX_ERR(0, 104, __pyx_L1_error)
-  __pyx_ptype_8instakit_10processors_3ext_8halftone_Ditherer = &__pyx_type_8instakit_10processors_3ext_8halftone_Ditherer;
-  __pyx_type_8instakit_10processors_3ext_8halftone_Atkinson.tp_base = __pyx_ptype_8instakit_10processors_3ext_8halftone_Ditherer;
+  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_ThresholdMatrixDitherer, (PyObject *)&__pyx_type_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer) < 0) __PYX_ERR(0, 104, __pyx_L1_error)
+  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer) < 0) __PYX_ERR(0, 104, __pyx_L1_error)
+  __pyx_ptype_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer = &__pyx_type_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer;
+  __pyx_type_8instakit_10processors_3ext_8halftone_Atkinson.tp_base = __pyx_ptype_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer;
   if (PyType_Ready(&__pyx_type_8instakit_10processors_3ext_8halftone_Atkinson) < 0) __PYX_ERR(0, 117, __pyx_L1_error)
   __pyx_type_8instakit_10processors_3ext_8halftone_Atkinson.tp_print = 0;
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_8instakit_10processors_3ext_8halftone_Atkinson.tp_dictoffset && __pyx_type_8instakit_10processors_3ext_8halftone_Atkinson.tp_getattro == PyObject_GenericGetAttr)) {
@@ -21166,7 +21166,7 @@ static int __Pyx_modinit_type_init_code(void) {
   if (PyObject_SetAttr(__pyx_m, __pyx_n_s_Atkinson, (PyObject *)&__pyx_type_8instakit_10processors_3ext_8halftone_Atkinson) < 0) __PYX_ERR(0, 117, __pyx_L1_error)
   if (__Pyx_setup_reduce((PyObject*)&__pyx_type_8instakit_10processors_3ext_8halftone_Atkinson) < 0) __PYX_ERR(0, 117, __pyx_L1_error)
   __pyx_ptype_8instakit_10processors_3ext_8halftone_Atkinson = &__pyx_type_8instakit_10processors_3ext_8halftone_Atkinson;
-  __pyx_type_8instakit_10processors_3ext_8halftone_FloydSteinberg.tp_base = __pyx_ptype_8instakit_10processors_3ext_8halftone_Ditherer;
+  __pyx_type_8instakit_10processors_3ext_8halftone_FloydSteinberg.tp_base = __pyx_ptype_8instakit_10processors_3ext_8halftone_ThresholdMatrixDitherer;
   if (PyType_Ready(&__pyx_type_8instakit_10processors_3ext_8halftone_FloydSteinberg) < 0) __PYX_ERR(0, 131, __pyx_L1_error)
   __pyx_type_8instakit_10processors_3ext_8halftone_FloydSteinberg.tp_print = 0;
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_8instakit_10processors_3ext_8halftone_FloydSteinberg.tp_dictoffset && __pyx_type_8instakit_10processors_3ext_8halftone_FloydSteinberg.tp_getattro == PyObject_GenericGetAttr)) {
