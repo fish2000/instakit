@@ -16,9 +16,7 @@ cimport cython
 
 from instakit.utils import ndarrays
 
-INT = numpy.int
 UINT8 = numpy.uint8
-FLOAT32 = numpy.float32
 
 ctypedef numpy.int_t int_t
 ctypedef numpy.uint8_t uint8_t
