@@ -61,7 +61,7 @@ try:
     exec(compile(open('__version__.py')).read(),
                       '__version__.py', 'exec')
 except:
-    __version__ = '0.6.25'
+    __version__ = '0.7.0'
 
 FIELDS = ('major', 'minor', 'patch',
           'pre',   'build')
