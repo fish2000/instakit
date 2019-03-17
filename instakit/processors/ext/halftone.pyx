@@ -16,8 +16,6 @@ cimport cython
 
 from instakit.utils import ndarrays
 
-UINT8 = numpy.uint8
-
 ctypedef numpy.int_t int_t
 ctypedef numpy.uint8_t uint8_t
 ctypedef numpy.uint32_t uint32_t
@@ -121,7 +119,7 @@ cdef class Atkinson(Ditherer):
     """ Fast cythonized Atkinson-dither halftone image processor """
     
     def process(self, image not None):
-        input_array = ndarrays.fromimage(image.convert('L')).astype(UINT8)
+        input_array = ndarrays.fromimage(image.convert('L')).astype(numpy.uint8)
         cdef uint32_t width = image.size[0]
         cdef uint32_t height = image.size[1]
         cdef uint8_t[:, :] input_view = input_array
@@ -135,7 +133,7 @@ cdef class FloydSteinberg(Ditherer):
     """ Fast cythonized Floyd-Steinberg-dither halftone image processor """
     
     def process(self, image not None):
-        input_array = ndarrays.fromimage(image.convert('L')).astype(UINT8)
+        input_array = ndarrays.fromimage(image.convert('L')).astype(numpy.uint8)
         cdef uint32_t width = image.size[0]
         cdef uint32_t height = image.size[1]
         cdef uint8_t[:, :] input_view = input_array
