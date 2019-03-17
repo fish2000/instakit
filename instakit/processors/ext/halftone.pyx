@@ -126,9 +126,8 @@ cdef class Atkinson(Ditherer):
         input_array = ndarrays.fromimage(image.convert('L')).astype(UINT8)
         cdef uint32_t width = image.size[0]
         cdef uint32_t height = image.size[1]
-        cdef uint8_t[:, :] input_view
+        cdef uint8_t[:, :] input_view = input_array
         with nogil:
-            input_view = input_array
             atkinson_dither(input_view, width, height, self.threshold_matrix)
         output_array = numpy.asarray(input_view.base)
         return ndarrays.toimage(output_array)
@@ -141,9 +140,8 @@ cdef class FloydSteinberg(Ditherer):
         input_array = ndarrays.fromimage(image.convert('L')).astype(UINT8)
         cdef uint32_t width = image.size[0]
         cdef uint32_t height = image.size[1]
-        cdef uint8_t[:, :] input_view
+        cdef uint8_t[:, :] input_view = input_array
         with nogil:
-            input_view = input_array
             floyd_steinberg_dither(input_view, width, height, self.threshold_matrix)
         output_array = numpy.asarray(input_view.base)
         return ndarrays.toimage(output_array)
