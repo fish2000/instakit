@@ -68,10 +68,6 @@ class Processor(ABC):
         return self.process(image)
     
     @classmethod
-    def apply(cls, processor, image):
-        return processor.process(image)
-    
-    @classmethod
     def __subclasshook__(cls, subclass):
         return subclasshook(cls, subclass)
 
