@@ -223,8 +223,6 @@ def u8bytes(source):
         return source
     elif type(source) is bytearray:
         return bytes(source)
-    elif type(source) is str:
-        return u8encode(source)
     elif isinstance(source, string_types):
         return u8encode(source)
     elif isinstance(source, (int, float)):

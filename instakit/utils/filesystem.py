@@ -854,21 +854,22 @@ class Directory(collections.abc.Hashable,
                                            os.pardir)))
     
     def copy_all(self, destination):
-        """ Copy the entire temporary directory tree, all contents
-            included, to a new destination path. The destination must not
-            already exist, and `copy_all(…)` will not overwrite existant
-            directories. Like, if you have yourself an instance of Directory,
-            `directory`, and you want to copy it to `/home/me/myshit`,
-            `/home/me` should already exist but `/home/me/myshit` should not,
-            as the `myshit` subdirectory will be created when you invoke the
-            `directory.copy_all('/home/me/myshit')` call.
+        """ Copy the entire directory tree, all contents included, to a new
+            destination path. The destination must not already exist, and
+           `copy_all(…)` will not overwrite existant directories. Like, if
+            you have yourself an instance of Directory, `directory`, and you
+            want to copy it to `/home/me/myshit`, `/home/me` should already
+            exist but `/home/me/myshit` should not, as the subdirectory
+           `myshit` gets created by the `directory.copy_all('/home/me/myshit')`
+            invocation (like as a side-effect).
             
-            Does that make sense to you? Try it, you’ll get a FilesystemError
+            Does that make sense to you? Try it, you’ll get a `FilesystemError`
             if it evidently did not make sense to you.
             
-            The destination path may be specified using a string-like, or
-            with a Directory object. Internally, this method uses
-            `shutil.copytree(…)` to tell the filesystem what to copy where.
+            The destination path may be specified using a string-like, with
+            another Directory object, or anything deemed path-y enough by
+           `os.fspath(…)`. Internally, this method uses `shutil.copytree(…)`
+            to tell the filesystem what to copy where.
         """
         import shutil
         whereto = self.directory(pth=destination)
