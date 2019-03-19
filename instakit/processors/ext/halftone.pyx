@@ -119,7 +119,7 @@ cdef class Atkinson(ThresholdMatrixDitherer):
     """ Fast cythonized Atkinson-dither halftone image processor """
     
     def process(self, image not None):
-        input_array = ndarrays.fromimage(image.convert('L')).astype(numpy.uint8)
+        input_array = ndarrays.fromimage(image.convert('L'), dtype=numpy.uint8)
         cdef uint32_t width = image.size[0]
         cdef uint32_t height = image.size[1]
         cdef uint8_t[:, :] input_view = input_array
@@ -133,7 +133,7 @@ cdef class FloydSteinberg(ThresholdMatrixDitherer):
     """ Fast cythonized Floyd-Steinberg-dither halftone image processor """
     
     def process(self, image not None):
-        input_array = ndarrays.fromimage(image.convert('L')).astype(numpy.uint8)
+        input_array = ndarrays.fromimage(image.convert('L'), dtype=numpy.uint8)
         cdef uint32_t width = image.size[0]
         cdef uint32_t height = image.size[1]
         cdef uint8_t[:, :] input_view = input_array
