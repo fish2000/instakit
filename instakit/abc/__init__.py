@@ -21,6 +21,7 @@ from pkgutil import extend_path
 from abc import ABC, abstractmethod as abstract
 from collections import defaultdict
 from enum import Enum as EnumBase
+from itertools import chain
 
 if '__path__' in locals():
     __path__ = extend_path(__path__, __name__)
@@ -52,6 +53,37 @@ def subclasshook(cls, subclass):
             return True
     return NotImplemented
 
+def slots_for(cls):
+    """ Get the summation of the __slots__ tuples for a class and its ancestors """
+    # q.v. https://stackoverflow.com/a/6720815/298171
+    return tuple(chain.from_iterable(
+                 getattr(ancestor, '__slots__', tuple()) \
+                           for ancestor in cls.__mro__))
+
+def compare_via_attrs(self, other):
+    """ Compare two processors:
+        1) Return NotImplemented if the types do not exactly match.
+        2) For processors using __dict__ mappings for attributes,
+           compare them directly.
+        3) For processors using __slots__ for attributes,
+           iterate through all ancestor slot names using “slots_for(…)”
+           and return False if any compare inequal between self and other --
+           ultimately returning True.
+        4) If the slots/dict situation differs between the two instances,
+           raise a TypeError.
+    """
+    if type(self) is not type(other):
+        return NotImplemented
+    if hasattr(self, '__dict__') and hasattr(other, '__dict__'):
+        return self.__dict__ == other.__dict__
+    elif hasattr(self, '__slots__') and hasattr(other, '__slots__'):
+        slots = slots_for(type(self))
+        for slot in slots:
+            if getattr(self, slot) != getattr(other, slot):
+                return False
+        return True
+    raise TypeError("dict/slots mismatch")
+
 class Processor(ABC):
     
     """ Base abstract processor class. """
@@ -70,6 +102,10 @@ class Processor(ABC):
     @classmethod
     def __subclasshook__(cls, subclass):
         return subclasshook(cls, subclass)
+    
+    def __eq__(self, other):
+        """ Delegate to “compare_via_attrs(…)” """
+        return compare_via_attrs(self, other)
 
 class Enum(EnumBase):
     
@@ -95,6 +131,10 @@ class NOOp(Processor):
     def process(self, image):
         """ Return the image instance, unchanged """
         return image
+    
+    def __eq__(self, other):
+        """ Simple type-comparison """
+        return type(self) is type(other)
 
 class Container(Processor):
     
@@ -128,6 +168,16 @@ class Container(Processor):
             and Falsey if it is empty.
         """
         return len(self) > 0
+    
+    def __eq__(self, other):
+        """ Compare “base_type()” results and item-by-item through “iterate()” """
+        if type(self).base_type() is not type(self).base_type():
+            return NotImplemented
+        for self_item, other_item in zip(self.iterate(),
+                                         other.iterate()):
+            if self_item != other_item:
+                return False
+        return True
 
 class Mapping(Container):
     
@@ -384,7 +434,10 @@ def test():
     print("SLOTS?", hasattr(slow_atkinson, '__slots__'))
     pprint(slow_atkinson.__slots__)
     pprint(slow_atkinson.__class__.__base__.__slots__)
+    pprint(slots_for(SlowAtkinson))
     print("THRESHOLD_MATRIX:", slow_atkinson.threshold_matrix)
+    assert slow_atkinson == SlowAtkinson()
+    assert NOOp() == NOOp()
 
 if __name__ == '__main__':
     test()

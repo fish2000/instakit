@@ -25,6 +25,10 @@ __all__ = ('Pipe', 'Pipeline',
 
 __dir__ = lambda: list(__all__)
 
+if not hasattr(__builtins__, 'cmp'):
+    def cmp(a, b):
+        return (a > b) - (a < b)
+
 class Pipe(Sequence):
     
     """ A static linear pipeline of processors to be applied en masse.
@@ -69,6 +73,11 @@ class Pipe(Sequence):
         for processor in self.iterate():
             image = processor.process(image)
         return image
+    
+    def __eq__(self, other):
+        if not isinstance(other, (type(self), type(self).base_type())):
+            return NotImplemented
+        return 
 
 class Pipeline(MutableSequence):
     
