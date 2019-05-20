@@ -171,7 +171,7 @@ class Container(Processor):
     
     def __eq__(self, other):
         """ Compare “base_type()” results and item-by-item through “iterate()” """
-        if type(self).base_type() is not type(self).base_type():
+        if type(self).base_type() is not type(other).base_type():
             return NotImplemented
         for self_item, other_item in zip(self.iterate(),
                                          other.iterate()):
