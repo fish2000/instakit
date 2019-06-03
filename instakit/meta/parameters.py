@@ -23,7 +23,7 @@ def dotpath_join(base, *addenda):
             base += QUALIFIER
         if addendum.startswith(QUALIFIER):
             if len(addendum) == 1:
-                raise ValueError('operand to short: %s' % addendum)
+                raise ValueError('operand too short: %s' % addendum)
             addendum = addendum[1:]
         base += addendum
     # N.B. this might be overthinking it -- 
@@ -67,8 +67,8 @@ def qualified_name(cls):
 
 class Nothing(object):
     """ Placeholder singleton, signifying nothing """
-    # __class__ = type('Nothing', tuple(), {})
-    def __new__(cls):
+    __slots__ = tuple()
+    def __new__(cls, *a, **k):
         return Nothing
 
 def check_parameter_default(param_default):
