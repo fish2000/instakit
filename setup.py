@@ -143,8 +143,6 @@ except:
     print("ERROR COMPILING __version__.py")
     __version__ = '0.7.4'
 
-print("VERSION:", __version__)
-
 # PROJECT DESCRIPTION
 LONG_DESCRIPTION = project_content('ABOUT.md')
 
