@@ -141,7 +141,7 @@ try:
             '__version__.py', 'exec'))
 except:
     print("ERROR COMPILING __version__.py")
-    __version__ = '0.7.3'
+    __version__ = '0.7.4'
 
 print("VERSION:", __version__)
 
