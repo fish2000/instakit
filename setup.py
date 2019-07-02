@@ -39,7 +39,7 @@ except ImportError:
         except ImportError:
             cpu_count = lambda: 1
 
-from setuptools import setup
+from setuptools import setup, find_packages
 from Cython.Build import cythonize
 
 # HOST PYTHON VERSION
@@ -178,44 +178,6 @@ except ImportError:
         def get_include(self):
             return os.path.curdir
     numpy = FakeNumpy()
-
-# SETUPTOOLS: FIND SUBORDINATE PACKAGES
-try:
-    from setuptools import find_packages
-
-except ImportError:
-    def is_package(path):
-        return (os.path.isdir(path) and \
-                os.path.isfile(
-                os.path.join(path, '__init__.py')))
-    
-    def find_packages(path, base=""):
-        """ Find all packages in path; see also:
-            http://wiki.python.org/moin/Distutils/Cookbook/AutoPackageDiscovery
-        """
-        packages = {}
-        for item in os.listdir(path):
-            pth = os.path.join(path, item)
-            if is_package(pth):
-                if base:
-                    module_name = "%(base)s.%(item)s" % dict(base=base, item=item)
-                else:
-                    module_name = item
-                packages[module_name] = pth
-                packages.update(
-                    find_packages(pth, module_name))
-        return packages
-
-# SETUPTOOLS: CLEAN BUILD ARTIFACTS
-if 'sdist' in sys.argv:
-    import subprocess
-    finder = "/usr/bin/find %s \( -iname \*.pyc -or -iname .ds_store \) -print -delete"
-    theplace = os.getcwd()
-    if theplace not in (os.path.sep, os.path.curdir):
-        print("+ Deleting crapola from %s..." % theplace)
-        print("$ %s" % finder % theplace)
-        output = subprocess.getoutput(finder % theplace)
-        print(output)
 
 # SOURCES & INCLUDE DIRECTORIES
 hsluv_source = additional_source('utils', 'ext', 'hsluv.c')
