@@ -27,7 +27,7 @@ sdist:
 	python setup.py sdist
 
 twine-upload:
-	twine upload -s --repository-url=https://upload.pypi.org/legacy/ dist/*
+	twine upload -s dist/*
 
 bump:
 	bumpversion --verbose patch
