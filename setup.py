@@ -28,7 +28,17 @@
 from __future__ import print_function
 import os, sys, sysconfig
 
-from psutil import cpu_count
+try:
+    from os import cpu_count
+except ImportError:
+    try:
+        from multiprocessing import cpu_count
+    except ImportError:
+        try:
+            from psutil import cpu_count
+        except ImportError:
+            cpu_count = lambda: 1
+
 from setuptools import setup
 from Cython.Build import cythonize
 
@@ -130,7 +140,10 @@ try:
             '__version__.py')).read(),
             '__version__.py', 'exec'))
 except:
+    print("ERROR COMPILING __version__.py")
     __version__ = '0.7.3'
+
+print("VERSION:", __version__)
 
 # PROJECT DESCRIPTION
 LONG_DESCRIPTION = project_content('ABOUT.md')

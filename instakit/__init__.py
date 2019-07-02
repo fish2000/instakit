@@ -58,8 +58,8 @@ __copyright__ = '© 2012-2025 %s' % __author__
 
 # get the project version tag without importing:
 try:
-    exec(compile(open('__version__.py')).read(),
-                      '__version__.py', 'exec')
+    exec(compile(open('__version__.py').read(),
+                      '__version__.py', 'exec'))
 except:
     __version__ = '0.7.3'
 

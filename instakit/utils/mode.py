@@ -358,8 +358,8 @@ def test():
     
     # print(Mode.I16L.bands)
     # print(Mode.RGB.bands)
-    # print(list(Mode))
-    # print()
+    print(list(Mode))
+    print()
     
     assert Mode(10) == Mode.LAB
     assert hasattr(Mode.RGB, '__slots__')
