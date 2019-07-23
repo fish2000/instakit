@@ -247,9 +247,7 @@ class Mode(ModeAncestor):
     
     @property
     def bands(self):
-        return self.band_count == 1 \
-          and (self.value.bands,) \
-            or self.value.bands
+        return self.value.bands
         
     @property
     def basemode(self):
@@ -302,6 +300,7 @@ class Mode(ModeAncestor):
 
 
 def test():
+    from pprint import pprint
     
     print("«KNOWN IMAGE MODES»")
     print()
@@ -355,10 +354,12 @@ def test():
     # assert split_abbreviations('XYZ') == ('X', 'Y', 'Z')
     
     print("«SUCCESS»")
+    print()
     
     # print(Mode.I16L.bands)
     # print(Mode.RGB.bands)
-    print(list(Mode))
+    
+    pprint(list(Mode))
     print()
     
     assert Mode(10) == Mode.LAB
