@@ -141,7 +141,7 @@ try:
             '__version__.py', 'exec'))
 except:
     print("ERROR COMPILING __version__.py")
-    __version__ = '0.7.6'
+    __version__ = '0.7.7'
 
 # PROJECT DESCRIPTION
 LONG_DESCRIPTION = project_content('ABOUT.md')
