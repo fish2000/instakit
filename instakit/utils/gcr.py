@@ -5,9 +5,14 @@ from math import fabs, pow as mpow
 
 from instakit.utils.mode import Mode
 from instakit.abc import Processor
+from instakit.exporting import Exporter
+
+exporter = Exporter(path=__file__)
+export = exporter.decorator()
 
 PERCENT_ADMONISHMENT = "Do you not know how percents work??!"
 
+@export
 def gcr(image, percentage=20, revert_mode=False):
     ''' basic “Gray Component Replacement” function. Returns a CMYK image* with 
         percentage gray component removed from the CMY channels and put in the
@@ -51,6 +56,7 @@ def gcr(image, percentage=20, revert_mode=False):
         return original_mode.process(recomposed)
     return recomposed
 
+@export
 class BasicGCR(Processor):
     
     __slots__ = ('percentage', 'revert_mode')
@@ -68,6 +74,7 @@ class BasicGCR(Processor):
         return gcr(image, percentage=self.percentage,
                           revert_mode=self.revert_mode)
 
+@export
 def hex2rgb(h):
     """ Convert a hex string or number to an RGB triple """
     # q.v. https://git.io/fh9E2
@@ -75,18 +82,21 @@ def hex2rgb(h):
         return hex2rgb(int(h[1:] if h.startswith('#') else h, 16))
     return (h >> 16) & 0xff, (h >> 8) & 0xff, h & 0xff
 
+@export
 def compand(v):
     """ Compand a linearized value to an sRGB byte value """
     # q.v. http://www.brucelindbloom.com/index.html?Math.html
     V = (v <= 0.0031308) and (v * 12.92) or fabs((1.055 * mpow(v, 1 / 2.4)) - 0.055)
     return int(V * 255.0)
 
+@export
 def uncompand(A):
     """ Uncompand an sRGB byte value to a linearized value """
     # q.v. http://www.brucelindbloom.com/index.html?Eqn_RGB_to_XYZ.html
     V = A / 255.0
     return (V <= 0.04045) and (V / 12.92) or mpow(((V + 0.055) / 1.055), 2.4)
 
+@export
 def ucr(image, revert_mode=False):
     ''' basic “Under-Color Removal” function. Returns a CMYK image* in which regions
         containing overlapping C, M, and Y ink are replaced with K (“Key”, née “BlacK”)
@@ -157,6 +167,7 @@ def ucr(image, revert_mode=False):
         return original_mode.process(recomposed)
     return recomposed
 
+@export
 class BasicUCR(Processor):
     
     __slots__ = ('revert_mode',)
@@ -168,6 +179,7 @@ class BasicUCR(Processor):
     def process(self, image):
         return ucr(image, revert_mode=self.revert_mode)
 
+@export
 class DemoUCR(object):
     
     """ Demonstrate each phase of the UCR color-conversion process """
@@ -248,6 +260,8 @@ class DemoUCR(object):
         """ Stringify yo self """
         return self.stringify_demo_values()
 
+# Assign the modules’ `__all__` and `__dir__` using the exporter:
+__all__, __dir__ = exporter.all_and_dir()
 
 def test():
     from instakit.utils.static import asset

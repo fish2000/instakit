@@ -6,15 +6,21 @@ utils/colortype.py
 Created by FI$H 2000 on 2012-08-23.
 Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 """
-
-import numpy
+from __future__ import print_function
 from collections import namedtuple, defaultdict
-from instakit.utils.mode import split_abbreviations
+
+from clu.constants.polyfills import numpy
+from clu.naming import split_abbreviations
+from instakit.exporting import Exporter
+
+exporter = Exporter(path=__file__)
+export = exporter.decorator()
 
 color_types = defaultdict(dict)
 
 # hash_RGB = lambda rgb: (rgb[0]*256)**2 + (rgb[1]*256) + rgb[2]
 
+@export
 def ColorType(name, *args, **kwargs):
     global color_types
     dtype = numpy.dtype(kwargs.pop('dtype', numpy.uint8))
@@ -58,11 +64,17 @@ def ColorType(name, *args, **kwargs):
         color_types[dtype.name][name] = Color
     return color_types[dtype.name][name]
 
-if __name__ == '__main__':
-    
+export(color_types,     name='color_types')
+
+# Assign the modules’ `__all__` and `__dir__` using the exporter:
+__all__, __dir__ = exporter.all_and_dir()
+
+def test():
     assert split_abbreviations('RGB') == ('R', 'G', 'B')
     assert split_abbreviations('CMYK') == ('C', 'M', 'Y', 'K')
     assert split_abbreviations('YCbCr') == ('Y', 'Cb', 'Cr')
     assert split_abbreviations('sRGB') == ('R', 'G', 'B')
     assert split_abbreviations('XYZ') == ('X', 'Y', 'Z')
-    
+
+if __name__ == '__main__':
+    test()

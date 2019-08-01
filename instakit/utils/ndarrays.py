@@ -20,11 +20,16 @@ from __future__ import division, print_function
 import numpy
 from instakit.utils.mode import Mode
 from instakit.abc import NDProcessorBase
+from instakit.exporting import Exporter
+
+exporter = Exporter(path=__file__)
+export = exporter.decorator()
 
 uint8_t = numpy.uint8
 uint32_t = numpy.uint32
 float32_t = numpy.float32
 
+@export
 def bytescale(data, cmin=None, cmax=None,
                     high=255,  low=0):
     """
@@ -80,6 +85,7 @@ def bytescale(data, cmin=None, cmax=None,
     bytedata = (data - cmin) * scale + low
     return (bytedata.clip(low, high) + 0.5).astype(uint8_t)
 
+@export
 def fromimage(image, flatten=False,
                         mode=None,
                        dtype=None):
@@ -145,6 +151,7 @@ def fromimage(image, flatten=False,
 
 _errstr = "Mode unknown or incompatible with input array shape"
 
+@export
 def toimage(array,  high=255,    low=0,
                     cmin=None,  cmax=None,
                      pal=None,
@@ -293,7 +300,7 @@ def toimage(array,  high=255,    low=0,
     image = mode.frombytes(shape, strdata)
     return image
 
-
+@export
 class NDProcessor(NDProcessorBase):
     
     """ An image processor ancestor class that represents PIL image
@@ -328,6 +335,8 @@ class NDProcessor(NDProcessorBase):
         """
         return float32_t(ndimage) / 255.0
 
+# Assign the modules’ `__all__` and `__dir__` using the exporter:
+__all__, __dir__ = exporter.all_and_dir()
 
 def test():
     """ Tests for bytescale(¬) adapted from `scipy.misc.pilutil` doctests,
