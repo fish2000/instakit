@@ -20,8 +20,10 @@ from __future__ import print_function
 from pkgutil import extend_path
 from abc import ABC, abstractmethod as abstract
 from collections import defaultdict
-from enum import Enum as EnumBase
+from enum import Enum as EnumBase, EnumMeta
 from itertools import chain
+
+from clu.exporting import Slotted
 
 if '__path__' in locals():
     __path__ = extend_path(__path__, __name__)
@@ -84,10 +86,9 @@ def compare_via_attrs(self, other):
         return True
     raise TypeError("dict/slots mismatch")
 
-class Processor(ABC):
+class Processor(ABC, metaclass=Slotted):
     
     """ Base abstract processor class. """
-    __slots__ = tuple()
     
     @abstract
     def process(self, image):
@@ -107,10 +108,12 @@ class Processor(ABC):
         """ Delegate to “compare_via_attrs(…)” """
         return compare_via_attrs(self, other)
 
-class Enum(EnumBase):
+class SlottedEnumMeta(EnumMeta, metaclass=Slotted):
+    pass
+
+class Enum(EnumBase, metaclass=SlottedEnumMeta):
     
     """ Base abstract processor enum. """
-    __slots__ = tuple()
     
     @abstract
     def process(self, image):
@@ -139,7 +142,6 @@ class NOOp(Processor):
 class Container(Processor):
     
     """ Base abstract processor container. """
-    __slots__ = tuple()
     
     @classmethod
     @abstract
@@ -181,14 +183,10 @@ class Container(Processor):
 
 class Mapping(Container):
     
-    __slots__ = tuple()
-    
     @abstract
     def get(self, idx, default_value): ...
 
 class Sequence(Container):
-    
-    __slots__ = tuple()
     
     @abstract
     def index(self, value): ...
@@ -199,7 +197,6 @@ class Sequence(Container):
 class MutableContainer(Container):
     
     """ Base abstract processor mutable container. """
-    __slots__ = tuple()
     
     @abstract
     def __setitem__(self, idx, value): ...
@@ -208,8 +205,6 @@ class MutableContainer(Container):
     def __delitem__(self, idx, value): ...
 
 class MutableMapping(MutableContainer):
-    
-    __slots__ = tuple()
     
     @abstract
     def get(self, idx, default_value): ...
@@ -221,8 +216,6 @@ class MutableMapping(MutableContainer):
     def update(self, iterable=None, **kwargs): ...
 
 class MutableSequence(MutableContainer):
-    
-    __slots__ = tuple()
     
     @abstract
     def index(self, value): ...
@@ -368,7 +361,6 @@ class NDProcessorBase(Processor):
         Note that “process(…)” has NOT been implemented yet in the
         inheritance chain – a subclass will need to furnish it.
     """
-    __slots__ = tuple()
     
     @abstract
     def process_nd(self, ndimage):
@@ -404,7 +396,7 @@ def test():
     print_red(__main__.__doc__)
     
     class SlowAtkinson(ThresholdMatrixProcessor):
-        __slots__ = tuple()
+        # __slots__ = tuple()
         def process(self, image):
             from instakit.utils.mode import Mode
             image = Mode.L.process(image)

@@ -7,15 +7,12 @@ from copy import copy
 from enum import unique
 from functools import wraps
 
-try:
-    from functools import reduce
-except ImportError:
-    pass
-
+from clu.mathematics import Σ
+from clu.predicates import tuplize
+from clu.typology import string_types
 from instakit.abc import Enum, Fork, NOOp, Sequence, MutableSequence
 from instakit.utils.gcr import BasicGCR
 from instakit.utils.mode import Mode
-from instakit.utils.misc import string_types, tuplize
 from instakit.processors.adjust import AutoContrast
 from instakit.exporting import Exporter
 
@@ -33,7 +30,7 @@ class Pipe(Sequence):
         Derived from a `pilkit` class:
             `pilkit.processors.base.ProcessorPipeline`
     """
-    __slots__ = ('tuple',)
+    __slots__ = tuplize('tuple')
     
     @classmethod
     def base_type(cls):
@@ -84,7 +81,7 @@ class Pipeline(MutableSequence):
         Derived from a `pilkit` class:
             `pilkit.processors.base.ProcessorPipeline`
     """
-    __slots__ = ('list',)
+    __slots__ = tuplize('list')
     
     @classmethod
     def base_type(cls):
@@ -269,7 +266,6 @@ ink_values = (
 )
 
 class Ink(Enum):
-    __slots__ = tuple()
     
     def rgb(self):
         return ink_values[self.value]
@@ -282,7 +278,6 @@ class Ink(Enum):
 
 @unique
 class CMYKInk(Ink):
-    __slots__ = tuple()
     
     WHITE = 0
     CYAN = 1
@@ -300,7 +295,6 @@ class CMYKInk(Ink):
 
 @unique
 class RGBInk(Ink):
-    __slots__ = tuple()
     
     WHITE = 0
     RED = 5
@@ -399,7 +393,7 @@ class OverprintFork(BandFork):
         """ OverprintFork.compose(…) uses PIL.ImageChops.multiply() to create
             the final composite image output
         """
-        return reduce(ImageChops.multiply, bands)
+        return Σ(ImageChops.multiply, bands)
 
 class Grid(Fork):
     pass
