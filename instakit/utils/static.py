@@ -11,7 +11,7 @@ def static_namespace(name):
         festooning it with shortcuts allowing for accesing static files
         within subdirectories of the Instakit project package tree.
     """
-    from instakit.utils.misc import Namespace
+    from clu.typespace.namespace import Namespace
     ns = Namespace()
     ns.name = str(name)
     ns.root = os.path.join(projectdir, ns.name)

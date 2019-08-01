@@ -281,7 +281,7 @@ def test():
                         help="print verbose messages to STDOUT")
     
     processor_names = ('adjust', 'blur', 'curves', 'halftone', 'noise', 'squarecrop')
-    utility_names = ('colortype', 'filesystem', 'gcr', 'kernels', 'lutmap',
+    utility_names = ('colortype', 'gcr', 'kernels', 'lutmap',
                      'misc', 'mode', 'ndarrays', 'pipeline', 'static', 'stats')
     
     module_names = []
