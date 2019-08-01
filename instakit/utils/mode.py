@@ -9,50 +9,14 @@ import os
 from PIL import Image, ImageMode
 from enum import auto, unique
 
+from clu.constants.consts import DEBUG, ENCODING
+from clu.typespace.namespace import Namespace
+from clu.naming import split_abbreviations
+from clu.predicates import or_none
 from instakit.abc import Enum
-from instakit.utils import misc
 
-junkdrawer = misc.Namespace()
+junkdrawer = Namespace()
 junkdrawer.imode = lambda image: ImageMode.getmode(image.mode)
-
-def split_abbreviations(s):
-    """ Split a string into a tuple of its unique constituents,
-        based on its internal capitalization -- to wit:
-        
-        >>> split_abbreviations('RGB')
-        ('R', 'G', 'B')
-        >>> split_abbreviations('CMYK')
-        ('C', 'M', 'Y', 'K')
-        >>> split_abbreviations('YCbCr')
-        ('Y', 'Cb', 'Cr')
-        >>> split_abbreviations('sRGB')
-        ('R', 'G', 'B')
-        >>> split_abbreviations('XYZZ')
-        ('X', 'Y', 'Z')
-        >>> split_abbreviations('I;16B')
-        ('I',)
-        
-        If you still find this function inscrutable,
-        have a look here: https://gist.github.com/4027079
-    """
-    abbreviations = []
-    current_token = ''
-    for char in s.split(';')[0]:
-        if current_token == '':
-            current_token += char
-        elif char.islower():
-            current_token += char
-        else:
-            if not current_token.islower():
-                if current_token not in abbreviations:
-                    abbreviations.append(current_token)
-            current_token = ''
-            current_token += char
-    if current_token != '':
-        if current_token not in abbreviations:
-            abbreviations.append(current_token)
-    return tuple(abbreviations)
-
 
 ImageMode.getmode('RGB') # one call must be made to getmode()
                          # to properly initialize ImageMode._modes:
@@ -94,8 +58,6 @@ class ModeAncestor(Enum):
     def is_mode(cls, instance):
         return type(instance) in cls.__mro__
 
-junkdrawer.or_none = lambda thing, name: getattr(thing, name, None)
-
 class ModeContext(contextlib.AbstractContextManager):
     
     """ An ad-hoc mutable named-tuple-ish context-manager class,
@@ -116,12 +78,11 @@ class ModeContext(contextlib.AbstractContextManager):
     def __init__(self, image, mode, **kwargs):
         assert Image.isImageType(image)
         assert Mode.is_mode(mode)
-        self.verbose = bool(kwargs.get('verbose', False))
-        if self.verbose:
-            label = junkdrawer.or_none(image, 'filename') \
+        if DEBUG:
+            label = or_none(image, 'filename') \
                 and os.path.basename(getattr(image, 'filename')) \
                 or str(image)
-            print("ModeContext.__init__: configured with image: %s" % label)
+            print(f"ModeContext.__init__: configured with image: {label}")
         self.initial_image = image
         self.image = None
         self.final_image = None
@@ -142,7 +103,7 @@ class ModeContext(contextlib.AbstractContextManager):
         return len(self.__slots__)
     
     def attr_or_none(self, name):
-        return junkdrawer.or_none(self, name)
+        return or_none(self, name)
     
     def attr_set(self, name, value):
         setattr(self, name, value)
@@ -151,10 +112,9 @@ class ModeContext(contextlib.AbstractContextManager):
         initial_image = self.attr_or_none('initial_image')
         mode = self.attr_or_none('mode')
         if initial_image is not None and mode is not None:
-            if self.verbose:
-                print("ModeContext.__enter__: converting %s to %s" % (
-                       Mode.of(initial_image),
-                       mode))
+            if DEBUG:
+                initial_mode = Mode.of(initial_image)
+                print(f"ModeContext.__enter__: converting {initial_mode} to {mode}")
             image = mode.process(initial_image)
             self.attr_set('image', image)
         return self
@@ -163,10 +123,9 @@ class ModeContext(contextlib.AbstractContextManager):
         image = self.attr_or_none('image')
         original_mode = self.attr_or_none('original_mode')
         if image is not None and original_mode is not None:
-            if self.verbose:
-                print("ModeContext.__exit__: converting %s to %s" % (
-                       Mode.of(image),
-                       original_mode))
+            if DEBUG:
+                mode = Mode.of(image)
+                print(f"ModeContext.__exit__: converting {mode} to {original_mode}")
             final_image = original_mode.process(image)
             self.attr_set('final_image', final_image)
         return exc_type is None
@@ -208,14 +167,14 @@ class Mode(ModeAncestor):
         for mode in cls:
             if mode.check(image):
                 return mode
-        raise ValueError("Image has unknown mode %s" % image.mode)
+        raise ValueError(f"Image has unknown mode {image.mode}")
     
     @classmethod
     def for_string(cls, string):
         for mode in cls:
             if mode.to_string() == string:
                 return mode
-        raise ValueError("for_string(): unknown mode %s" % string)
+        raise ValueError(f"for_string(): unknown mode {string}")
     
     def to_string(self):
         return str(self.value)
@@ -232,7 +191,7 @@ class Mode(ModeAncestor):
                                 id(self))
     
     def __bytes__(self):
-        return bytes(self.to_string(), encoding="UTF-8")
+        return bytes(self.to_string(), encoding=ENCODING)
     
     def __call__(self, image, **kwargs):
         return ModeContext(image, self, **kwargs)
@@ -269,7 +228,7 @@ class Mode(ModeAncestor):
     def label(self):
         return str(self) == self.name \
                         and self.name \
-                        or "%s (%s)" % (self, self.name)
+                        or f"{self!s}, ({self.name})"
     
     def check(self, image):
         return junkdrawer.imode(image) is self.value
@@ -379,7 +338,7 @@ def test():
             image_paths))
     
     for image in image_inputs:
-        with Mode.L(image, verbose=True) as grayscale:
+        with Mode.L(image) as grayscale:
             assert Mode.of(grayscale.image) is Mode.L
             print(grayscale.image)
             grayscale.image = Mode.MONO.process(grayscale.image)

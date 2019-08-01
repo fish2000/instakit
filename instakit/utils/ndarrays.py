@@ -109,7 +109,7 @@ def fromimage(image, flatten=False,
     from PIL import Image
     
     if not Image.isImageType(image):
-        raise TypeError("Input is not a PIL image (got %s)" % repr(image))
+        raise TypeError(f"Input is not a PIL image (got {image!r})")
     
     if mode is not None:
         if not Mode.is_mode(mode):
@@ -250,13 +250,13 @@ def toimage(array,  high=255,    low=0,
                 ca = ca[0]
             else:
                 raise ValueError(
-                    "Could not find a channel dimension (shape = %s)" % pformat(shape))
+                    f"Could not find a channel dimension (shape = {pformat(shape)})")
     else:
         ca = channel_axis
     
     numch = shape[ca]
     if numch not in [3, 4]:
-        raise ValueError("Channel dimension invalid (#channels = %s)" % numch)
+        raise ValueError(f"Channel dimension invalid (#channels = {numch})")
     
     bytedata = bytescale(data, high=high,
                                low=low,
@@ -284,12 +284,10 @@ def toimage(array,  high=255,    low=0,
     
     if mode in [ Mode.RGB, Mode.YCbCr ]:
         if numch != 3:
-            raise ValueError("Invalid shape for mode “%s”: %s" % (
-                              mode, pformat(shape)))
+            raise ValueError(f"Invalid shape for mode “{mode}”: {pformat(shape)}")
     if mode in [ Mode.RGBA, Mode.CMYK ]:
         if numch != 4:
-            raise ValueError("Invalid shape for mode “%s”: %s" % (
-                              mode, pformat(shape)))
+            raise ValueError(f"Invalid shape for mode “{mode}”: {pformat(shape)}")
     
     # Here we know both `strdata` and `mode` are correct:
     image = mode.frombytes(shape, strdata)

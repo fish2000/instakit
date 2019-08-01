@@ -17,18 +17,16 @@ from instakit.utils.gcr import BasicGCR
 from instakit.utils.mode import Mode
 from instakit.utils.misc import string_types, tuplize
 from instakit.processors.adjust import AutoContrast
+from instakit.exporting import Exporter
 
-__all__ = ('Pipe', 'Pipeline',
-           'BandFork', 'ChannelFork',
-           'CMYKInk', 'RGBInk',
-           'OverprintFork', 'ChannelOverprinter')
-
-__dir__ = lambda: list(__all__)
+exporter = Exporter(path=__file__)
+export = exporter.decorator()
 
 if not hasattr(__builtins__, 'cmp'):
     def cmp(a, b):
         return (a > b) - (a < b)
 
+@export
 class Pipe(Sequence):
     
     """ A static linear pipeline of processors to be applied en masse.
@@ -79,6 +77,7 @@ class Pipe(Sequence):
             return NotImplemented
         return 
 
+@export
 class Pipeline(MutableSequence):
     
     """ A mutable linear pipeline of processors to be applied en masse.
@@ -169,6 +168,7 @@ class Pipeline(MutableSequence):
             image = processor.process(image)
         return image
 
+@export
 class BandFork(Fork):
     
     """ BandFork is a processor container -- a processor that applies other
@@ -316,6 +316,7 @@ class RGBInk(Ink):
     def BGR(cls):
         return (cls.BLUE, cls.GREEN, cls.RED)
 
+@export
 class OverprintFork(BandFork):
     
     """ A BandFork subclass that rebuilds its output image using multiply-mode
@@ -407,6 +408,14 @@ class Sequence(Fork):
     pass
 
 ChannelOverprinter = OverprintFork
+
+export(ChannelFork,         name='ChannelFork')
+export(ChannelOverprinter,  name='ChannelOverprinter')
+export(CMYKInk,             name='CMYKInk',         doc="CMYKInk → Enumeration class furnishing CMYK primitive triple values")
+export(RGBInk,              name='RGBInk',          doc="RGBInk → Enumeration class furnishing RGB primitive triple values")
+
+# Assign the modules’ `__all__` and `__dir__` using the exporter:
+__all__, __dir__ = exporter.all_and_dir()
 
 if __name__ == '__main__':
     from pprint import pprint

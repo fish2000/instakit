@@ -25,6 +25,7 @@ from PIL import Image
 from enum import Enum, unique
 from scipy import interpolate
 
+from clu.predicates import pyname
 from instakit.utils.static import asset
 from instakit.utils.mode import Mode
 from instakit.abc import Processor
@@ -127,14 +128,14 @@ class CurveSet(Processor):
                                 'interpolation_mode')
     
     acv = 'acv'
-    dotacv = '.' + acv
+    dotacv = f'.{acv}'
     channels = ('composite', 'red', 'green', 'blue')
     valid_modes = ( Mode.RGB, Mode.MONO, Mode.L )
     
     @classmethod
     def builtin(cls, name):
-        print("Reading curves [builtin] %s%s" % (name, cls.dotacv))
-        acv_path = asset.path(cls.acv, "%s%s" % (name, cls.dotacv))
+        print(f"Reading curves [builtin] {name}{cls.dotacv}")
+        acv_path = asset.path(cls.acv, f"{name}{cls.dotacv}")
         out = cls(acv_path)
         out._is_builtin = True
         return out
@@ -154,7 +155,7 @@ class CurveSet(Processor):
         try:
             return cls.channels[idx]
         except IndexError:
-            return "channel%s" % idx
+            return f"channel{idx}"
     
     def __init__(self, path, interpolation_mode=InterpolateMode.LAGRANGE):
         self.count = 0
@@ -195,7 +196,7 @@ class CurveSet(Processor):
     
     def read_acv(self, acv_path, interpolation_mode):
         if not self.file_exists:
-            raise IOError("Can't read nonexistant ACV file: %s" % self.path)
+            raise IOError(f"Can't read nonexistant ACV file: {self.path}")
         with open(acv_path, "rb") as acv_file:
             _, self.count = struct.unpack("!hh", acv_file.read(4))
             for idx in range(self.count):
@@ -232,13 +233,12 @@ class CurveSet(Processor):
         self.count = len(self.curves)
     
     def __repr__(self):
-        cls_name = getattr(type(self), '__qualname__',
-                   getattr(type(self), '__name__'))
+        cls_name = pyname(type(self))
         address = id(self)
         label = self.is_builtin and '[builtin]' or self.name
         interp = self.interpolation_mode or InterpolateMode.LAGRANGE
-        parenthetical = "%s, %d, %s" % (label, self.count, interp)
-        return "%s(%s) @ <%s>" % (cls_name, parenthetical, address)
+        parenthetical = f"{label}, {self.count}, {interp}"
+        return f"{cls_name}({parenthetical}) @ <{address}>"
 
 
 def test():
