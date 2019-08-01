@@ -8,8 +8,10 @@ rebuild: distclean cython
 dist: rebuild sdist twine-upload
 
 upload: bump dist
+	git push
 
 bigupload: bigbump dist
+	git push
 
 clean-pyc:
 	find . -name \*.pyc -print -delete
