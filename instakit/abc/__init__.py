@@ -396,7 +396,6 @@ def test():
     print_red(__main__.__doc__)
     
     class SlowAtkinson(ThresholdMatrixProcessor):
-        # __slots__ = tuple()
         def process(self, image):
             from instakit.utils.mode import Mode
             image = Mode.L.process(image)
