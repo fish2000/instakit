@@ -1,7 +1,5 @@
--r install.txt
+-r tox.txt
 bumpversion
-check-manifest
 flake8
 flake8-bugbear
 twine
-pytest
