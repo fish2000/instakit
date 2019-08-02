@@ -42,17 +42,16 @@ def is_in_class(attr, cls):
         regardless of whether the class uses `__slots__` or
         an internal `__dict__`.
     """
-    if hasattr(cls, '__dict__'):
-        return attr in cls.__dict__
-    elif hasattr(cls, '__slots__'):
+    if hasattr(cls, '__slots__'):
         return attr in cls.__slots__
+    elif hasattr(cls, '__dict__'):
+        return attr in cls.__dict__
     return False
 
 def subclasshook(cls, subclass):
     """ A subclass hook function for both Processor and Enum """
-    if subclass in (Processor, Enum):
-        if any(is_in_class('process', ancestor) for ancestor in subclass.__mro__):
-            return True
+    if any(is_in_class('process', ancestor) for ancestor in subclass.__mro__):
+        return True
     return NotImplemented
 
 def slots_for(cls):
@@ -129,7 +128,6 @@ class Enum(EnumBase, metaclass=SlottedEnumMeta):
 class NOOp(Processor):
     
     """ A no-op processor. """
-    __slots__ = tuple()
     
     def process(self, image):
         """ Return the image instance, unchanged """

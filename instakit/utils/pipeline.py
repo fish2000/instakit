@@ -7,10 +7,12 @@ from copy import copy
 from enum import unique
 from functools import wraps
 
+from clu.enums import AliasingEnum, alias
 from clu.mathematics import Σ
 from clu.predicates import tuplize
 from clu.typology import string_types
-from instakit.abc import Enum, Fork, NOOp, Sequence, MutableSequence
+
+from instakit.abc import Fork, NOOp, Sequence, MutableSequence
 from instakit.utils.gcr import BasicGCR
 from instakit.utils.mode import Mode
 from instakit.processors.adjust import AutoContrast
@@ -208,8 +210,7 @@ class BandFork(Fork):
             e.g. `(R=MyProcessor, G=MyOtherProcessor, B=None)`
         """
         # Reset `self.mode` if a new mode was specified:
-        if 'mode' in kwargs:
-            self.mode = kwargs.pop('mode')
+        self.mode = kwargs.pop('mode', None)
         
         # Call `super(…)`, passing `processor_factory`:
         super(BandFork, self).__init__(processor_factory, *args, **kwargs)
@@ -220,6 +221,8 @@ class BandFork(Fork):
     
     @mode.setter
     def mode(self, value):
+        if value is None:
+            return
         if type(value) in string_types:
             value = Mode.for_string(value)
         if type(value) is Mode:
@@ -265,7 +268,7 @@ ink_values = (
     (0,   0,   255),    # Blue
 )
 
-class Ink(Enum):
+class Ink(AliasingEnum):
     
     def rgb(self):
         return ink_values[self.value]
@@ -279,15 +282,16 @@ class Ink(Enum):
 @unique
 class CMYKInk(Ink):
     
-    WHITE = 0
-    CYAN = 1
-    MAGENTA = 2
-    YELLOW = 3
-    KEY = 4
+    WHITE       = 0
+    CYAN        = 1
+    MAGENTA     = 2
+    YELLOW      = 3
+    KEY         = 4
+    BLACK       = alias(KEY)
     
     @classmethod
     def CMYK(cls):
-        return (cls.CYAN, cls.MAGENTA, cls.YELLOW, cls.KEY)
+        return (cls.CYAN, cls.MAGENTA, cls.YELLOW, cls.BLACK)
     
     @classmethod
     def CMY(cls):
@@ -296,11 +300,12 @@ class CMYKInk(Ink):
 @unique
 class RGBInk(Ink):
     
-    WHITE = 0
-    RED = 5
-    GREEN = 6
-    BLUE = 7
-    KEY = 4
+    WHITE       = 0
+    RED         = 5
+    GREEN       = 6
+    BLUE        = 7
+    KEY         = 4
+    BLACK       = alias(KEY)
     
     @classmethod
     def RGB(cls):
