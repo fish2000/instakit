@@ -228,7 +228,7 @@ class Mode(ModeAncestor):
     def label(self):
         return str(self) == self.name \
                         and self.name \
-                        or f"{self!s}, ({self.name})"
+                        or f"{self!s} ({self.name})"
     
     def check(self, image):
         return junkdrawer.imode(image) is self.value
