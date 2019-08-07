@@ -13,10 +13,9 @@ from PIL import ImageDraw
 from instakit.utils import pipeline, gcr
 from instakit.utils.mode import Mode
 from instakit.utils.stats import histogram_mean
-from instakit.abc import Processor, ThresholdMatrixProcessor
+from instakit.abc import Processor, ThresholdProcessor
 
-
-class SlowAtkinson(ThresholdMatrixProcessor):
+class SlowAtkinson(ThresholdProcessor):
     
     """ It’s not a joke, this processor is slow as fuck;
         if at all possible, use the cythonized version instead
@@ -48,7 +47,7 @@ class SlowAtkinson(ThresholdMatrixProcessor):
                         pass # it happens, evidently.
         return image
 
-class SlowFloydSteinberg(ThresholdMatrixProcessor):
+class SlowFloydSteinberg(ThresholdProcessor):
     
     """ A similarly super-slow reference implementation of Floyd-Steinberg.
         Adapted from an RGB version here: https://github.com/trimailov/qwer

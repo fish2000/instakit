@@ -17,50 +17,68 @@ Instakit’s Abstract Base Classes – née ABCs – for processors and data str
 """
 from __future__ import print_function
 
-from pkgutil import extend_path
 from abc import ABC, abstractmethod as abstract
-from collections import defaultdict
+from collections import defaultdict as DefaultDict
 from enum import Enum as EnumBase, EnumMeta
-from itertools import chain
-
-from clu.exporting import Slotted
+from pkgutil import extend_path
 
 if '__path__' in locals():
     __path__ = extend_path(__path__, __name__)
 
-__all__ = ('is_in_class', 'subclasshook',
-           'abstract',
-           'Processor', 'Enum', 'NOOp',
-           'Container', 'MutableContainer',
-           'Fork',
-           'ThresholdMatrixProcessor',
-           'NDProcessorBase')
+from clu.exporting import Slotted
+from clu.predicates import (getpyattr, isslotted,
+                                       isdictish,
+                                       isslotdicty,
+                                       slots_for,
+                                       predicate_and,
+                                       tuplize)
 
-__dir__ = lambda: list(__all__)
+from instakit.exporting import Exporter
 
-def is_in_class(attr, cls):
+exporter = Exporter(path=__file__)
+export = exporter.decorator()
+
+@export
+def is_in_class(atx, cls):
     """ Test whether or not a class has a named attribute,
         regardless of whether the class uses `__slots__` or
         an internal `__dict__`.
     """
     if hasattr(cls, '__slots__'):
-        return attr in cls.__slots__
+        return atx in cls.__slots__
     elif hasattr(cls, '__dict__'):
-        return attr in cls.__dict__
+        return atx in cls.__dict__
     return False
 
+@export
 def subclasshook(cls, subclass):
     """ A subclass hook function for both Processor and Enum """
     if any(is_in_class('process', ancestor) for ancestor in subclass.__mro__):
         return True
     return NotImplemented
 
-def slots_for(cls):
-    """ Get the summation of the __slots__ tuples for a class and its ancestors """
-    # q.v. https://stackoverflow.com/a/6720815/298171
-    return tuple(chain.from_iterable(
-                 getattr(ancestor, '__slots__', tuple()) \
-                           for ancestor in cls.__mro__))
+def compare_via_slots(self, other):
+    """ Compare two slotted objects by checking each available slot
+        on each instance
+    """
+    if not isslotted(self):
+        return False
+    if not isslotted(other):
+        return False
+    for slot in slots_for(type(self)):
+        if getattr(self, slot) != getattr(other, slot):
+            return False
+    return True
+
+def compare_via_dicts(self, other):
+    """ Compare two objects by comparing the contents of their
+        internal __dict__ attributes
+    """
+    if not isdictish(self):
+        return False
+    if not isdictish(other):
+        return False
+    return getpyattr(self, 'dict') == getpyattr(other, 'dict')
 
 def compare_via_attrs(self, other):
     """ Compare two processors:
@@ -76,16 +94,29 @@ def compare_via_attrs(self, other):
     """
     if type(self) is not type(other):
         return NotImplemented
-    if hasattr(self, '__dict__') and hasattr(other, '__dict__'):
-        return self.__dict__ == other.__dict__
-    elif hasattr(self, '__slots__') and hasattr(other, '__slots__'):
-        slots = slots_for(type(self))
-        for slot in slots:
-            if getattr(self, slot) != getattr(other, slot):
-                return False
-        return True
+    
+    # If they both have *both* __slots__ and __dicts__,
+    # delegate to the results of *both* “compare_via_slots(…)”
+    # and “compare_via_dicts(…)”:
+    if predicate_and(isslotdicty, self, other):
+        return compare_via_slots(self, other) and \
+               compare_via_dicts(self, other)
+    
+    # If they both have __slots__, delegate
+    # to “compare_via_slots(…)”:
+    if predicate_and(isslotted, self, other):
+        return compare_via_slots(self, other)
+    
+    # If they both have __dicts__, delegate
+    # to “compare_via_dicts(…)”:
+    if predicate_and(isdictish, self, other):
+        return compare_via_dicts(self, other)
+    
+    # Couldn’t match __dict__ and __slots__ attributes,
+    # raise a TypeError:
     raise TypeError("dict/slots mismatch")
 
+@export
 class Processor(ABC, metaclass=Slotted):
     
     """ Base abstract processor class. """
@@ -111,6 +142,7 @@ class Processor(ABC, metaclass=Slotted):
 class SlottedEnumMeta(EnumMeta, metaclass=Slotted):
     pass
 
+@export
 class Enum(EnumBase, metaclass=SlottedEnumMeta):
     
     """ Base abstract processor enum. """
@@ -126,6 +158,7 @@ class Enum(EnumBase, metaclass=SlottedEnumMeta):
     def __subclasshook__(cls, subclass):
         return subclasshook(cls, subclass)
 
+@export
 class NOOp(Processor):
     
     """ A no-op processor. """
@@ -138,6 +171,7 @@ class NOOp(Processor):
         """ Simple type-comparison """
         return type(self) is type(other)
 
+@export
 class Container(Processor):
     
     """ Base abstract processor container. """
@@ -180,11 +214,13 @@ class Container(Processor):
                 return False
         return True
 
+@export
 class Mapping(Container):
     
     @abstract
     def get(self, idx, default_value): ...
 
+@export
 class Sequence(Container):
     
     @abstract
@@ -193,6 +229,7 @@ class Sequence(Container):
     @abstract
     def last(self): ...
 
+@export
 class MutableContainer(Container):
     
     """ Base abstract processor mutable container. """
@@ -203,6 +240,7 @@ class MutableContainer(Container):
     @abstract
     def __delitem__(self, idx, value): ...
 
+@export
 class MutableMapping(MutableContainer):
     
     @abstract
@@ -214,6 +252,7 @@ class MutableMapping(MutableContainer):
     @abstract
     def update(self, iterable=None, **kwargs): ...
 
+@export
 class MutableSequence(MutableContainer):
     
     @abstract
@@ -231,6 +270,7 @@ class MutableSequence(MutableContainer):
     @abstract
     def pop(self, idx=-1): ...
 
+@export
 class Fork(MutableMapping):
     
     """ Base abstract forking processor. """
@@ -238,7 +278,7 @@ class Fork(MutableMapping):
     
     @classmethod
     def base_type(cls):
-        return defaultdict
+        return DefaultDict
     
     def __init__(self, default_factory, *args, **kwargs):
         """ The `Fork` ABC implements the same `__init__(¬)` call signature as
@@ -337,20 +377,21 @@ class Fork(MutableMapping):
     @abstract
     def compose(self, *bands): ...
 
-class ThresholdMatrixProcessor(Processor):
+class ThresholdProcessor(Processor):
     
-    """ Abstract base class for a processor using a uint8 threshold matrix """
+    """ Abstract base class for a processor using a uint8_t threshold matrix """
     # This is used in instakit.processors.halftone
-    __slots__ = ('threshold_matrix',)
+    __slots__ = tuplize('threshold_matrix')
     
-    LO_TUP = (0,)
-    HI_TUP = (255,)
+    LO_TUP = tuplize(0)
+    HI_TUP = tuplize(255)
     
     def __init__(self, threshold = 128.0):
         """ Initialize with a threshold value between 0 and 255 """
         self.threshold_matrix = int(threshold)  * self.LO_TUP + \
                            (256-int(threshold)) * self.HI_TUP
 
+@export
 class NDProcessorBase(Processor):
     
     """ An image processor ancestor class that represents PIL image
@@ -377,6 +418,10 @@ class NDProcessorBase(Processor):
     @abstract
     def uncompand(ndimage): ...
 
+export(abstract)
+
+# Assign the modules’ `__all__` and `__dir__` using the exporter:
+__all__, __dir__ = exporter.all_and_dir()
 
 def test():
     """ Inline tests for instakit.abc module """
@@ -394,7 +439,7 @@ def test():
     import __main__
     print_red(__main__.__doc__)
     
-    class SlowAtkinson(ThresholdMatrixProcessor):
+    class SlowAtkinson(ThresholdProcessor):
         def process(self, image):
             from instakit.utils.mode import Mode
             image = Mode.L.process(image)

@@ -74,7 +74,7 @@ class Pipe(Sequence):
     def __eq__(self, other):
         if not isinstance(other, (type(self), type(self).base_type())):
             return NotImplemented
-        return 
+        return super(Pipe, self).__eq__(other)
 
 @export
 class Pipeline(MutableSequence):
@@ -166,6 +166,11 @@ class Pipeline(MutableSequence):
         for processor in self.iterate():
             image = processor.process(image)
         return image
+    
+    def __eq__(self, other):
+        if not isinstance(other, (type(self), type(self).base_type())):
+            return NotImplemented
+        return super(Pipe, self).__eq__(other)
 
 @export
 class BandFork(Fork):

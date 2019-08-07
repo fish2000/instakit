@@ -10,72 +10,77 @@ from __future__ import print_function
 
 from PIL import ImageFilter
 from instakit.abc import Processor
+from instakit.exporting import Exporter
 
+exporter = Exporter(path=__file__)
+export = exporter.decorator()
+
+@export
 class ImagingCoreFilterMixin(Processor):
     """ A mixin furnishing a `process(…)` method to PIL.ImageFilter classes """
-    __slots__ = tuple() # a __dict__ slot exists already
     
     def process(self, image):
         return image.filter(self)
 
+@export
 class Contour(ImageFilter.CONTOUR, ImagingCoreFilterMixin):
     """ Contour-Enhance Filter """
-    __slots__ = tuple()
+    pass
 
-
+@export
 class Detail(ImageFilter.DETAIL, ImagingCoreFilterMixin):
     """ Detail-Enhance Filter """
-    __slots__ = tuple()
+    pass
 
-
+@export
 class Emboss(ImageFilter.EMBOSS, ImagingCoreFilterMixin):
     """ Emboss-Effect Filter """
-    __slots__ = tuple()
+    pass
 
-
+@export
 class FindEdges(ImageFilter.FIND_EDGES, ImagingCoreFilterMixin):
     """ Edge-Finder Filter """
-    __slots__ = tuple()
+    pass
 
-
+@export
 class EdgeEnhance(ImageFilter.EDGE_ENHANCE, ImagingCoreFilterMixin):
     """ Edge-Enhance Filter """
-    __slots__ = tuple()
+    pass
 
-
+@export
 class EdgeEnhanceMore(ImageFilter.EDGE_ENHANCE_MORE, ImagingCoreFilterMixin):
     """ Edge-Enhance (With Extreme Predjudice) Filter """
-    __slots__ = tuple()
+    pass
 
-
+@export
 class Smooth(ImageFilter.SMOOTH, ImagingCoreFilterMixin):
     """ Image-Smoothing Filter """
-    __slots__ = tuple()
+    pass
 
-
+@export
 class SmoothMore(ImageFilter.SMOOTH_MORE, ImagingCoreFilterMixin):
     """ Image-Smoothing (With Extreme Prejudice) Filter """
-    __slots__ = tuple()
+    pass
 
-
+@export
 class Sharpen(ImageFilter.SHARPEN, ImagingCoreFilterMixin):
     """ Image Sharpener """
-    __slots__ = tuple()
+    pass
 
-
+@export
 class UnsharpMask(ImageFilter.UnsharpMask, ImagingCoreFilterMixin):
     """ Unsharp Mask Filter 
         Optionally initialize with params:
             radius (2), percent (150), threshold (3) """
-    __slots__ = tuple()
+    pass
 
-
+@export
 class SimpleGaussianBlur(ImageFilter.GaussianBlur, ImagingCoreFilterMixin):
     """ Simple Gaussian Blur Filter 
         Optionally initialize with radius (2) """
-    __slots__ = tuple()
+    pass
 
-
+@export
 class GaussianBlur(Processor):
     """ Gaussian Blur Filter 
         Optionally initialize with params:
@@ -100,10 +105,13 @@ class GaussianBlur(Processor):
                                sigmaY=self.sigmaY,
                                sigmaZ=self.sigmaZ))
 
+# Assign the modules’ `__all__` and `__dir__` using the exporter:
+__all__, __dir__ = exporter.all_and_dir()
 
-if __name__ == '__main__':
+def test():
     from instakit.utils.static import asset
     from instakit.utils.mode import Mode
+    from clu.predicates import isslotted
     
     image_paths = list(map(
         lambda image_file: asset.path('img', image_file),
@@ -112,7 +120,27 @@ if __name__ == '__main__':
         lambda image_path: Mode.RGB.open(image_path),
             image_paths))
     
+    processors = (Contour(),
+                  Detail(),
+                  Emboss(),
+                  EdgeEnhance(),
+                  EdgeEnhanceMore(),
+                  FindEdges(),
+                  Smooth(),
+                  SmoothMore(),
+                  Sharpen(),
+                  UnsharpMask(),
+                  GaussianBlur(sigmaX=3),
+                  SimpleGaussianBlur(radius=3))
+    
+    for processor in processors:
+        assert isslotted(processor)
+    
     for image_input in image_inputs:
+        # image_input.show()
+        # for processor in processors:
+        #     processor.process(image_input).show()
+        
         # image_input.show()
         # Contour().process(image_input).show()
         # Detail().process(image_input).show()
@@ -129,3 +157,5 @@ if __name__ == '__main__':
     
     print(image_paths)
     
+if __name__ == '__main__':
+    test()
