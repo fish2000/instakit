@@ -10,10 +10,11 @@ from PIL import Image, ImageMode
 from enum import auto, unique
 
 from clu.constants.consts import DEBUG, ENCODING
-from clu.typespace.namespace import Namespace
+from clu.enums import alias, AliasingEnum
 from clu.naming import split_abbreviations
-from clu.predicates import or_none
-from instakit.abc import Enum
+from clu.predicates import attr, getpyattr, isclasstype, or_none
+from clu.typespace.namespace import Namespace
+from clu.typology import string_types
 
 junkdrawer = Namespace()
 junkdrawer.imode = lambda image: ImageMode.getmode(image.mode)
@@ -31,7 +32,7 @@ dtypes_for_modes = { k : v[0] for k, v in junkdrawer.types.items() }
 junkdrawer.idxmode = lambda idx: ImageMode.getmode(mode_strings[idx])
 junkdrawer.is_mapped = lambda mode: mode in junkdrawer.ismap
 
-class ModeAncestor(Enum):
+class ModeAncestor(AliasingEnum):
     """
     Valid ImageMode mode strings:
     ('1',    'L',     'I',     'F',     'P',
@@ -130,6 +131,67 @@ class ModeContext(contextlib.AbstractContextManager):
             self.attr_set('final_image', final_image)
         return exc_type is None
 
+@unique
+class Field(AliasingEnum):
+    
+    RO          = auto()
+    WO          = auto()
+    RW          = auto()
+    ReadOnly    = alias(RO)
+    WriteOnly   = alias(WO)
+    ReadWrite   = alias(RW)
+
+class FieldIOError(IOError):
+    pass
+
+anno_for = lambda cls, name, default=None: getpyattr(cls, 'annotations', default={}).get(name, default)
+
+class ModeField(object):
+    
+    """ Not *that* ModeDescriptor. THIS ModeDescriptor! """
+    __slots__ = ('default', 'value', 'name', 'io')
+    
+    def __init__(self, default):
+        self.default = default
+    
+    def __set_name__(self, cls, name):
+        if name is not None:
+            self.name = name
+            self.value = None
+            self.io = anno_for(cls, name, Field.RW)
+    
+    def __get__(self, instance=None, cls=None):
+        if instance is not None:
+            if self.io is Field.WO:
+                raise FieldIOError(f"can’t access write-only field {self.name}")
+        if isclasstype(cls):
+            return self.get()
+    
+    def __set__(self, instance, value):
+        if self.io is Field.RO:
+            if value != self.value:
+                FieldIOError(f"can’t set read-only field {self.name}")
+        self.set(value)
+    
+    def value_from_instance(self, instance):
+        pass
+    
+    def get(self):
+        return attr(self, 'value', 'default')
+    
+    def set(self, value):
+        if value is None:
+            self.value = value
+            return
+        if type(value) in string_types:
+            value = Mode.for_string(value)
+        if Mode.is_mode(value):
+            if value is not self.default:
+                self.value = value
+                return
+        else:
+            raise TypeError("can’t set invalid mode: %s (%s)" % (type(value), value))
+
 
 @unique
 class Mode(ModeAncestor):
@@ -193,7 +255,7 @@ class Mode(ModeAncestor):
     def __bytes__(self):
         return bytes(self.to_string(), encoding=ENCODING)
     
-    def __call__(self, image, **kwargs):
+    def ctx(self, image, **kwargs):
         return ModeContext(image, self, **kwargs)
     
     def dtype_code(self):
@@ -322,7 +384,7 @@ def test():
     print()
     
     assert Mode(10) == Mode.LAB
-    assert hasattr(Mode.RGB, '__slots__')
+    # assert hasattr(Mode.RGB, '__slots__')
     
     print()
     
@@ -338,7 +400,7 @@ def test():
             image_paths))
     
     for image in image_inputs:
-        with Mode.L(image) as grayscale:
+        with Mode.L.ctx(image) as grayscale:
             assert Mode.of(grayscale.image) is Mode.L
             print(grayscale.image)
             grayscale.image = Mode.MONO.process(grayscale.image)

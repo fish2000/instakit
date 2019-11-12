@@ -207,6 +207,7 @@ class BandFork(Fork):
         ‡ q.v. the `collections.abc` module, and the `MutableMapping`
                     abstract base class within, supra.
     """
+    __slots__ = tuplize('mode_t')
     mode_t = Mode.RGB
     
     def __init__(self, processor_factory, *args, **kwargs):
@@ -230,7 +231,7 @@ class BandFork(Fork):
             return
         if type(value) in string_types:
             value = Mode.for_string(value)
-        if type(value) is Mode:
+        if Mode.is_mode(value):
             if value is not self.mode_t:
                 self.set_mode_t(value)
         else:

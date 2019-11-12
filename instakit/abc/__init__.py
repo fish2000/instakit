@@ -25,7 +25,7 @@ from pkgutil import extend_path
 if '__path__' in locals():
     __path__ = extend_path(__path__, __name__)
 
-from clu.exporting import Slotted
+from clu.abstract import Slotted
 from clu.predicates import (getpyattr, isslotted,
                                        isdictish,
                                        isslotdicty,
