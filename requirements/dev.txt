@@ -1,5 +1,9 @@
 -r tox.txt
+PyYAML
+bpython
 bumpversion
 flake8
 flake8-bugbear
+ipython
+jupyter
 twine
