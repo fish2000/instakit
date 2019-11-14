@@ -207,8 +207,6 @@ class BandFork(Fork):
         ‡ q.v. the `collections.abc` module, and the `MutableMapping`
                     abstract base class within, supra.
     """
-    __slots__ = tuplize('mode_t')
-    mode_t = Mode.RGB
     
     def __init__(self, processor_factory, *args, **kwargs):
         """ Initialize a BandFork instance, using the given callable value
@@ -216,7 +214,7 @@ class BandFork(Fork):
             e.g. `(R=MyProcessor, G=MyOtherProcessor, B=None)`
         """
         # Reset `self.mode` if a new mode was specified:
-        self.mode = kwargs.pop('mode', None)
+        self.mode = kwargs.pop('mode', Mode.RGB)
         
         # Call `super(…)`, passing `processor_factory`:
         super(BandFork, self).__init__(processor_factory, *args, **kwargs)
@@ -337,7 +335,6 @@ class OverprintFork(BandFork):
     """
     __slots__ = ('contrast', 'basicgcr')
     
-    mode_t = Mode.CMYK
     inks = CMYKInk.CMYK()
     
     def __init__(self, processor_factory, gcr=20, *args, **kwargs):
@@ -350,7 +347,8 @@ class OverprintFork(BandFork):
         self.basicgcr = BasicGCR(percentage=gcr)
         
         # Call `super(…)`, passing `processor_factory`:
-        super(OverprintFork, self).__init__(processor_factory, *args, **kwargs)
+        super(OverprintFork, self).__init__(processor_factory, *args, mode=Mode.CMYK,
+                                                              **kwargs)
         
         # Make each band-processor a Pipeline() ending in
         # the channel-appropriate CMYKInk enum processor:

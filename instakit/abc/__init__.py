@@ -274,7 +274,7 @@ class MutableSequence(MutableContainer):
 class Fork(MutableMapping):
     
     """ Base abstract forking processor. """
-    __slots__ = ('dict', '__weakref__')
+    __slots__ = ('dict', 'mode_t', '__weakref__')
     
     @classmethod
     def base_type(cls):
