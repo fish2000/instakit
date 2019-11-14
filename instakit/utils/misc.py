@@ -2,9 +2,9 @@
 # encoding: utf-8
 from __future__ import print_function
 
-from clu.fs.misc import (wrap_value, none_function, stringify,
-                         suffix_searcher, u8encode, u8bytes, u8str)
-from clu.predicates import tuplize, uniquify, listify
+from clu.fs.misc import suffix_searcher, u8encode, u8bytes, u8str
+from clu.predicates import wrap_value, none_function, tuplize, uniquify, listify
+from clu.repr import stringify
 from clu.typespace.namespace import SimpleNamespace, Namespace
 from clu.typology import (string_types, bytes_types as byte_types)
 from instakit.exporting import Exporter

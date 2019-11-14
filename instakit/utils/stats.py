@@ -34,6 +34,7 @@ def histogram_sum(image):
         Basically this is an optimized way of doing:
             
             out = 0.0
+            histogram = Mode.L.process(image).histogram()
             for value, count in enumerate(histogram):
                 out += value * count
             return out
@@ -51,10 +52,7 @@ def histogram_mean(image):
 
 @export
 def histogram_entropy_py(image):
-    """ Calculate the entropy of an images' histogram.
-        Used for “smart cropping” in easy-thumbnails:
-            https://git.io/fhqxd
-    """
+    """ Calculate the entropy of an images' histogram. """
     from math import log2, fsum
     histosum = float(color_count(image))
     histonorm = (histocol / histosum for histocol in image.histogram())

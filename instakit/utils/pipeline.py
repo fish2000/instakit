@@ -43,7 +43,7 @@ class Pipe(Sequence):
         self.tuple = tuplize(*args)
     
     def iterate(self):
-        return iter(self.tuple)
+        yield from self.tuple
     
     @wraps(tuple.__len__)
     def __len__(self):
@@ -114,7 +114,7 @@ class Pipeline(MutableSequence):
             self.list = base_type([*args])
     
     def iterate(self):
-        return iter(self.list)
+        yield from self.list
     
     @wraps(list.__len__)
     def __len__(self):
@@ -245,8 +245,7 @@ class BandFork(Fork):
         return self.mode_t.bands
     
     def iterate(self):
-        for band_label in self.band_labels:
-            yield self[band_label]
+        yield from (self[band_label] for band_label in self.band_labels)
     
     def split(self, image):
         return self.mode_t.process(image).split()

@@ -2,7 +2,7 @@
 from __future__ import print_function
 
 from PIL import ImageOps, ImageChops, ImageEnhance as enhancers
-from clu.exporting import Slotted
+from clu.abstract import Slotted
 from clu.predicates import tuplize
 from instakit.abc import abstract, ABC, Processor
 from instakit.exporting import Exporter
