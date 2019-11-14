@@ -207,17 +207,19 @@ class BandFork(Fork):
         ‡ q.v. the `collections.abc` module, and the `MutableMapping`
                     abstract base class within, supra.
     """
+    __slots__ = tuplize('mode_t')
     
     def __init__(self, processor_factory, *args, **kwargs):
         """ Initialize a BandFork instance, using the given callable value
             for `processor_factory` and any band-appropriate keyword-arguments,
             e.g. `(R=MyProcessor, G=MyOtherProcessor, B=None)`
         """
-        # Reset `self.mode` if a new mode was specified:
-        self.mode = kwargs.pop('mode', Mode.RGB)
-        
         # Call `super(…)`, passing `processor_factory`:
         super(BandFork, self).__init__(processor_factory, *args, **kwargs)
+        
+        # Reset `self.mode_t` if a new mode was specified --
+        # N.B. we can’t use the “self.mode” property during “__init__(…)”:
+        self.mode_t = kwargs.pop('mode', Mode.RGB)
     
     @property
     def mode(self):
@@ -230,8 +232,8 @@ class BandFork(Fork):
         if type(value) in string_types:
             value = Mode.for_string(value)
         if Mode.is_mode(value):
-            if value is not self.mode_t:
-                self.set_mode_t(value)
+            # if value is not self.mode_t:
+            self.set_mode_t(value)
         else:
             raise TypeError("invalid mode type: %s (%s)" % (type(value), value))
     
@@ -240,16 +242,16 @@ class BandFork(Fork):
     
     @property
     def band_labels(self):
-        return self.mode_t.bands
+        return self.mode.bands
     
     def iterate(self):
         yield from (self[band_label] for band_label in self.band_labels)
     
     def split(self, image):
-        return self.mode_t.process(image).split()
+        return self.mode.process(image).split()
     
     def compose(self, *bands):
-        return self.mode_t.merge(*bands)
+        return self.mode.merge(*bands)
     
     def process(self, image):
         processed = []
