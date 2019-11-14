@@ -7,3 +7,4 @@ flake8-bugbear
 ipython
 jupyter
 twine
+xerox
