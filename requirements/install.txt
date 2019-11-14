@@ -1,4 +1,4 @@
-python-clu>=0.2.1
+python-clu>=0.4.0
 Cython>=0.29.0
 docopt>=0.6.0
 enum34>=1.1.0; python_version < '3.4'
