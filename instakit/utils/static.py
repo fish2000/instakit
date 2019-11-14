@@ -13,7 +13,7 @@ namespaces = set()
 
 @export
 def static_namespace(name):
-    """ Configure and return an instakit.utils.misc.Namespace instance,
+    """ Configure and return a clu.typespace.namespace.Namespace instance,
         festooning it with shortcuts allowing for accesing static files
         within subdirectories of the Instakit project package tree.
     """
