@@ -8,7 +8,8 @@ Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 """
 from __future__ import print_function
 
-import numpy, imread
+import numpy
+import imread
 from os.path import join
 from collections import defaultdict
 
