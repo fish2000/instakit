@@ -6,5 +6,7 @@ flake8
 flake8-bugbear
 ipython
 jupyter
+pythonpy
 twine
 xerox
+yolk1977
