@@ -240,7 +240,6 @@ class CurveSet(Processor):
         parenthetical = f"{label}, {self.count}, {interp}"
         return f"{cls_name}({parenthetical}) @ <{address}>"
 
-
 def test():
     curve_sets = CurveSet.instakit_curve_sets()
     
