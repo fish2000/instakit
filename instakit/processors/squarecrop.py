@@ -9,7 +9,12 @@ Copyright (c) 2012 Objects In Space And Time, LLC. All rights reserved.
 from __future__ import print_function
 
 from instakit.abc import Processor
+from instakit.exporting import Exporter
 
+exporter = Exporter(path=__file__)
+export = exporter.decorator()
+
+@export
 class SquareCrop(Processor):
     
     """ Crop an image to an Instagrammy square, by whittling away
@@ -77,8 +82,10 @@ class SquareCrop(Processor):
         box = (left, top, right, bottom)
         return image.crop(box)
 
+# Assign the modules’ `__all__` and `__dir__` using the exporter:
+__all__, __dir__ = exporter.all_and_dir('pout', 'inline')
 
-if __name__ == '__main__':
+def test():
     from instakit.utils.static import asset
     from instakit.utils.mode import Mode
     
@@ -95,3 +102,5 @@ if __name__ == '__main__':
     
     print(image_paths)
 
+if __name__ == '__main__':
+    test()

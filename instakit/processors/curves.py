@@ -62,7 +62,6 @@ class InterpolateMode(Enum):
     def __str__(self):
         return self.to_string()
 
-
 class SingleCurve(list):
     
     """ A SingleCurve instance is a named list of (x, y) coordinates,

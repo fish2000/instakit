@@ -11,7 +11,6 @@ from enum import Enum, unique
 
 from instakit.utils.ndarrays import NDProcessor
 
-
 @unique
 class NoiseMode(Enum):
     

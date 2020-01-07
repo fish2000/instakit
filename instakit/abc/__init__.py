@@ -17,7 +17,7 @@ Instakit’s Abstract Base Classes – née ABCs – for processors and data str
 """
 from __future__ import print_function
 
-from abc import ABC, abstractmethod as abstract
+from abc import ABC, abstractmethod
 from collections import defaultdict as DefaultDict
 from enum import Enum as EnumBase, EnumMeta
 from pkgutil import extend_path
@@ -35,6 +35,7 @@ from clu.predicates import (getpyattr, isslotted,
 
 from instakit.exporting import Exporter
 
+abstract = abstractmethod
 exporter = Exporter(path=__file__)
 export = exporter.decorator()
 
