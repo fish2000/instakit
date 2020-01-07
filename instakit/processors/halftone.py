@@ -251,8 +251,7 @@ class CMYKDotScreen(Processor):
     def process(self, image):
         return self.overprinter.process(image)
 
-
-if __name__ == '__main__':
+def test():
     from instakit.utils.static import asset
     
     image_paths = list(map(
@@ -263,14 +262,17 @@ if __name__ == '__main__':
             image_paths))
     
     for image_input in image_inputs:
-        # image_input.show()
+        image_input.show()
         
         # Atkinson(threshold=128.0).process(image_input).show()
         # FloydSteinberg(threshold=128.0).process(image_input).show()
         # SlowFloydSteinberg(threshold=128.0).process(image_input).show()
         
-        CMYKAtkinson().process(image_input).show()
+        # CMYKAtkinson().process(image_input).show()
         # CMYKFloydsterBill().process(image_input).show()
         CMYKDotScreen(sample=10, scale=4).process(image_input).show()
     
     print(image_paths)
+
+if __name__ == '__main__':
+    test()
