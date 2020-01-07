@@ -24,7 +24,6 @@
 #    SOFTWARE.
 #
 from __future__ import print_function
-from pkgutil import extend_path
 from os.path import dirname
 
 from clu.version import read_version_file, VersionInfo
@@ -35,10 +34,6 @@ __all__ = ('__version__', 'version_info',
            '__license__', '__copyright__')
 
 __dir__ = lambda: list(__all__)
-
-if '__path__' in locals():
-    __path__ = extend_path(__path__, __name__)
-    __all__ += ('__path__',)
 
 # Embedded project metadata:
 __version__ = read_version_file(dirname(__file__))

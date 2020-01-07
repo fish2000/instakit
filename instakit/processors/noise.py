@@ -83,7 +83,6 @@ class SpeckleNoise(Noise):
     """
     mode = NoiseMode.SPECKLE
 
-
 def test():
     from instakit.utils.static import asset
     from instakit.utils.mode import Mode

@@ -319,7 +319,6 @@ class Mode(ModeAncestor):
                                size, data, decoder_name,
                               *args)
 
-
 def test():
     from pprint import pprint
     

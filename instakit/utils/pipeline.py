@@ -421,7 +421,7 @@ export(RGBInk,              name='RGBInk',          doc="RGBInk → Enumeration 
 # Assign the modules’ `__all__` and `__dir__` using the exporter:
 __all__, __dir__ = exporter.all_and_dir()
 
-if __name__ == '__main__':
+def test():
     from pprint import pprint
     from instakit.utils.static import asset
     from instakit.processors.halftone import Atkinson
@@ -468,4 +468,6 @@ if __name__ == '__main__':
     pprint(bandfork)
     
     print(image_paths)
-    
+
+if __name__ == '__main__':
+    test()

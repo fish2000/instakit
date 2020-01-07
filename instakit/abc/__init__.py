@@ -20,10 +20,6 @@ from __future__ import print_function
 from abc import ABC, abstractmethod
 from collections import defaultdict as DefaultDict
 from enum import Enum as EnumBase, EnumMeta
-from pkgutil import extend_path
-
-if '__path__' in locals():
-    __path__ = extend_path(__path__, __name__)
 
 from clu.abstract import Slotted
 from clu.predicates import (getpyattr, isslotted,
