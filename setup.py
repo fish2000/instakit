@@ -184,38 +184,40 @@ include_dirs = [numpy.get_include(),
                 sysconfig.get_path('include')]
 
 # THE CALL TO `setup(…)`
-setup(
-    name=PROJECT_NAME,
-    author=AUTHOR_NAME,
-    author_email=AUTHOR_EMAIL,
+
+if __name__ == '__main__':
+    setup(
+        name=PROJECT_NAME,
+        author=AUTHOR_NAME,
+        author_email=AUTHOR_EMAIL,
     
-    version=__version__,
-    description=__doc__.strip(),
-    long_description=LONG_DESCRIPTION,
-    long_description_content_type="text/markdown",
+        version=__version__,
+        description=__doc__.strip(),
+        long_description=LONG_DESCRIPTION,
+        long_description_content_type="text/markdown",
     
-    keywords=" ".join(KEYWORDS),
-    url=PROJECT_GH_URL, download_url=PROJECT_DL_URL,
-    license=LICENSE, platforms=['any'],
-    classifiers=CLASSIFIERS,
+        keywords=" ".join(KEYWORDS),
+        url=PROJECT_GH_URL, download_url=PROJECT_DL_URL,
+        license=LICENSE, platforms=['any'],
+        classifiers=CLASSIFIERS,
     
-    packages=find_packages(),
-    package_data={ '' : ['*.*'] },
-    include_package_data=True,
-    zip_safe=False,
+        packages=find_packages(),
+        package_data={ '' : ['*.*'] },
+        include_package_data=True,
+        zip_safe=False,
     
-    install_requires=INSTALL_REQUIRES,
-    include_dirs=include_dirs,
+        install_requires=INSTALL_REQUIRES,
+        include_dirs=include_dirs,
     
-    ext_modules=cythonize([
-        cython_comparator("buttereye",  sources=[augli_source],
-                                        language="c++"),
-        cython_processor("halftone",    include_dirs=include_dirs,
-                                        language="c"),
-        cython_utility("api",           sources=[hsluv_source],
-                                        language="c")
-        ], nthreads=cpu_count(),
-           compiler_directives=dict(language_level=3,
-                                    infer_types=True,
-                                    embedsignature=True)),
-)
+        ext_modules=cythonize([
+            cython_comparator("buttereye",  sources=[augli_source],
+                                            language="c++"),
+            cython_processor("halftone",    include_dirs=include_dirs,
+                                            language="c"),
+            cython_utility("api",           sources=[hsluv_source],
+                                            language="c")
+            ], nthreads=cpu_count(),
+               compiler_directives=dict(language_level=3,
+                                        infer_types=True,
+                                        embedsignature=True)),
+    )
